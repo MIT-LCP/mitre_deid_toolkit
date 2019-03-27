@@ -1,0 +1,3614 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Task XML Reference</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Task XML Reference<br>
+    </h1>
+    <p>The XML format for the task files (see <a
+        href="create_task.html">"Creating a New Task"</a>) <span
+        style="text-decoration: underline;"></span> is described in this
+      document. Use cases are described <a
+        href="task_xml_use_cases.html">here</a>. Click <a
+        href="task_xml_iframe.html">here</a> for a split-screen view.<br>
+    </p>
+    <h2>Element hierarchy</h2>
+    <p>&nbsp;&nbsp;&nbsp; <a href="#task">&lt;task&gt;</a> (and
+      &lt;tasks&gt;)<br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a href="#workflows_of_task">&lt;workflows&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#workflow_of_workflows">&lt;workflow&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; <a
+        href="#ui_settings_of_workflow">&lt;ui_settings&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; <a href="#setting_of_ui_settings_of_workflow">&lt;setting&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#step_of_workflow">&lt;step&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; <a href="#create_settings_of_step">&lt;create_settings&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <a
+        href="#setting_of_create_settings">&lt;setting&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; <a href="#run_settings_of_step">&lt;run_settings&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <a
+        href="#setting_of_run_settings">&lt;setting&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; <a href="#ui_settings_of_step">&lt;ui_settings&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <a
+        href="#setting_of_ui_settings">&lt;setting&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="task_xml.html#settings_of_task">&lt;settings&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="task_xml.html#setting_of_settings">&lt;setting&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &lt;doc_enhancement_class&gt;<br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#java_subprocess_parameters_of_task">&lt;java_subprocess_parameters&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#web_customization_of_task">&lt;web_customization&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &lt;js&gt;<br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &lt;css&gt;<br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &lt;short_name&gt;<br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &lt;long_name&gt;<br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a href="#model_config_of_task">&lt;model_config&gt;<br>
+      </a>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp; <a
+        href="#build_settings_of_model_config">&lt;build_settings&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; <a
+        href="#setting_of_build_settings_of_model_config">&lt;setting&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &lt;default_model&gt;<br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a href="#workspace_of_task">&lt;workspace&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#operation_of_workspace">&lt;operation&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#settings_of_operation">&lt;settings&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; <a href="#setting_of_settings_of_operation">&lt;setting&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#step_implementations_of_task">&lt;step_implementations&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#step_of_step_implementations">&lt;step&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; <a
+        href="#create_settings_of_step_of_step_impl">&lt;create_settings&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; <a
+        href="#setting_of_create_settings_of_step_of_step_impl">&lt;setting&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+        href="#annotation_set_descriptors_of_task">&lt;annotation_set_descriptors&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <a
+        href="#annotation_set_descriptor_of_annotation_set_descriptors">&lt;annotation_set_descriptor&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+        href="#annotation_display_of_task">&lt;annotation_display&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+        href="#label_of_annotation_display">&lt;label&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+        href="#attribute_of_annotation_display">&lt;attribute&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+        href="#label_group_of_annotation_display">&lt;label_group&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+        href="#similarity_profile_of_task">&lt;similarity_profile&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+        href="#stratum_of_similarity_profile">&lt;stratum&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+        href="#tag_profile_of_similarity_profile">&lt;tag_profile&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+      <a href="#attr_equivalences_of_tag_profile">&lt;attr_equivalences&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+      <a href="#dimension_of_tag_profile">&lt;dimension&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#score_profile_of_task">&lt;score_profile&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+        href="#aggregation_of_score_profile">&lt;aggregation&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+        href="#attr_decomposition_of_score_profile">&lt;attr_decomposition&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+        href="#partition_decomposition_of_score_profile">&lt;partition_decomposition&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+        href="#label_limitation_of_score_profile">&lt;label_limitation&gt;</a><br>
+    </p>
+    <h2><a name="task"></a>&lt;task&gt;</h2>
+    <p>The toplevel element in the file. For historical reasons, some of
+      the tags are obligatory and some not. Conceptually speaking, you
+      always need to specify &lt;annotation_set_descriptors&gt;;
+      &lt;model_config&gt;, &lt;workflows&gt; and
+      &lt;step_implementations&gt; are required for using the engine and
+      experiment infrastructure; &lt;workspace&gt; if you're going to
+      use workspace mode. The other elements are for advanced
+      customizations.<br>
+    </p>
+    <p>If you want to define multiple tasks in the same task.xml file
+      (if, for instance, you're defining a task and a set of child
+      tasks), you can use &lt;tasks&gt; as your toplevel element. This
+      element has no attributes, and only one repeatable child:
+      &lt;task&gt;.<br>
+    </p>
+    <p> </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" cellpadding="2"
+      cellspacing="2" border="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">name </td>
+          <td style="vertical-align: top;"> a string<br>
+          </td>
+          <td style="vertical-align: top;">yes </td>
+          <td style="vertical-align: top;">The name of the task. This
+            name will appear in menus in the UI, and in help strings in
+            the engine, so make it something mnemonic, distinctive and
+            descriptive.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">visible </td>
+          <td style="vertical-align: top;"> "no"<br>
+          </td>
+          <td style="vertical-align: top;">no </td>
+          <td style="vertical-align: top;">If present, the task is not
+            "visible" in the various lists of tasks the user will see.
+            Typically, this is used if this task is not a leaf in the
+            tree of tasks. You will seldom need this capability.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">parent </td>
+          <td style="vertical-align: top;"> a string<br>
+          </td>
+          <td style="vertical-align: top;">no </td>
+          <td style="vertical-align: top;">The name of the parent task
+            in the hierarchy. If this is not specified, the system root
+            task will be used. You will seldom need this capability. If
+            you do, typically the parent will specify visible="no". <br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">class </td>
+          <td style="vertical-align: top;">a string, the name of a
+            Python class<br>
+          </td>
+          <td style="vertical-align: top;">no </td>
+          <td style="vertical-align: top;"> If you've found a need to <a
+              href="customize_task_advanced.html">specialize</a> the
+            default task implementation, the value of this attribute
+            should be "&lt;file&gt;.&lt;classname&gt;", where
+            &lt;file&gt; corresponds to a file
+            &lt;taskdir&gt;/python/&lt;file&gt;.py.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3>Children</h3>
+    <p>
+      <table style="text-align: left; width: 100%;" cellpadding="2"
+        cellspacing="2" border="1">
+        <tbody>
+          <tr>
+            <th style="vertical-align: top;">Element<br>
+            </th>
+            <th style="vertical-align: top;">Obligatory?<br>
+            </th>
+            <th style="vertical-align: top;">Repeatable?<br>
+            </th>
+            <th style="vertical-align: top;">Description<br>
+            </th>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;workflows&gt; </td>
+            <td style="vertical-align: top;">yes </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;"> The workflows that are
+              used in the MAT engine.<br>
+            </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;settings&gt; </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;"> The task-specific settings
+              which may be viewed by specializations of the root task.<br>
+            </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;doc_enhancement_class&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">If specified, this element
+              should delimit a string "&lt;file&gt;.&lt;classname&gt;",
+              where &lt;file&gt; corresponds to a file
+              &lt;taskdir&gt;/python/&lt;file&gt;.py. The specified
+              class is a class which contributes to specializations of
+              this documentation for the task in question. This
+              functionality is currently undocumented.<br>
+              <br>
+              This element has no attributes or element children; its
+              value is the text it delimits. </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;java_subprocess_parameters&gt;<br>
+            </td>
+            <td style="vertical-align: top;">no<br>
+            </td>
+            <td style="vertical-align: top;">no<br>
+            </td>
+            <td style="vertical-align: top;">If present, defaults for
+              various JVM parameters for all Java subprocesses (e.g.,
+              Java Carafe training and tagging).<br>
+            </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;web_customization&gt; </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;"> Customizations of the Web
+              UI.<br>
+            </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;model_config&gt; </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">yes <br>
+            </td>
+            <td style="vertical-align: top;"> Settings for the model
+              building engine.<br>
+            </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;default_model&gt; </td>
+            <td style="vertical-align: top;">no<br>
+            </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;"> If present, this element
+              should delimit a pathname where models will be saved if
+              MATModelBuilder is invoked with --save_as_default_model.
+              If the pathname is relative, it will be interpreted as
+              relative to the task directory. This value may be
+              inherited from the parent task. </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;workspace&gt; </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;"> Implementations of the
+              operations in the workspaces.<br>
+            </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;step_implementations&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;"> Implementations of the
+              named steps in the MAT engine workflows.<br>
+            </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;annotation_set_descriptors&gt;
+
+
+
+
+
+
+
+
+
+            </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;"> The labels and attributes
+              which are used in this task.<br>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">&lt;annotation_display&gt;<br>
+            </td>
+            <td valign="top">no<br>
+            </td>
+            <td valign="top">no<br>
+            </td>
+            <td valign="top">The display-related properties of the
+              labels and attributes in this task.<br>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">&lt;similarity_profile&gt;<br>
+            </td>
+            <td valign="top">no<br>
+            </td>
+            <td valign="top">yes<br>
+            </td>
+            <td valign="top">The methods for comparing annotations for
+              scoring and visual comparison.<br>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">&lt;score_profile&gt;<br>
+            </td>
+            <td valign="top">no<br>
+            </td>
+            <td valign="top">yes<br>
+            </td>
+            <td valign="top">The methods for decomposing and aggregating
+              annotation labels for scoring.<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </p>
+    <h2><a name="workflows_of_task"></a>&lt;workflows&gt; (of
+      &lt;task&gt;)</h2>
+    <p>Workflows are ordered sets of steps, corresponding to a
+      larger-scale activity the user may wish to apply to the documents.<br>
+    </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" cellpadding="2"
+      cellspacing="2" border="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">inherit </td>
+          <td style="vertical-align: top;"> a string, a comma-delimited
+            sequence of workflow names<br>
+          </td>
+          <td style="vertical-align: top;">no </td>
+          <td style="vertical-align: top;"> If the task has a non-root
+            parent task, you may use this attribute to inherit workflows
+            from the parent task. The implementations of the step names
+            will also be inherited. You can list multiple workflows,
+            delimited by commas, e.g., "Demo,Hand annotation". </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">inherit_all </td>
+          <td style="vertical-align: top;"> "yes"<br>
+          </td>
+          <td style="vertical-align: top;">no </td>
+          <td style="vertical-align: top;"> If the task has a non-root
+            parent, you may use this attribute to specify that all
+            workflows should be inherited from the parent.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3>Children</h3>
+    <p>
+      <table style="text-align: left; width: 100%;" cellpadding="2"
+        cellspacing="2" border="1">
+        <tbody>
+          <tr>
+            <th style="vertical-align: top;">Element<br>
+            </th>
+            <th style="vertical-align: top;">Obligatory?<br>
+            </th>
+            <th style="vertical-align: top;">Repeatable?<br>
+            </th>
+            <th style="vertical-align: top;">Description<br>
+            </th>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;workflow&gt; </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">yes </td>
+            <td style="vertical-align: top;"> An individual workflow<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </p>
+    <h2><a name="workflow_of_workflows"></a>&lt;workflow&gt; (of
+      &lt;workflows&gt;)</h2>
+    <p>Each non-inherited workflow is specified by a &lt;workflow&gt;
+      tag.<br>
+    </p>
+    <p> </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" cellpadding="2"
+      cellspacing="2" border="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">name </td>
+          <td style="vertical-align: top;"> a string<br>
+          </td>
+          <td style="vertical-align: top;">yes </td>
+          <td style="vertical-align: top;">The name of the workflow that
+            the user can specify in the Web UI or the MAT engine.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">hand_annotation_available_at_end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          </td>
+          <td style="vertical-align: top;"> "yes"<br>
+          </td>
+          <td style="vertical-align: top;">no </td>
+          <td style="vertical-align: top;"> If specified, the user will
+            be able to add or correct hand annotations in the document
+            after the last step of this workflow is completed. If one of
+            the steps in the workflow is implemented as a tag step, this
+            attribute will be ignored; similarly, if
+            hand_annotation_available_at_beginning is specified, this
+            attribute will be ignored.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">hand_annotation_available_at_beginning<br>
+          </td>
+          <td style="vertical-align: top;">"yes"<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">If specified, the user will
+            be able to add or correct hand annotations in the document
+            before the first step of this workflow.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3>Children</h3>
+    <p>
+      <table style="text-align: left; width: 100%;" cellpadding="2"
+        cellspacing="2" border="1">
+        <tbody>
+          <tr>
+            <th style="vertical-align: top;">Element<br>
+            </th>
+            <th style="vertical-align: top;">Obligatory?<br>
+            </th>
+            <th style="vertical-align: top;">Repeatable?<br>
+            </th>
+            <th style="vertical-align: top;">Description<br>
+            </th>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;ui_settings&gt;</td>
+            <td style="vertical-align: top;">no<br>
+            </td>
+            <td style="vertical-align: top;">no<br>
+            </td>
+            <td style="vertical-align: top;">These are settings that are
+              intended to be passed unmodified to the UI. This is not
+              currently used.</td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;step&gt; </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">yes </td>
+            <td style="vertical-align: top;"> An individual step of a
+              workflow.<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </p>
+    <h2><a name="ui_settings_of_workflow"></a>&lt;ui_settings&gt; (of
+      &lt;workflow&gt;)</h2>
+    <p>These are settings that are intended to be passed unmodified to
+      the UI, in order to declaratively configure UI customizations for
+      particular workflows. At the moment, no tasks use this feature.
+      You can configure these settings either with a child
+      &lt;setting&gt; element, or with an attribute on the
+      &lt;settings&gt; element itself; they're interchangeable.<br>
+    </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" cellpadding="2"
+      cellspacing="2" border="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;attr&gt; </td>
+          <td style="vertical-align: top;"> a string<br>
+          </td>
+          <td style="vertical-align: top;">no </td>
+          <td style="vertical-align: top;"> The &lt;ui_settings&gt; tag
+            supports arbitrary attribute-value pairs.</td>
+        </tr>
+      </tbody>
+    </table>
+    <p> </p>
+    <h3>Children</h3>
+    <p>
+      <table style="text-align: left; width: 100%;" cellpadding="2"
+        cellspacing="2" border="1">
+        <tbody>
+          <tr>
+            <th style="vertical-align: top;">Element<br>
+            </th>
+            <th style="vertical-align: top;">Obligatory?<br>
+            </th>
+            <th style="vertical-align: top;">Repeatable?<br>
+            </th>
+            <th style="vertical-align: top;">Description<br>
+            </th>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;setting&gt; </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">yes </td>
+            <td style="vertical-align: top;"> An attribute-value pair.<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </p>
+    <h2><a name="setting_of_ui_settings_of_workflow"></a>&lt;setting&gt;
+      (of &lt;ui_settings&gt;)</h2>
+    <p>An individual UI setting.<br>
+    </p>
+    <p> </p>
+    <h3>Children</h3>
+    <p>
+      <table style="text-align: left; width: 100%;" cellpadding="2"
+        cellspacing="2" border="1">
+        <tbody>
+          <tr>
+            <th style="vertical-align: top;">Element<br>
+            </th>
+            <th style="vertical-align: top;">Obligatory?<br>
+            </th>
+            <th style="vertical-align: top;">Repeatable?<br>
+            </th>
+            <th style="vertical-align: top;">Description<br>
+            </th>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;name&gt; </td>
+            <td style="vertical-align: top;">yes </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">The name of the setting.
+              This element has no attributes or element children; its
+              value is the text it delimits. </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;value&gt; </td>
+            <td style="vertical-align: top;">yes </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">The value of the setting.
+              This element has no attributes or element children; its
+              value is the text it delimits. </td>
+          </tr>
+        </tbody>
+      </table>
+    </p>
+    <h2><a name="step_of_workflow"></a>&lt;step&gt; (of
+      &lt;workflow&gt;)</h2>
+    <p>The steps are the basic elements of workflows. <br>
+    </p>
+    <p> </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" cellpadding="2"
+      cellspacing="2" border="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">name </td>
+          <td style="vertical-align: top;"> a string<br>
+          </td>
+          <td style="vertical-align: top;">yes </td>
+          <td style="vertical-align: top;">The name of the step. These
+            names must be matched in the step implementations.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">hand_annotation_available </td>
+          <td style="vertical-align: top;"> "yes"<br>
+          </td>
+          <td style="vertical-align: top;">no </td>
+          <td style="vertical-align: top;">If specified, hand annotation
+            is available in the Web UI during this step.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">by_hand </td>
+          <td style="vertical-align: top;"> "yes"<br>
+          </td>
+          <td style="vertical-align: top;">no </td>
+          <td style="vertical-align: top;"> If specified, this step is
+            performed by the user by hand, not automatically. This step
+            must be defined as a tagging step in the step
+            implementation, and it implies
+            hand_annotation_available="yes".<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">pretty_name </td>
+          <td style="vertical-align: top;"> a string<br>
+          </td>
+          <td style="vertical-align: top;">no </td>
+          <td style="vertical-align: top;">The name of this step that
+            the user will see in the UI.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">proxy_for_steps </td>
+          <td style="vertical-align: top;"> a comma-delimited string of
+            step names<br>
+          </td>
+          <td style="vertical-align: top;">no </td>
+          <td style="vertical-align: top;">Steps can be sequences of
+            other steps (i.e., they can be composite). You may want this
+            in a workflow if two steps will always be done as a group,
+            for instance. The names in the value for this attribute must
+            be the values of the "name" attribute of other steps, not
+            the values of the "pretty_name" attribute.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3>Children</h3>
+    <p>
+      <table style="text-align: left; width: 100%;" cellpadding="2"
+        cellspacing="2" border="1">
+        <tbody>
+          <tr>
+            <th style="vertical-align: top;">Element<br>
+            </th>
+            <th style="vertical-align: top;">Obligatory?<br>
+            </th>
+            <th style="vertical-align: top;">Repeatable?<br>
+            </th>
+            <th style="vertical-align: top;">Description<br>
+            </th>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;create_settings&gt; </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">no<br>
+            </td>
+            <td style="vertical-align: top;"> Settings to pass to the
+              initializer of the step<br>
+            </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;run_settings&gt;<br>
+            </td>
+            <td style="vertical-align: top;">no<br>
+            </td>
+            <td style="vertical-align: top;">no<br>
+            </td>
+            <td style="vertical-align: top;">Settings to pass to the
+              execution of a step<br>
+            </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;ui_settings&gt;<br>
+            </td>
+            <td style="vertical-align: top;">no<br>
+            </td>
+            <td style="vertical-align: top;">no<br>
+            </td>
+            <td style="vertical-align: top;">Settings to pass to the UI
+              for this step. Not currently used.<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </p>
+    <h2><a name="create_settings_of_step"></a>&lt;create_settings&gt;
+      (of &lt;step&gt;)</h2>
+    <p>These are settings that a step might pass to the initialization
+      phase of its step class. These settings override the values in the
+      &lt;create_settings&gt; element for &lt;step_implementation&gt;.
+      You can configure these settings either with a child
+      &lt;setting&gt; element, or with an attribute on the
+      &lt;settings&gt; element itself; they're interchangeable.<br>
+    </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" cellpadding="2"
+      cellspacing="2" border="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;attr&gt; </td>
+          <td style="vertical-align: top;"> a string<br>
+          </td>
+          <td style="vertical-align: top;">no </td>
+          <td style="vertical-align: top;"> The &lt;create_settings&gt;
+            tag supports arbitrary attribute-value pairs.</td>
+        </tr>
+      </tbody>
+    </table>
+    <p> </p>
+    <h3>Children</h3>
+    <p>
+      <table style="text-align: left; width: 100%;" cellpadding="2"
+        cellspacing="2" border="1">
+        <tbody>
+          <tr>
+            <th style="vertical-align: top;">Element<br>
+            </th>
+            <th style="vertical-align: top;">Obligatory?<br>
+            </th>
+            <th style="vertical-align: top;">Repeatable?<br>
+            </th>
+            <th style="vertical-align: top;">Description<br>
+            </th>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;setting&gt; </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">yes </td>
+            <td style="vertical-align: top;"> An attribute-value pair.<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </p>
+    <h2><a name="setting_of_create_settings"></a>&lt;setting&gt; (of
+      &lt;create_settings&gt;)</h2>
+    <p>An individual step creation setting.<br>
+    </p>
+    <p> </p>
+    <h3>Children</h3>
+    <p>
+      <table style="text-align: left; width: 100%;" cellpadding="2"
+        cellspacing="2" border="1">
+        <tbody>
+          <tr>
+            <th style="vertical-align: top;">Element<br>
+            </th>
+            <th style="vertical-align: top;">Obligatory?<br>
+            </th>
+            <th style="vertical-align: top;">Repeatable?<br>
+            </th>
+            <th style="vertical-align: top;">Description<br>
+            </th>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;name&gt; </td>
+            <td style="vertical-align: top;">yes </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">The name of the setting.
+              This element has no attributes or element children; its
+              value is the text it delimits. </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;value&gt; </td>
+            <td style="vertical-align: top;">yes </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">The value of the setting.
+              This element has no attributes or element children; its
+              value is the text it delimits. </td>
+          </tr>
+        </tbody>
+      </table>
+    </p>
+    <p> </p>
+    <h2><a name="run_settings_of_step"></a>&lt;run_settings&gt; (of
+      &lt;step&gt;)</h2>
+    <p>These are settings which are passed to the do() or doBatch()
+      method of the step (that's the method that actually performs the
+      step). You can configure the settings either with a child
+      &lt;setting&gt; element, or with an attribute on the
+      &lt;settings&gt; element itself; they're interchangeable.<br>
+    </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" cellpadding="2"
+      cellspacing="2" border="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;attr&gt; </td>
+          <td style="vertical-align: top;"> a string<br>
+          </td>
+          <td style="vertical-align: top;">no </td>
+          <td style="vertical-align: top;"> The &lt;run_settings&gt; tag
+            supports arbitrary attribute-value pairs.</td>
+        </tr>
+      </tbody>
+    </table>
+    <p> </p>
+    <h3>Children</h3>
+    <p>
+      <table style="text-align: left; width: 100%;" cellpadding="2"
+        cellspacing="2" border="1">
+        <tbody>
+          <tr>
+            <th style="vertical-align: top;">Element<br>
+            </th>
+            <th style="vertical-align: top;">Obligatory?<br>
+            </th>
+            <th style="vertical-align: top;">Repeatable?<br>
+            </th>
+            <th style="vertical-align: top;">Description<br>
+            </th>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;setting&gt; </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">yes </td>
+            <td style="vertical-align: top;"> An attribute-value pair.<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </p>
+    <p>Most predefined step implementations in MAT do not support any
+      run settings. The two implementations which do are
+      MAT.JavaCarafe.CarafeTokenizationStep and
+      MAT.JavaCarafe.CarafeTagStep. <br>
+    </p>
+    <p>The MAT.JavaCarafe.CarafeTagStep step implements automatic
+      tagging. Any step which implements automatic tagging can bear the
+      following additional attribute-value pairs:<br>
+    </p>
+    <table style="text-align: left; width: 100%;" cellpadding="2"
+      cellspacing="2" border="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Key<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">tagger_local<br>
+          </td>
+          <td style="vertical-align: top;">"yes"<br>
+          </td>
+          <td style="vertical-align: top;">By default, the MAT engine
+            will contact the MAT Web server to tag a document, because
+            the Web server has the capability of starting up and
+            monitoring a long-living tagger task. The reason this is
+            beneficial is that the Carafe tagger, like many model-based
+            taggers, has a fairly expensive startup cost. To block the
+            engine from contacting the Web server, and force it to start
+            up and shut down the tagger on its own, specify
+            tagger_local="yes".<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">tagger_model<br>
+          </td>
+          <td style="vertical-align: top;">a string, a filename of a
+            tagging model<br>
+          </td>
+          <td style="vertical-align: top;">If the task does not have a
+            default model, the user must specify the location of the
+            tagger model.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p> </p>
+    <p>In addition, the Carafe tagging and tokenization steps support
+      other run settings, documented <a href="carafe_engine.html">here</a>.</p>
+    <h2><a name="setting_of_run_settings"></a>&lt;setting&gt; (of
+      &lt;run_settings&gt;)</h2>
+    <p>An individual run setting.<br>
+    </p>
+    <p> </p>
+    <h3>Children</h3>
+    <p>
+      <table style="text-align: left; width: 100%;" cellpadding="2"
+        cellspacing="2" border="1">
+        <tbody>
+          <tr>
+            <th style="vertical-align: top;">Element<br>
+            </th>
+            <th style="vertical-align: top;">Obligatory?<br>
+            </th>
+            <th style="vertical-align: top;">Repeatable?<br>
+            </th>
+            <th style="vertical-align: top;">Description<br>
+            </th>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;name&gt; </td>
+            <td style="vertical-align: top;">yes </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">The name of the setting.
+              This element has no attributes or element children; its
+              value is the text it delimits. </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;value&gt; </td>
+            <td style="vertical-align: top;">yes </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">The value of the setting.
+              This element has no attributes or element children; its
+              value is the text it delimits. </td>
+          </tr>
+        </tbody>
+      </table>
+    </p>
+    <p> </p>
+    <h2><a name="ui_settings_of_step"></a>&lt;ui_settings&gt; (of
+      &lt;step&gt;)</h2>
+    <p>These are settings that are intended to be passed unmodified to
+      the UI, in order to declaratively configure UI customizations for
+      particular tasks. At the moment, no tasks use this feature. You
+      can configure these settings either with a child &lt;setting&gt;
+      element, or with an attribute on the &lt;settings&gt; element
+      itself; they're interchangeable.<br>
+    </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" cellpadding="2"
+      cellspacing="2" border="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;attr&gt; </td>
+          <td style="vertical-align: top;"> a string<br>
+          </td>
+          <td style="vertical-align: top;">no </td>
+          <td style="vertical-align: top;"> The &lt;ui_settings&gt; tag
+            supports arbitrary attribute-value pairs.</td>
+        </tr>
+      </tbody>
+    </table>
+    <p> </p>
+    <h3>Children</h3>
+    <p>
+      <table style="text-align: left; width: 100%;" cellpadding="2"
+        cellspacing="2" border="1">
+        <tbody>
+          <tr>
+            <th style="vertical-align: top;">Element<br>
+            </th>
+            <th style="vertical-align: top;">Obligatory?<br>
+            </th>
+            <th style="vertical-align: top;">Repeatable?<br>
+            </th>
+            <th style="vertical-align: top;">Description<br>
+            </th>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;setting&gt; </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">yes </td>
+            <td style="vertical-align: top;"> An attribute-value pair.<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </p>
+    <h2><a name="setting_of_ui_settings"></a>&lt;setting&gt; (of
+      &lt;ui_settings&gt;)</h2>
+    <p>An individual UI setting.<br>
+    </p>
+    <p> </p>
+    <h3>Children</h3>
+    <p>
+      <table style="text-align: left; width: 100%;" cellpadding="2"
+        cellspacing="2" border="1">
+        <tbody>
+          <tr>
+            <th style="vertical-align: top;">Element<br>
+            </th>
+            <th style="vertical-align: top;">Obligatory?<br>
+            </th>
+            <th style="vertical-align: top;">Repeatable?<br>
+            </th>
+            <th style="vertical-align: top;">Description<br>
+            </th>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;name&gt; </td>
+            <td style="vertical-align: top;">yes </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">The name of the setting.
+              This element has no attributes or element children; its
+              value is the text it delimits. </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;value&gt; </td>
+            <td style="vertical-align: top;">yes </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">The value of the setting.
+              This element has no attributes or element children; its
+              value is the text it delimits. </td>
+          </tr>
+        </tbody>
+      </table>
+    </p>
+    <p> </p>
+    <h2><a name="settings_of_task"></a>&lt;settings&gt; (of
+      &lt;task&gt;)</h2>
+    <p>These are settings that a specialized task might require which
+      the user wishes to be able to configure in XML, rather than by
+      modifying the source code for the specialized task. The chances
+      that a normal user will use this are extremely slim. These
+      settings are not inherited by task children.<br>
+    </p>
+    <p>You can configure the settings either with a child
+      &lt;setting&gt; element, or with an attribute on the
+      &lt;settings&gt; element itself; they're interchangeable.<br>
+    </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" cellpadding="2"
+      cellspacing="2" border="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;attr&gt; </td>
+          <td style="vertical-align: top;"> a string<br>
+          </td>
+          <td style="vertical-align: top;">no </td>
+          <td style="vertical-align: top;"> The &lt;settings&gt; tag
+            supports arbitrary attribute-value pairs.</td>
+        </tr>
+      </tbody>
+    </table>
+    <p> </p>
+    <h3>Children</h3>
+    <p>
+      <table style="text-align: left; width: 100%;" cellpadding="2"
+        cellspacing="2" border="1">
+        <tbody>
+          <tr>
+            <th style="vertical-align: top;">Element<br>
+            </th>
+            <th style="vertical-align: top;">Obligatory?<br>
+            </th>
+            <th style="vertical-align: top;">Repeatable?<br>
+            </th>
+            <th style="vertical-align: top;">Description<br>
+            </th>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;setting&gt; </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">yes </td>
+            <td style="vertical-align: top;"> An attribute-value pair.<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </p>
+    <h2><a name="setting_of_settings"></a>&lt;setting&gt; (of
+      &lt;settings&gt;)</h2>
+    <p>An individual task-level setting.<br>
+    </p>
+    <p> </p>
+    <h3>Children</h3>
+    <p>
+      <table style="text-align: left; width: 100%;" cellpadding="2"
+        cellspacing="2" border="1">
+        <tbody>
+          <tr>
+            <th style="vertical-align: top;">Element<br>
+            </th>
+            <th style="vertical-align: top;">Obligatory?<br>
+            </th>
+            <th style="vertical-align: top;">Repeatable?<br>
+            </th>
+            <th style="vertical-align: top;">Description<br>
+            </th>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;name&gt; </td>
+            <td style="vertical-align: top;">yes </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">The name of the task-level
+              setting. This element has no attributes or element
+              children; its value is the text it delimits. </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;value&gt; </td>
+            <td style="vertical-align: top;">yes </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">The value of the task-level
+              setting. This element has no attributes or element
+              children; its value is the text it delimits. </td>
+          </tr>
+        </tbody>
+      </table>
+    </p>
+    <p> </p>
+    <h2><a name="java_subprocess_parameters_of_task"></a>&lt;java_subprocess_parameters&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      (of &lt;task&gt;)</h2>
+    <p>MAT has some built-in tools to control Java Carafe and other Java
+      subprocesses. Using this element, you can declare default settings
+      for Java heap and stack sizes. If not set locally, these settings
+      are inherited from parent tasks.<br>
+    </p>
+    <h3>Children</h3>
+    <p>
+      <table style="text-align: left; width: 100%;" cellpadding="2"
+        cellspacing="2" border="1">
+        <tbody>
+          <tr>
+            <th style="vertical-align: top;">Attribute<br>
+            </th>
+            <th style="vertical-align: top;">Value<br>
+            </th>
+            <th style="vertical-align: top;">Obligatory?<br>
+            </th>
+            <th style="vertical-align: top;">Description<br>
+            </th>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">heap_size </td>
+            <td style="vertical-align: top;">a string </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">The value here is a value
+              for the heap size for the Java VM. It is passed to the
+              Java VM using the -Xmx argument. Values like 512M or 2G
+              are examples of expected values. This default value can be
+              overridden by declaring the empty string ("") in any
+              configuration context where the heap size can be specified
+              (see the <a href="carafe_engine.html">Java Carafe engine</a>
+              for examples).<br>
+            </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">stack_size </td>
+            <td style="vertical-align: top;">a string </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">The value here is a value
+              for the stack size for the Java VM. It is passed to the
+              Java VM using the -Xss argument. Values like 4096k or 512k
+              are examples of expected values. This default value can be
+              overridden by declaring the empty string ("") in any
+              configuration context where the heap size can be specified
+              (see the <a href="carafe_engine.html">Java Carafe engine</a>
+              for examples).</td>
+          </tr>
+        </tbody>
+      </table>
+    </p>
+    <p> </p>
+    <h2><a name="web_customization_of_task"></a>&lt;web_customization&gt;
+(of
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      &lt;task&gt;)</h2>
+    <p>Among the ways that tasks can be customized is the Web UI can be
+      customized in a number of ways. This process is quite complicated;
+      it's almost entirely code-oriened, and it's not documented at all.
+      This section is here for reference only; users who aren't really,
+      really brave shouldn't go anywhere near most of these
+      customizations.<br>
+    </p>
+    <p> </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" cellpadding="2"
+      cellspacing="2" border="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">inherit_css </td>
+          <td style="vertical-align: top;"> "no"<br>
+          </td>
+          <td style="vertical-align: top;">no </td>
+          <td style="vertical-align: top;"> If the parent task has CSS
+            customizations, as specified in the &lt;css&gt; element
+            below, they are inherited by default. Use this setting to
+            block inheritance.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">inherit_js </td>
+          <td style="vertical-align: top;"> "no"<br>
+          </td>
+          <td style="vertical-align: top;">no </td>
+          <td style="vertical-align: top;"> If the parent task has
+            Javascript customizations, as specified in the &lt;css&gt;
+            element below, they are inherited by default. Use this
+            setting to block inheritance. </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">display_config </td>
+          <td style="vertical-align: top;"> a string<br>
+          </td>
+          <td style="vertical-align: top;">no </td>
+          <td style="vertical-align: top;">Each Web customization set
+            has a name, so that when the user selects a particular task,
+            the UI knows which customization set to use. Can be
+            inherited from parent tasks; a value of "" cancels the
+            inheritance.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">alphabetize_labels<br>
+          </td>
+          <td style="vertical-align: top;">"no"<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">By default, the MAT UI orders
+            the annotation labels alphabetically in the legend and the
+            tag popup menu. If this attribute is set, the UI will list
+            the annotation labels in the order they are defined in the
+            &lt;tags&gt; element. Can be inherited from parent tasks; a
+            value of "" cancels the inheritance. </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">tokenless_autotag_delimiters<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">By default, if you ask the
+            MAT UI to autotag similar strings when you're annotating
+            without tokens, the only edge conditions that the UI
+            recognizes are whitespace and zone boundaries. If your match
+            abuts a punctuation mark, it will not recognize it as a
+            delimiter. If you want other edge conditions to be
+            recognized, you can list them in the value of this
+            attribute. (Remember, though, that you may have to use the
+            XML entity character codes for those characters which are
+            significant to XML syntax, so that the XML parsing doesn't
+            fail.) This setting can be inherited from parent tasks; a
+            value of "" cancels the inheritance.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">text_right_to_left<br>
+          </td>
+          <td style="vertical-align: top;">"yes"<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">If specified, documents
+            viewed in this task in the MAT UI will be treated as
+            right-to-left text (e.g., Arabic). Can be inherited from
+            parent tasks; a value of "" cancels the inheritance. </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3>Children</h3>
+    <p>
+      <table style="text-align: left; width: 100%;" cellpadding="2"
+        cellspacing="2" border="1">
+        <tbody>
+          <tr>
+            <th style="vertical-align: top;">Element<br>
+            </th>
+            <th style="vertical-align: top;">Obligatory?<br>
+            </th>
+            <th style="vertical-align: top;">Repeatable?<br>
+            </th>
+            <th style="vertical-align: top;">Description<br>
+            </th>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;js&gt; </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">yes </td>
+            <td style="vertical-align: top;">The relative pathname of
+              the Javascript customizations. This path is relative to
+              the task directory. By convention, this file should be in
+              the "js" subdirectory.<br>
+              <br>
+              This element has no attributes or element children; its
+              value is the text it delimits. </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;css&gt; </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">yes </td>
+            <td style="vertical-align: top;">The relative pathname of
+              the CSS customizations. This path is relative to the task
+              directory. By convention, this file should be in the "css"
+              subdirectory.<br>
+              <br>
+              This element has no attributes or element children; its
+              value is the text it delimits. </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;short_name&gt;<br>
+            </td>
+            <td style="vertical-align: top;">no<br>
+            </td>
+            <td style="vertical-align: top;">no<br>
+            </td>
+            <td style="vertical-align: top;">This is the name that the
+              UI will display in the upper left corner if this
+              customization is the only customization available. This
+              setting will be inherited by child tasks.<br>
+              <br>
+              This element has no attributes or element children; its
+              value is the text it delimits.</td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;long_name&gt;<br>
+            </td>
+            <td style="vertical-align: top;">no<br>
+            </td>
+            <td style="vertical-align: top;">no<br>
+            </td>
+            <td style="vertical-align: top;">This is the name that the
+              UI will use as the title of the Web page if this
+              customization is the only customization available. This
+              setting will be inherited by child tasks.<br>
+              <br>
+              This element has no attributes or element children; its
+              value is the text it delimits.</td>
+          </tr>
+        </tbody>
+      </table>
+    </p>
+    <h2><a name="model_config_of_task"></a>&lt;model_config&gt; (of
+      &lt;task&gt;)</h2>
+    <p>It's also possible to configure various dimensions of the model
+      build process in the task.xml file. The settings for this config
+      are identical to the command-line options available for the <a
+        href="MATModelBuilder.html">MATModelBuilder</a>. There is no
+      default model build engine in a task.xml file; if you want to
+      build models, you must declare a model config.<br>
+    </p>
+    <p>MAT is delivered with a default <a href="carafe_engine.html">Carafe
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        model builder</a>.<br>
+    </p>
+    <p>You can have multiple &lt;model_config&gt; entries, as long as
+      they differ by the config_name attribute. If a named or default
+      model config isn't found when requested by MATModelBuilder or the
+      experiment engine, MAT will look for it in the parent task. <br>
+    </p>
+    <p> </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" cellpadding="2"
+      cellspacing="2" border="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">class<br>
+          </td>
+          <td style="vertical-align: top;">the name of a Python class<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">This attribute names the
+            class which will be used as the model builder. The default
+            Carafe model builder class is
+            MAT.JavaCarafe.CarafeModelBuilder<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">config_name<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">If present, a config name to
+            specify as the --config_name in MATModelBuilder, or for the
+            config_name attribute in &lt;build_settings&gt; in the
+            experiment engine. If omitted, this entry is the default
+            model config. There can be only one default.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3><span style="font-weight: bold;"></span>Children</h3>
+    <p>
+      <table style="text-align: left; width: 100%;" cellpadding="2"
+        cellspacing="2" border="1">
+        <tbody>
+          <tr>
+            <th style="vertical-align: top;">Element<br>
+            </th>
+            <th style="vertical-align: top;">Obligatory?<br>
+            </th>
+            <th style="vertical-align: top;">Repeatable?<br>
+            </th>
+            <th style="vertical-align: top;">Description<br>
+            </th>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;build_settings&gt; </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">no<br>
+            </td>
+            <td style="vertical-align: top;"> The settings for this
+              model config<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </p>
+    <h2><a name="build_settings_of_model_config"></a>&lt;build_settings&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      (of &lt;model_config&gt;)</h2>
+    <p>The &lt;build_settings&gt; tag supports arbitrary attribute-value
+      pairs which are passed to the model builder. See the documentation
+      for the <a href="carafe_engine.html">Carafe model builder</a> to
+      see which attributes should be supplied to that engine. You can
+      configure these settings either with a child &lt;setting&gt;
+      element, or with an attribute on the &lt;settings&gt; element
+      itself; they're interchangeable. </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" cellpadding="2"
+      cellspacing="2" border="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;attr&gt; </td>
+          <td style="vertical-align: top;"> a string<br>
+          </td>
+          <td style="vertical-align: top;">no </td>
+          <td style="vertical-align: top;"> The &lt;build_settings&gt;
+            tag supports arbitrary attribute-value pairs.</td>
+        </tr>
+      </tbody>
+    </table>
+    <p> </p>
+    <h3>Children</h3>
+    <p>
+      <table style="text-align: left; width: 100%;" cellpadding="2"
+        cellspacing="2" border="1">
+        <tbody>
+          <tr>
+            <th style="vertical-align: top;">Element<br>
+            </th>
+            <th style="vertical-align: top;">Obligatory?<br>
+            </th>
+            <th style="vertical-align: top;">Repeatable?<br>
+            </th>
+            <th style="vertical-align: top;">Description<br>
+            </th>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;setting&gt; </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">yes </td>
+            <td style="vertical-align: top;"> An attribute-value pair.<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </p>
+    <h2><a name="setting_of_build_settings_of_model_config"></a>&lt;setting&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      (of &lt;build_settings&gt;)</h2>
+    <p>An individual build setting.<br>
+    </p>
+    <p> </p>
+    <h3>Children</h3>
+    <p>
+      <table style="text-align: left; width: 100%;" cellpadding="2"
+        cellspacing="2" border="1">
+        <tbody>
+          <tr>
+            <th style="vertical-align: top;">Element<br>
+            </th>
+            <th style="vertical-align: top;">Obligatory?<br>
+            </th>
+            <th style="vertical-align: top;">Repeatable?<br>
+            </th>
+            <th style="vertical-align: top;">Description<br>
+            </th>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;name&gt; </td>
+            <td style="vertical-align: top;">yes </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">The name of the setting.
+              This element has no attributes or element children; its
+              value is the text it delimits. </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;value&gt; </td>
+            <td style="vertical-align: top;">yes </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">The value of the setting.
+              This element has no attributes or element children; its
+              value is the text it delimits. </td>
+          </tr>
+        </tbody>
+      </table>
+    </p>
+    <h2><a name="workspace_of_task"></a>&lt;workspace&gt; (of
+      &lt;task&gt;)</h2>
+    <p>If you want to use workspace mode, you must declare how the
+      various workspace operations are implemented. These operations are
+      described <a href="files_and_workspaces.html">here</a>.<br>
+    </p>
+    <p> </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" cellpadding="2"
+      cellspacing="2" border="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">inherit_operations </td>
+          <td style="vertical-align: top;"> "no"<br>
+          </td>
+          <td style="vertical-align: top;">no </td>
+          <td style="vertical-align: top;"> By default, workspace
+            operation implementations are inherited from the task
+            parent, if not available locally. Use this attribute to
+            block inheritance.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3>Children</h3>
+    <p>
+      <table style="text-align: left; width: 100%;" cellpadding="2"
+        cellspacing="2" border="1">
+        <tbody>
+          <tr>
+            <th style="vertical-align: top;">Element<br>
+            </th>
+            <th style="vertical-align: top;">Obligatory?<br>
+            </th>
+            <th style="vertical-align: top;">Repeatable?<br>
+            </th>
+            <th style="vertical-align: top;">Description<br>
+            </th>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;operation&gt; </td>
+            <td style="vertical-align: top;">yes </td>
+            <td style="vertical-align: top;">yes </td>
+            <td style="vertical-align: top;"> An individual operation.<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </p>
+    <h2><a name="operation_of_workspace"></a>&lt;operation&gt; (of
+      &lt;workspace&gt;)</h2>
+    <p>Specifies the implementation of a workspace operation. Note that
+      in spite of the fact that operations are associated with folders,
+      these operations are referenced only by name, because the
+      operations should be named uniquely.<br>
+    </p>
+    <p> </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" cellpadding="2"
+      cellspacing="2" border="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">name </td>
+          <td style="vertical-align: top;"> a string<br>
+          </td>
+          <td style="vertical-align: top;">yes </td>
+          <td style="vertical-align: top;">The name of the operation<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3>Children</h3>
+    <p>
+      <table style="text-align: left; width: 100%;" cellpadding="2"
+        cellspacing="2" border="1">
+        <tbody>
+          <tr>
+            <th style="vertical-align: top;">Element<br>
+            </th>
+            <th style="vertical-align: top;">Obligatory?<br>
+            </th>
+            <th style="vertical-align: top;">Repeatable?<br>
+            </th>
+            <th style="vertical-align: top;">Description<br>
+            </th>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;settings&gt; </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;"> The operation settings.<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </p>
+    <h2><a name="settings_of_operation"></a>&lt;settings&gt; (of
+      &lt;operation&gt;)</h2>
+    <p>The settings for the operation. What these settings are depend on
+      what sort of operation it is. For instance, for operations which
+      invoke the MAT engine, these settings will be the arguments to the
+      MAT engine. For operations which invoke the MAT model builder,
+      these settings will be the arguments to the MAT model builder. See
+      the documentation on <a href="files_and_workspaces.html">workspaces</a>
+      to find out what the options are for particular operations. </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" cellpadding="2"
+      cellspacing="2" border="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;attr&gt; </td>
+          <td style="vertical-align: top;"> a string<br>
+          </td>
+          <td style="vertical-align: top;">no </td>
+          <td style="vertical-align: top;"> The &lt;settings&gt; tag
+            supports arbitrary attribute-value pairs.</td>
+        </tr>
+      </tbody>
+    </table>
+    <p> </p>
+    <h3>Children</h3>
+    <p>
+      <table style="text-align: left; width: 100%;" cellpadding="2"
+        cellspacing="2" border="1">
+        <tbody>
+          <tr>
+            <th style="vertical-align: top;">Element<br>
+            </th>
+            <th style="vertical-align: top;">Obligatory?<br>
+            </th>
+            <th style="vertical-align: top;">Repeatable?<br>
+            </th>
+            <th style="vertical-align: top;">Description<br>
+            </th>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;setting&gt; </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">yes </td>
+            <td style="vertical-align: top;"> An attribute-value pair.<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </p>
+    <h2><a name="setting_of_settings_of_operation"></a>&lt;setting&gt;
+      (of &lt;settings&gt;)</h2>
+    <p>An individual operation setting.<br>
+    </p>
+    <p> </p>
+    <h3>Children</h3>
+    <p>
+      <table style="text-align: left; width: 100%;" cellpadding="2"
+        cellspacing="2" border="1">
+        <tbody>
+          <tr>
+            <th style="vertical-align: top;">Element<br>
+            </th>
+            <th style="vertical-align: top;">Obligatory?<br>
+            </th>
+            <th style="vertical-align: top;">Repeatable?<br>
+            </th>
+            <th style="vertical-align: top;">Description<br>
+            </th>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;name&gt; </td>
+            <td style="vertical-align: top;">yes </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">The name of the setting.
+              This element has no attributes or element children; its
+              value is the text it delimits. </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;value&gt; </td>
+            <td style="vertical-align: top;">yes </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">The value of the setting.
+              This element has no attributes or element children; its
+              value is the text it delimits.</td>
+          </tr>
+        </tbody>
+      </table>
+    </p>
+    <p> </p>
+    <h2><a name="step_implementations_of_task"></a>&lt;step_implementations&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      (of &lt;task&gt;)</h2>
+    <p>Step implementations associate a named step with an
+      implementation for that step (i.e., a Python class), perhaps in
+      the context of particular workflows. The effect of each named step
+      in a task is global; e.g., the "tag" step might add content
+      annotations. However, the way that effect is achieved may differ
+      among step implementations; e.g., one implementation of the tag
+      step may involve hand annotation, or there may be multiple
+      possibilities for adding the tags automatically. By default, step
+      implementations are inherited from the parent.<br>
+    </p>
+    <p> </p>
+    <h3>Children</h3>
+    <p>
+      <table style="text-align: left; width: 100%;" cellpadding="2"
+        cellspacing="2" border="1">
+        <tbody>
+          <tr>
+            <th style="vertical-align: top;">Element<br>
+            </th>
+            <th style="vertical-align: top;">Obligatory?<br>
+            </th>
+            <th style="vertical-align: top;">Repeatable?<br>
+            </th>
+            <th style="vertical-align: top;">Description<br>
+            </th>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;step&gt; </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">yes </td>
+            <td style="vertical-align: top;"> An individual step
+              implementation.<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </p>
+    <h2><a name="step_of_step_implementations"></a>&lt;step&gt; (of
+      &lt;step_implementations&gt;)</h2>
+    <p>Each individual step implementation specifies the Python class,
+      at least.<br>
+    </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" cellpadding="2"
+      cellspacing="2" border="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">name </td>
+          <td style="vertical-align: top;"> a string<br>
+          </td>
+          <td style="vertical-align: top;">yes </td>
+          <td style="vertical-align: top;"> The name of a step as it is
+            used in workflows. These are values of the "name" attribute
+            for the &lt;workflow&gt; &lt;step&gt; element, not the
+            "pretty_name" attribute.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">class </td>
+          <td style="vertical-align: top;"> a string, the name of a
+            Python class<br>
+          </td>
+          <td style="vertical-align: top;">yes </td>
+          <td style="vertical-align: top;"> The Python class, including
+            its module name, which implements this step.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">workflows </td>
+          <td style="vertical-align: top;"> a comma-delimited string of
+            workflow names<br>
+          </td>
+          <td style="vertical-align: top;">no </td>
+          <td style="vertical-align: top;">The workflow contexts in
+            which this implementation holds. Different workflows can
+            have different implementations for the same named step.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3>Children</h3>
+    <p>
+      <table style="text-align: left; width: 100%;" cellpadding="2"
+        cellspacing="2" border="1">
+        <tbody>
+          <tr>
+            <th style="vertical-align: top;">Element<br>
+            </th>
+            <th style="vertical-align: top;">Obligatory?<br>
+            </th>
+            <th style="vertical-align: top;">Repeatable?<br>
+            </th>
+            <th style="vertical-align: top;">Description<br>
+            </th>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;create_settings&gt; </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">no<br>
+            </td>
+            <td style="vertical-align: top;"> Default settings for
+              initializing the step.<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </p>
+    <h2><a name="create_settings_of_step_of_step_impl"></a>&lt;create_settings&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      (of &lt;step&gt;)</h2>
+    <p>These are settings that a step might pass to the initialization
+      phase of its step class. These settings can be overridden by the
+      values in the &lt;create_settings&gt; element for &lt;step&gt; in
+      the &lt;workflow&gt; element. You can configure these settings
+      either with a child &lt;setting&gt; element, or with an attribute
+      on the &lt;settings&gt; element itself; they're interchangeable.<br>
+    </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" cellpadding="2"
+      cellspacing="2" border="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;attr&gt; </td>
+          <td style="vertical-align: top;"> a string<br>
+          </td>
+          <td style="vertical-align: top;">no </td>
+          <td style="vertical-align: top;"> The &lt;create_settings&gt;
+            tag supports arbitrary attribute-value pairs.</td>
+        </tr>
+      </tbody>
+    </table>
+    <p> </p>
+    <h3>Children</h3>
+    <p>
+      <table style="text-align: left; width: 100%;" cellpadding="2"
+        cellspacing="2" border="1">
+        <tbody>
+          <tr>
+            <th style="vertical-align: top;">Element<br>
+            </th>
+            <th style="vertical-align: top;">Obligatory?<br>
+            </th>
+            <th style="vertical-align: top;">Repeatable?<br>
+            </th>
+            <th style="vertical-align: top;">Description<br>
+            </th>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;setting&gt; </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">yes </td>
+            <td style="vertical-align: top;"> An attribute-value pair.<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </p>
+    <h2><a name="setting_of_create_settings_of_step_of_step_impl"></a>&lt;setting&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      (of &lt;create_settings&gt;)</h2>
+    <p>An individual step creation setting.<br>
+    </p>
+    <h3>Children</h3>
+    <p>
+      <table style="text-align: left; width: 100%;" cellpadding="2"
+        cellspacing="2" border="1">
+        <tbody>
+          <tr>
+            <th style="vertical-align: top;">Element<br>
+            </th>
+            <th style="vertical-align: top;">Obligatory?<br>
+            </th>
+            <th style="vertical-align: top;">Repeatable?<br>
+            </th>
+            <th style="vertical-align: top;">Description<br>
+            </th>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;name&gt; </td>
+            <td style="vertical-align: top;">yes </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">The name of the setting.
+              This element has no attributes or element children; its
+              value is the text it delimits. </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;value&gt; </td>
+            <td style="vertical-align: top;">yes </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">The value of the setting.
+              This element has no attributes or element children; its
+              value is the text it delimits. </td>
+          </tr>
+        </tbody>
+      </table>
+    </p>
+    <h2><a name="annotation_set_descriptors_of_task"></a>&lt;annotation_set_descriptors&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      (of &lt;task&gt;)</h2>
+    <p>The &lt;annotation_set_descriptors&gt; element allows you to
+      define multiple annotation sets. In the current implementation,
+      you should have only one, which should have its attributes set as
+      shown immediately below. You can inherit annotations from other
+      tasks.<br>
+    </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" cellpadding="2"
+      cellspacing="2" border="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">all_annotations_known</td>
+          <td style="vertical-align: top;">"yes"<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">By default, the task leaves
+            its annotation sets "open"; i.e., if the task encounters an
+            unknown annotation label, it won't raise an error. If you
+            provide the value "yes" for this attribute, an error will be
+            raised if the task encounters an unknown annotation.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">inherit</td>
+          <td style="vertical-align: top;">a comma-separated list of
+            labels to inherit<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">You can inherit annotations
+            from other tasks, either by label or by category (see the
+            "category" attribute of &lt;annotation_set_descriptor&gt;.
+            To inherit an annotation by label, simply list it; to
+            inherit a category, list "category:" + the category name.<br>
+            <br>
+            A typical value for this attribute is
+            "category:zone,category:token", which inherits the
+            annotations for the zone and token categories from the
+            parent (usually root) task.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3>Children</h3>
+    <table style="text-align: left; width: 100%;" cellpadding="2"
+      cellspacing="2" border="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Element<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Repeatable?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;annotation_set_descriptor&gt;</td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;"><br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a
+        name="annotation_set_descriptor_of_annotation_set_descriptors"></a>&lt;annotation_set_descriptor&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      (of &lt;annotation_set_descriptors&gt;)</h2>
+    <p>The &lt;annotation_set_descriptor&gt; element is described in
+      detail <a href="asd_reference.html">elsewhere</a> (eventually,
+      you'll be able to specify it in its own file, and share these
+      files among tasks). The only elements of this type you should be
+      declaring should have category="content" and name="content".<br>
+    </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" cellpadding="2"
+      cellspacing="2" border="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">category</td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">The category of the
+            annotation set descriptor. Eventually, we intend for these
+            values to be user-definable (aside from a few predetermined
+            values like "zone" and "token"), but for now, the value for
+            this attribute for those descriptors you define should be
+            "content".<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">name<br>
+          </td>
+          <td valign="top"><br>
+          </td>
+          <td valign="top">yes<br>
+          </td>
+          <td valign="top">The name of the annotation set descriptor.
+            This attribute is distinguished from the category attribute
+            in that, eventually, we'll treat the category attribute as a
+            functional one, which can specify values which different
+            descriptors can fill in different tasks. Eventually, we
+            intend for the value of the "name" attribute to be
+            user-definable, but for now, the value for this attribute
+            for those descriptors you define should be "content".<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="annotation_display_of_task"></a>&lt;annotation_display&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      (of &lt;task&gt;)</h2>
+    <p>This element defines all the display-related properties in the
+      MAT UI of the elements defined in the
+      &lt;annotation_set_descriptors&gt; element. Most of what you can
+      do here is define the display-related properties of labels,
+      although you can also define some of the properties of attributes,
+      and also define groups for hierarchical annotation displays.<br>
+    </p>
+    <h3>Children</h3>
+    <table style="text-align: left; width: 100%;" cellpadding="2"
+      cellspacing="2" border="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Element<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Repeatable?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;label&gt;</td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">Defines the display-related
+            properties for a true or effective label<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;attribute&gt;</td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">Defines the display-related
+            properties for an attribute of a particular label<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;label_group&gt;</td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">Defines groups for
+            hierarchical annotation displays<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="label_of_annotation_display"></a>&lt;label&gt; (of
+      &lt;annotation_display&gt;)</h2>
+    <p>This element defines the display-related properties of true or
+      effective labels.<br>
+    </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" cellpadding="2"
+      cellspacing="2" border="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">name</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">The true or effective label
+            to which this definition applies.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">accelerator</td>
+          <td style="vertical-align: top;">a single-character string<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">If specified, this
+            accelerator will be available in the annotation selection
+            menu in the Web UI; if the user presses this key, this
+            annotation will be selected for the span, just as if the
+            element in the menu had been chosen. </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">edit_immediately</td>
+          <td style="vertical-align: top;">"yes"<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">If a label has attributes, or
+            if it can be the value of an annotation-valued attribute, it
+            is possible to edit the annotation in the UI, either in a
+            popup dialog or in a detail tab. If the annotation is
+            spanless, this editor will appear automatically when the
+            annotation is created; if it is spanned, it will not. If you
+            provide this attribute-value pair, the editor will appear
+            automatically when the annotation is created, whether or not
+            it's spanned.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">presented_name</td>
+          <td style="vertical-align: top;">a format string<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">In the UI, there are many
+            places (e.g., in the annotation tables) where the annotation
+            can be described, and by default, the description for
+            spanned annotations is the covered text, while the
+            description for spanless annotations is the annotation ID.
+            Sometimes, this name isn't what you would prefer it to be,
+            and you can use this attribute to define the name you
+            prefer. The syntax for the value of this string is described
+            immediately below.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">css</td>
+          <td style="vertical-align: top;">a string of legal CSS<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;"> If the label is a spanned
+            label, the UI will apply this CSS on a token-by-token basis
+            to any span labeled by this annotation. If the label is a
+            spanless label, the CSS will be applied to its icon in the
+            spanless sidebar. Because there's no text in the spanless
+            sidebar, and because annotations can overlap and be
+            displayed in an exploded, stacked representation in spanned
+            hand annotation and in comparison, it's probably best to
+            ensure that the primary aspect of this CSS is background
+            styling. </td>
+        </tr>
+      </tbody>
+    </table>
+    <h4>The syntax of the presented_name attribute</h4>
+    <p>The presented_name attribute is a simple string, with format
+      directive of the form $(...). The values within the parentheses
+      can be any of the attributes of the label (in which case the
+      format directive will be replaced by the attribute value), or one
+      of the special values listed below. The format directive can also
+      contain key-value pairs, as in $(val:a=b,c=d). We describe the
+      possible key-value pairs below as well.<br>
+    </p>
+    <table cellpadding="2" cellspacing="2" border="1" width="100%">
+      <tbody>
+        <tr>
+          <th valign="top">special value<br>
+          </th>
+          <th valign="top">interpretation<br>
+          </th>
+        </tr>
+        <tr>
+          <td valign="top">_start<br>
+          </td>
+          <td valign="top">The start index of the spanned annotation<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">_end<br>
+          </td>
+          <td valign="top">The end index of the spanned annotation<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">_parent<br>
+          </td>
+          <td valign="top">The parent annotation(s) (i.e., the
+            annotation(s) which have this annotation as a value of an
+            annotation-valued attribute)<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">_label<br>
+          </td>
+          <td valign="top">The true or effective label of the annotation<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">_text<br>
+          </td>
+          <td valign="top">The spanned text of the spanned annotation<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      <table cellpadding="2" cellspacing="2" border="1" width="100%">
+        <tbody>
+          <tr>
+            <th valign="top">key<br>
+            </th>
+            <th valign="top">available for<br>
+            </th>
+            <th valign="top">possible value<br>
+            </th>
+            <th valign="top">interpretation<br>
+            </th>
+          </tr>
+          <tr>
+            <td valign="top">truncate<br>
+            </td>
+            <td valign="top">_text<br>
+            </td>
+            <td valign="top">integer<br>
+            </td>
+            <td valign="top">If specified, the UI will ensure that the
+              spanned text is no longer than n characters long. This
+              value cannot be less than 5. The UI will show the
+              beginning and end of the text, and show the truncated
+              medial text with ellipses (...).<br>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">truncate<br>
+            </td>
+            <td valign="top">_parent<br>
+            </td>
+            <td valign="top">integer<br>
+            </td>
+            <td valign="top">If specified, the UI will limit the number
+              of parent annotations listed, and indicate the remainder
+              of the list with ellipses (...).<br>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">showLabel<br>
+            </td>
+            <td valign="top">_parent, any annotation-valued attribute<br>
+            </td>
+            <td valign="top">"no"<br>
+            </td>
+            <td valign="top">By default, when the UI displays an
+              annotation attribute value as part of the name of an
+              annotation, it contains the label of the annotation value.
+              If you don't want the label displayed, provide this
+              key-value pair.<br>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">showIndices<br>
+            </td>
+            <td valign="top">_parent, any annotation-valued attribute</td>
+            <td valign="top">"yes"<br>
+            </td>
+            <td valign="top">By default, when the UI displays an
+              annotation attribute value as part of the name of an
+              annotation,it does not display its start and end indices.
+              If you want these indices displayed, provide this
+              key-value pair.<br>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">showFormattedName<br>
+            </td>
+            <td valign="top">_parent, any annotation-valued attribute</td>
+            <td valign="top">"yes"<br>
+            </td>
+            <td valign="top">By default, when the UI displays an
+              annotation attribute value as part of the name of an
+              annotation, it does not display the value's formatted
+              name. If you want the formatted name displayed, provide
+              this key-value pair.<br>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">showFeatures<br>
+            </td>
+            <td valign="top">_parent, any annotation-valued attribute</td>
+            <td valign="top">"yes"<br>
+            </td>
+            <td valign="top">By default, when the UI displays an
+              annotation attribute value as part of the name of an
+              annotation, it does not display the values attribute-value
+              pairs. If you want these pairs displayed, provide this
+              key-value pair.<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </p>
+    <p>So, for example, if you want the presented name of your
+      annotation to contain the text truncated to 20 characters, your
+      value for presented_name would be "$(_text:truncate=20)".<br>
+    </p>
+    <h2><a name="attribute_of_annotation_display"></a>&lt;attribute&gt;
+      (of &lt;annotation_display&gt;)</h2>
+    <p>This element defines the display-related properties for specific
+      annotation attributes.<br>
+    </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" cellpadding="2"
+      cellspacing="2" border="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">name</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">The name of a known attribute<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">of_annotation</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">The name of a known true or
+            effective label<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">editor_style</td>
+          <td style="vertical-align: top;">"long"<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">There are two ways of
+            providing attribute values for non-choice string attributes
+            in the UI: via a short typein window or via a multi-line
+            typein window. By default, a short typein window will be
+            used. If you provide this attribute-value pair, a long
+            typein window will be used. Ignored if the attribute is not
+            a string attribute, or if it's a choice attribute.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">read_only<br>
+          </td>
+          <td valign="top">"yes"<br>
+          </td>
+          <td valign="top">no<br>
+          </td>
+          <td valign="top">Attributes are typically editable. If for
+            some reason you don't want to be able to edit an attribute
+            directly in the annotation editor (e.g., the attribute value
+            is automatically populated by a custom editor, as described
+            below), use this setting.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">custom_editor</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">You may have a string
+            attribute which is actually a date, which you want to use a
+            calendar widget to populate; or you might want to look up
+            the annotation text in a database, and use the results to
+            populate the attribute value. If you're willing to do some
+            programming, you can use this attribute to specify an
+            arbitrary JavaScript function for a string, int, or float
+            attribute, to use as its editor. You can define your
+            function in your task directory in your <a
+              href="#web_customization_of_task">Javascript customization
+              file</a>. Unfortunately, we don't really have the
+            resources to document the API this function has to conform
+            to; either dig through the source code yourself, or ask us
+            for help. </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">custom_editor_is_multiattribute</td>
+          <td style="vertical-align: top;">"yes"<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">If you've associated a
+            custom_editor with this attribute, this attribute-value pair
+            tells the UI that the editor will fill multiple attributes.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">custom_editor_button_label<br>
+          </td>
+          <td valign="top">a string<br>
+          </td>
+          <td valign="top">no<br>
+          </td>
+          <td valign="top">If you have a custom editor, but you want the
+            label to be something other than "Edit" (let's say the value
+            is automatically calculated when you press the button), use
+            this.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">url_link<br>
+          </td>
+          <td valign="top">a string<br>
+          </td>
+          <td valign="top">no<br>
+          </td>
+          <td valign="top">When the annotation attribute is displayed in
+            the annotation editor or the annotation table, the
+            annotation will be used to construct a URL link. The syntax
+            is identical to that of presented_name <a
+              href="#label_of_annotation_display">above</a>, except that
+            of the special values, only _text is recognized, and no
+            key-value pairs are recognized within each directive. So,
+            e.g., if you want the link on an annotation attribute to
+            search for the spanned text in Google, the value of url_link
+            would be<br>
+            <br>
+            http://www.google.com/search?q=$(_text)<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="label_group_of_annotation_display"></a>&lt;label_group&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      (of &lt;annotation_display&gt;)</h2>
+    <p>Under some circumstances, you might want to create cascaded
+      annotation menus in the MAT UI, perhaps in order to group together
+      similar annotations, or provide options for more or less general
+      annotations, or to compress the screen real estate taken up by the
+      annotation popup menu. You can use the &lt;label_group&gt; element
+      to accomplish this.<br>
+    </p>
+    <p>Each label group has a name. This might correspond to a known
+      true or effective label (in which case it refers to that
+      annotation), or it might be a previously unknown name, in which
+      case it serves merely as a group. The children of each label group
+      can be actual annotation names, or other known label groups. The
+      annotations the label group refers to must be content annotations.
+      If the label group is not otherwise known, it has the option of
+      declaring CSS styling for the menu entry.<br>
+    </p>
+    Label groups are inherited from an available parent task; this group
+    information is filtered by the locally defined annotations. Local
+    label groups override parent label groups.
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" cellpadding="2"
+      cellspacing="2" border="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">name</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">the name of the label group,
+            either a new name or the name of a true or effective content
+            annotation </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">children</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">a comma-delimited sequence of
+            names, either names of existing content annotations or of
+            known label groups </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">css</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;"> Like the css attribute on
+            the &lt;label&gt; element above. Used to assign styling to
+            otherwise unknown label groups. </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="similarity_profile_of_task"></a>&lt;similarity_profile&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      (of &lt;task&gt;)</h2>
+    <p>When you run the <a href="MATScore.html">MATScore</a> engine, or
+      produce a <a href="ui_comparison.html">visual comparison of
+        annotations</a>, MAT uses a set of <a
+        href="score_algorithm.html">heuristics</a> to determine the best
+      pairing of annotations. You can affect this process using the
+      &lt;similarity_profile&gt; element.<br>
+    </p>
+    <p>Similarity profiles are <b>not inherited</b>.<br>
+    </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" cellpadding="2"
+      cellspacing="2" border="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">name</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">The name of the profile, for
+            use when creating comparison documents or scoring. If no
+            name is provided, this is the default profile for the task.
+            There can be only one unnamed profile.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3>Children</h3>
+    <table style="text-align: left; width: 100%;" cellpadding="2"
+      cellspacing="2" border="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Element<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Repeatable?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;stratum&gt;</td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">The comparison algorithm is <b>stratified</b>
+            (see the <a href="score_algorithm.html">algorithm</a> for
+            more details). You can use this element to define the
+            strata, rather than allowing them to be inferred.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;tag_profile&gt;</td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">There's a default similarity
+            profile for spanned and spanless annotations. If you want to
+            declare your own profile explicitly, you can do that with
+            this element.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="stratum_of_similarity_profile"></a>&lt;stratum&gt; (of
+      &lt;similarity_profile&gt;)</h2>
+    <p>The comparison algorithm is <b>stratified</b> (see the <a
+        href="score_algorithm.html">algorithm</a> for more details). You
+      can use this element to define the strata, rather than allowing
+      them to be inferred.</p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" cellpadding="2"
+      cellspacing="2" border="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">true_labels</td>
+          <td style="vertical-align: top;">a comma-separated string of
+            labels<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">The labels in this stratum.
+            Note that these labels must be true labels, not effective
+            labels.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="tag_profile_of_similarity_profile"></a>&lt;tag_profile&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      (of &lt;similarity_profile&gt;)</h2>
+    <p>There's a default similarity profile for spanned and spanless
+      annotations. If you want to declare your own profile explicitly,
+      you can do that with this element. See the <a
+        href="score_algorithm.html">algorithm</a> for details on how to
+      use these.<br>
+    </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" cellpadding="2"
+      cellspacing="2" border="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">true_labels</td>
+          <td style="vertical-align: top;">a comma-separated string of
+            labels<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">The labels to which this
+            profile applies. Note that these labels must be true labels,
+            not effective labels.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3>Children</h3>
+    <table style="text-align: left; width: 100%;" cellpadding="2"
+      cellspacing="2" border="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Element<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Repeatable?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td valign="top">&lt;attr_equivalences&gt;<br>
+          </td>
+          <td valign="top">no<br>
+          </td>
+          <td valign="top">yes<br>
+          </td>
+          <td valign="top">Equivalences for attributes among the various
+            labels in the profile.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;dimension&gt;</td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">One dimension of the profile.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="attr_equivalences_of_tag_profile"></a>&lt;attr_equivalences&gt;
+
+
+
+      (of &lt;tag_profile&gt;)</h2>
+    <p>The true labels in your tag profile may vary in their attribute
+      names, but you may still want these attributes to be comparable.
+      This element allows you to declare your equivalences. See the <a
+        href="score_algorithm.html">algorithm</a> for details about the
+      various dimensions.<br>
+    </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" cellpadding="2"
+      cellspacing="2" border="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">name</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">The name of the equivalence.
+            See the algorithm for a list of legal names and their
+            interpretations.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">attrs</td>
+          <td style="vertical-align: top;">a comma-separated stering<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">All attributes which stand in
+            this equivalence. Each label in your profile must have at
+            least one of these attributes, and no attribute name can
+            appear more than once among the equivalences in the profile.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="dimension_of_tag_profile"></a>&lt;dimension&gt; (of
+      &lt;tag_profile&gt;)</h2>
+    <p>Each profile consists of a number of dimensions, which define
+      some aspect of the annotation to use in comparison, along with the
+      method to be used for comparison and the relative weight of the
+      dimension. See the <a href="score_algorithm.html">algorithm</a>
+      for details about the various dimensions.<br>
+    </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" cellpadding="2"
+      cellspacing="2" border="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">name</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">The name of the dimension.
+            See the algorithm for a list of legal names and their
+            interpretations.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">weight</td>
+          <td style="vertical-align: top;">a number<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">The relative weight of the
+            dimension. The weights of all the dimensions will be
+            normalized.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">param_digester_method</td>
+          <td style="vertical-align: top;">a Python function name<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">In rare circumstances, the
+            dimension method may accept parameters (see &lt;attr&gt;
+            below) and these parameters may need to be interpreted
+            (e.g., "yes" -&gt; True). The full name of the function,
+            including the module it's in, must be specified.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">aggregator_method</td>
+          <td style="vertical-align: top;">a Python function name<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">If special handling is
+            required for a dimension which has an aggregation value,
+            this option allows you to declare the handler. The full name
+            of the function, including the module it's in, must be
+            specified. </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">method</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">The method associated with
+            the dimension, if not the default method. See the algorithm
+            for a list of legal names.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;attr&gt;</td>
+          <td style="vertical-align: top;">a string</td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">the &lt;dimension&gt; element
+            supports arbitrary attribute-value pairs</td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="score_profile_of_task"></a>&lt;score_profile&gt; (of
+      &lt;task&gt;)</h2>
+    <p>When you run the <a href="MATScore.html">MATScore</a> engine,
+      you can control how the scored elements are aggregated,
+      decomposed, or filtered in the scoring output. See the <a
+        href="score_algorithm.html">algorithm</a> for details on how to
+      use this.<br>
+    </p>
+    <p>Score profiles are <b>not inherited</b>.<br>
+    </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" cellpadding="2"
+      cellspacing="2" border="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">name</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">The name of the profile, for
+            use when scoring. If no name is provided, this is the
+            default profile for the task. There can be only one unnamed
+            profile. </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3>Children</h3>
+    <table style="text-align: left; width: 100%;" cellpadding="2"
+      cellspacing="2" border="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Element<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Repeatable?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;aggregation&gt;</td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">A set of labels to aggregate
+            as a separate entry.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;attr_decomposition&gt;</td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">An attribute-based
+            decomposition of particular labels to report as a separate
+            entry.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;partition_decomposition&gt;</td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">A function-based
+            decomposition of particular labels to report as a separate
+            entry.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">&lt;label_limitation&gt;<br>
+          </td>
+          <td valign="top">no<br>
+          </td>
+          <td valign="top">no<br>
+          </td>
+          <td valign="top">A list of labels to restrict the overall
+            reporting to.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="aggregation_of_score_profile"></a>&lt;aggregation&gt;
+      (of &lt;score_profile&gt;)</h2>
+    <p>Under normal circumstances, annotations are aggregated per
+      document and per run by effective label (if available) or true
+      label, or by equivalence classes passed to MATScore, and then all
+      together into a single heap. You can add other aggregations of
+      true labels using this element.<br>
+    </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" cellpadding="2"
+      cellspacing="2" border="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">name</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">The name of the aggregation
+            as it will appear in the output spreadsheet<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">true_labels</td>
+          <td style="vertical-align: top;">a comma-separated string of
+            labels<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">The true labels in this
+            aggregation.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="attr_decomposition_of_score_profile"></a>&lt;attr_decomposition&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      (of &lt;score_profile&gt;)</h2>
+    <p>Under normal circumstances, the only way to decompose true labels
+      in the score output is by effective label. If you want to
+      decompose them by a particular attribute (e.g., you want to see
+      the score for ENAMEXes when type = NOM), you can use this element.
+      Decompositions can overlap with each other.<br>
+    </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" cellpadding="2"
+      cellspacing="2" border="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">true_labels</td>
+          <td style="vertical-align: top;">a comma-separated string of
+            labels<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">The true labels to which this
+            decomposition applies.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">attrs</td>
+          <td style="vertical-align: top;">a comma-separated string of
+            attrs<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">The names of attributes
+            defined for all the listed labels. There will be a separate
+            decomposition for each tuple of values for these attrs.
+            The&nbsp; name of the decomposition in the score output will
+            be &lt;attr1&gt;=&lt;val1&gt; &lt;attr2&gt;=&lt;val2&gt;...<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="partition_decomposition_of_score_profile"></a>&lt;partition_decomposition&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      (of &lt;score_profile&gt;)</h2>
+    <p>Under normal circumstances, the only way to decompose true labels
+      in the score output is by effective label. If you want to
+      decompose them by a Python function, you can use this element.
+      Decompositions can overlap with each other.<br>
+    </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" cellpadding="2"
+      cellspacing="2" border="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">true_labels</td>
+          <td style="vertical-align: top;">a comma-separated string of
+            labels<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">The true labels to which this
+            decomposition applies.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">method</td>
+          <td style="vertical-align: top;">a Python function name<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">This function must take a
+            single argument, which will be an annotation, and return a
+            value. For instance, if you're evaluating a geotagger, and
+            the tagger provides a country attribute for the location,
+            and you want to decompose location scores by US and non-US,
+            you'd define a function which returns "US" if the country
+            attribute is "US", and "non-US" otherwise. The full name of
+            the function, including the module it's in, must be
+            specified. The name of the decomposition in the score output
+            will be &lt;bare function name&gt;=&lt;val&gt;. </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="label_limitation_of_score_profile"></a>&lt;label_limitation&gt;
+
+
+
+
+
+
+
+(of
+
+
+
+
+
+
+
+      &lt;score_profile&gt;)</h2>
+    <p>The scorer will pair all annotations which are not specified as
+      being ignored. Sometimes, you might need to pair some annotations
+      as part of the scoring process (let's say they're arguments of
+      relations, for instance), but you don't want them in the final
+      output, even though you can't ignore them. You can use this
+      element to provide that filter.<br>
+    </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" cellpadding="2"
+      cellspacing="2" border="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">true_labels</td>
+          <td style="vertical-align: top;">a comma-separated string of
+            labels<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">Only these true labels (and
+            the effective labels that are defined on them) will be
+            included in the scoring output.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

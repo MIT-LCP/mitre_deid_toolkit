@@ -1,0 +1,134 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Annotations</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Annotations</h1>
+    <p>The basic unit of document enrichment in MAT is the <span
+        style="font-weight: bold;">annotation</span>. There are two
+      types of annotations in MAT: <span style="font-weight: bold;">span(ned)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        annotations</span> and <span style="font-weight: bold;">spanless
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        annotations</span>. Span annotations are anchored to a
+      particular contiguous span in the document, and make some implicit
+      assertion about it; e.g., the span from character 10 to character
+      15 is a noun phrase. Spanless annotations are not anchored to a
+      span, and are used to make assertions about the entire document,
+      or to make assertions about other annotations; e.g., annotation 1
+      and annotation 2 refer to the same entity, or they stand in some
+      relation to each other.<br>
+    </p>
+    <p>Annotations have labels, which are strings. Annotations can also
+      have attributes, whose values are restricted to particular types.
+      Your task maintainer will define all your annotations, attributes,
+      and attribute value types and restrictions for you; each task
+      defines the annotations and attributes available for that task.
+      You'll learn more about tasks <a href="tasks_and_workflows.html">in
+
+
+
+        a minute</a>.<br>
+    </p>
+    <p>While you don't need to know most of the details of how
+      annotations are constructed or defined, you <b>do</b> need to
+      know that among the possible attribute value types are
+      "annotation" and "list or set of annotations"; in other words, the
+      way MAT implements relation, event and coreference annotation is
+      via attributes whose values are other annotations. The annotations
+      which "host" these annotation-valued attributes may be spanned or
+      spanless. You've already seen some examples of some of these in <a
+        href="tutorial_8.html">tutorial 8</a>, and you'll see UI
+      examples in <a href="ui_annotation_edit.html">more</a> <a
+        href="ui_spanless.html">detail</a> later. If you want all the
+      gory details, you can look <a href="sample_task.html">here</a>
+      and <a href="asd_reference.html">here</a>.<br>
+    </p>
+    <p>In most circumstances, the name that you'll be given or shown for
+      an annotation is the annotation's label; e.g., if you're applying
+      or looking at a PERSON annotation, the label of that annotation
+      will be "PERSON". However, in some cases, your task maintainer
+      will choose to make this notional label an <b>effective label</b>,
+      which corresponds to some combination of annotation label +
+      attribute value (e.g., ENAMEX type="PER"). As the annotator,
+      you'll have access to to the actual label and attribute/value
+      information in the UI, but you'll be shown the effective label in
+      the relevant circumstances (e.g., when you're choosing an
+      annotation to create from your annotation menu in the UI).<br>
+    </p>
+    <p>MAT currently allows you to apply all of its tools to what we'll
+      call <b>simple span annotations</b>: span annotations which have
+      either no attributes, or a single attribute/value pair which
+      defines the effective label. The engine which comes with MAT, <a
+        href="carafe_engine.html">Carafe</a>, can be used with such
+      annotations to perform the tag-a-little, learn-a-little loop, run
+      experiments, etc. For annotations of greater complexity (i.e.,
+      spanless annotations, or annotations with more attributes), Carafe
+      can't currently add such annotations automatically; so Carafe will
+      be able to build and apply models for only the simple span subset
+      of these more complex annotation sets. This restriction affects
+      the MAT <a href="MATEngine.html">processing engine</a> and <a
+        href="MATExperimentEngine.html">experiment harness</a>, and it
+      means that all your more complex attributes and annotations will
+      have to be added by hand. For more details about what MAT can and
+      can't do with complex annotations, see <a
+        href="annotation_ref.html#Simple_span_annotations_vs._complex">here</a>.<br>
+    </p>
+    <p>There's one more concept you'll need. MAT divides the annotations
+      in a task into different categories. All the annotations you'll be
+      hand-adding or editing are called <b>content annotations</b>.
+      Other categories include:<br>
+    </p>
+    <ul>
+      <li><b>token annotations</b>, which mark the word boundaries in
+        your documents</li>
+      <li><b>zone annotations</b>, which mark the regions of your
+        document that you can add annotations to</li>
+      <li><b>admin annotations</b>, which contain administrative
+        information about the document regions (e.g., who annotated
+        them)<br>
+      </li>
+    </ul>
+    <p>If this documentation ever talks about annotations without
+      specifying a category, it's almost certainly talking about content
+      annotations. As a user, you really won't need to know much, if
+      anything, about the other categories.<br>
+    </p>
+  </body>
+</html>

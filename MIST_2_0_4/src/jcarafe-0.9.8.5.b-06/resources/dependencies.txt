@@ -1,0 +1,21 @@
+The following libraries are required for running jCarafe XMLRPC and are included in the runtime jar:
+
+ - Scala 2.10.0:		http://www.scala-lang.org	    		 License: http://www.scala-lang.org/node/146
+ - Jackson JSON 1.5.0 (ASL):	http://jackson.codehaus.org/		 	 License: Apache 2.0
+ - xmlrpc-server 3.1.2		Maven: xmlrpc-server:org.apache.xmlrpc	 	 License: Apache 2.0
+ - xmlrpc-client 3.1.2		Maven: xmlrpc-client:org.apache.xmlrpc	 	 License: Apache 2.0
+ - commons-httpclient 3.1	Maven: commons-httpclient:commons-httpclient	 License: Apache 2.0
+
+jCarafe also makes use a modified portion of the COLT 1.2 library from CERN
+with the following license/copyright:
+
+"Copyright 1999 CERN - European Organization for Nuclear Research.
+Permission to use, copy, modify, distribute and sell this software and its documentation for any purpose 
+is hereby granted without fee, provided that the above copyright notice appear in all copies and 
+that both that copyright notice and this permission notice appear in supporting documentation. 
+CERN makes no representations about the suitability of this software for any purpose. 
+It is provided "as is" without expressed or implied warranty."
+
+Finally, jCarafe makes use of two source files, LBFGS.java and Mcsrch.java, which are derived
+from the original public domain version of the files. The files are copyrighted 1999 by
+Robert Dodier.

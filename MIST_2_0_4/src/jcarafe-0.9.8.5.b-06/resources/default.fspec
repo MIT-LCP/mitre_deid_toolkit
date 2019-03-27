@@ -1,0 +1,17 @@
+prefix1to3   as prefixFn(3); 
+suffixto3    as suffixFn(3);
+regInit      as regexpFn(INITCAP, [A-Z].*) over (-1,0);
+hasdigit     as regexpFn(HAS_DIGIT, .*[0-9]);
+compCntxt    as regexpFn(COMPWD, Ltd\.?|Corp\.?|Co\.|Inc\.) over (1 to 4);
+wdFn         as wdFn;
+lexFn        as lexFn;
+unkFn        as nodeFn;
+edgeFn       as edgeFn;
+winWdFns2    as wdFn over (-3,-2,-1,1,2,3);
+ngrmFn2to0   as wdFn ngram (-2 to 0);
+ngrmFn1to1   as wdFn ngram (-1 to 1);
+ngrmFn2to1  as wdFn ngram (-2 to -1);
+ngrmFn0to2    as wdFn ngram (0 to 2);
+ngrmFn0to1    as wdFn ngram (0 to 1);
+ngrmFn1to2    as wdFn ngram (1 to 2);
+ngrmReg      as regexpFn(INITCAP, [A-Z].*);

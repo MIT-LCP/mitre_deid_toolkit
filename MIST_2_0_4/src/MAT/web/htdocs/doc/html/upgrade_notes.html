@@ -1,0 +1,546 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Upgrade Notes</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Upgrade Notes</h1>
+    <p>If you've received a previous version of MAT, this page contains
+      instructions on how to upgrade to the new version.<br>
+    </p>
+    <h2>Upgrading from version 1.3 to version 2.0</h2>
+    <h3>New features</h3>
+    <ul>
+      <li><b>All non-automated components now handle annotation
+          attributes</b>: Attributes can be strings, ints, floats,
+        booleans,&nbsp; or other annotations, or set or list
+        aggregations of these types. Strings and ints support choice
+        lists; annotation attributes support type restrictions; ints and
+        floats support range restrictions. All attributes other than
+        annotations support default values.<br>
+      </li>
+      <li><b>All non-automated components now handle spanless
+          annotations</b>: These annotations have no direct anchor in
+        the text, and can be used to model relations, coreference
+        entities, and other elements.<br>
+      </li>
+      <li><b>Scorer now handles document-internal overlaps</b>: In
+        version 1.3, <a href="MATScore.html">MATScore</a> did not deal
+        with documents which contained internal content annotation
+        overlaps. In 2.0, we've implemented a sophisticated annotation
+        matching algorithm which addresses this issue.</li>
+      <li><b>Scorer is now customizable in task.xml</b>: You can declare
+        which dimensions of annotations will be compared when
+        annotations are compared; how those dimensions will be compared;
+        and what the weight of each dimension is.<br>
+      </li>
+      <li><b>New transducer tool now available</b>: In previous
+        versions, if you simply wanted to convert documents from one
+        format to another, you'd use <a href="MATEngine.html">MATEngine</a>.
+        The problem with MATEngine is that it requires a task; it only
+        succeeds if all documents can be processed; and it requires a
+        workflow. There's now a new tool, <a href="MATTransducer.html">MATTransducer</a>,
+        which addresses all these issues. The transducer also supports a
+        new XML-driven <a href="doc_conversion_xml.html">annotation
+          conversion language</a>.<br>
+      </li>
+      <li><b>All tools now support better temporary file management</b>:
+        In 2.0, every command-line tool which invokes a subprocess
+        (e.g., the Carafe tagger) now takes the --tmpdir_root and
+        --preserve_tempfiles options, which gives you better control
+        over debugging and the placement of temporary files created
+        during processing.</li>
+      <li><b>MAT JSON format has been expanded</b>: To support its
+        expanded annotation and attribute model, MAT 2.0 now uses
+        version 2 of the <a href="mat_json_format.html">MAT JSON
+          document format</a> by default. All readers recognize previous
+        versions of the format as well. We've also introduced a new
+        writer, mat-json-v1, to allow users to save documents in the
+        format used by MAT 1.3.</li>
+      <li><b>New span reconciliation capability</b>: In MAT 2.0, we've
+        deployed a tool for <a href="ui_reconciliation.html">reconciliation
+
+
+          of simple span annotations</a>. This tool will be replaced by
+        a general-purpose reconciliation tool in the next version of
+        MAT.</li>
+      <li><b>New standalone document viewer and annotation tool</b>: You
+        can now embed a <a href="standalone_viewer.html">standalone
+          version</a> of the MAT document viewing component in your own
+        Web application. This viewer can be enabled for hand annotation,
+        and it also supports document comparison.</li>
+      <li><b>New capabilities in MATReport</b>: Expanded support for
+        annotation attributes, including the ability to generate
+        per-label expanded report spreadsheets.</li>
+      <li><b>Hand annotation now supports adding overlapping annotations</b>:
+        This corrects an enormous deficiency in previous versions of
+        MAT. While annotating, the overlapping annotations are also
+        vertically stacked, ensuring that they're visible.<br>
+      </li>
+    </ul>
+    <h3>No Cygwin support</h3>
+    <p>Support for Cygwin has been removed, because Python in Cygwin
+      does not support sqlite, and sqlite is required for the MAT
+      workspaces in 2.0. Migrate to Windows native.<br>
+    </p>
+    <h3>Python 2.6 or later required</h3>
+    MAT 2.0 makes extensive use of JSON and sqlite, which are best
+    supported in Python 2.6 or 2.7. It also relies on Python's "with"
+    statement, which is supported first in 2.6.
+    <h3>Task.xml schema has changed</h3>
+    <p>Because MAT now explicitly defines the annotations and
+      well-formedness conditions for attributes separately from its
+      display information, the task.xml file has been reorganized. You
+      can use the <a href="MATUpdateTaskXML.html">MATUpdateTaskXML</a>
+      tool to update your task.xml file automatically.<br>
+    </p>
+    <ul>
+      <li>The &lt;tags&gt; element has been replaced by the
+        &lt;annotation_set_descriptors&gt; and
+        &lt;annotation_display&gt; elements. These new elements are
+        quite different than the old ones. If you're receiving MAT as a
+        zip file distribution with tasks included, your tasks have been
+        updated.</li>
+      <li>Because the UI has been completely redesigned, the
+        &lt;web_customization&gt; element no longer accepts the
+        default_tag_window_position and default_tag_window_size
+        attributes.</li>
+      <li>The tagging_step attribute of &lt;step_implementations&gt; is
+        no longer accepted (or needed).</li>
+      <li>Because of changes in the implementation of workspaces, the
+        tagprep operation has been replaced by the import operation, and
+        the list of steps required for the tag operation is now only
+        "tag".<br>
+      </li>
+    </ul>
+    <h3>All models must be rebuilt (new version of jCarafe)<br>
+    </h3>
+    <p>The version of jCarafe which is delivered with MAT 2.0 is
+      0.9.8.5.b-06, which has a different model structure than the
+      version delivered with 1.3. You must rebuild all your models,
+      either using <a href="MATModelBuilder.html">MATModelBuilder</a>
+      (in file mode) or the "modelbuild" operation of <a
+        href="MATWorkspaceEngine.html">MATWorkspaceEngine</a> (in
+      workspace mode).<br>
+    </p>
+    <h3>UI has been completely reorganized, with a new URL</h3>
+    <p>The 1.3 UI used a desktop-in-a-browser metaphor, which raised a
+      number of issues, including poor use of screen real estate. In
+      2.0, we've completely reorganized the UI, and <a
+        href="start_ui.html">changed the URL</a>.<br>
+    </p>
+    <h3>mat_controller.sh is replaced by the --spawn_tabbed_terminal
+      option of MATWeb</h3>
+    <p>In previous releases, you really didn't have the option to pass
+      any command-line options to the MATWeb server running under the
+      tabbed terminal. As the command-line options to MATWeb expanded,
+      and became more important, this turned out to be a bad idea. As a
+      result, we've now reorganized the tabbed terminal startup so that
+      it's part of MATWeb. The mat_controller.sh application is gone.
+      The Windows mat_controller.bat script is still present, but it
+      simply invokes MATWeb with the --spawn_tabbed_terminal option.<br>
+    </p>
+    <h3>Workspaces have been completely reorganized</h3>
+    <p>We have completely reorganized the internal structure of <a
+        href="workspaces.html">workspaces</a> for 2.0. These new
+      workspaces are more powerful and impose fewer requirements on the
+      user. Your MAT 1.3 workspaces cannot be used with MAT 2.0 without
+      modification. We've provided an <a href="MATUpdateWorkspace1To2.html">upgrade
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        tool</a> which will allow you to convert your MAT 1.3 workspaces
+      to MAT 2.0. <br>
+    </p>
+    <p>The new workspaces feature many fewer folders; a SQLite database
+      which manages the document state information; real transaction and
+      file locking; document assignment, potentially to multiple
+      annotators; extensive logging capabilities; and infrastructure for
+      future capabilities like reconciliation and complex reconciliation
+      workflows, prioritization queues, and segment-by-segment
+      annotation.<br>
+    </p>
+    <p>As a result of this change, it's no longer possible to run an
+      experiment against a workspace by pointing to, e.g., the
+      "completed" folder. So as part of this change, there's now special
+      support for running experiments against workspaces, both from <a
+        href="MATWorkspaceEngine.html">MATWorkspaceEngine</a> and <a
+        href="MATExperimentEngine.html">MATExperimentEngine</a>.<br>
+    </p>
+    <h3>Scorer output ranges have changed</h3>
+    In version 1.3, recall, precision and f-measure were all scaled from
+    0 to 100. In 2.0, they're scaled from 0 to 1.
+    <p> </p>
+    <p> </p>
+    <p> </p>
+    <h3>CSV spreadsheet management in MATScore and MATExperimentEngine
+      has changed</h3>
+    <p><a href="MATScore.html">MATScore</a> and <a
+        href="MATExperimentEngine.html">MATExperimentEngine</a> have
+      long supported writing one of three CSV file formats (Excel
+      formulas, OpenOffice formulas, and no formulas). In 2.0, you can
+      now write multiple formats in the same run, and the name of each
+      CSV file clearly indicates the formula type. As a result, the
+      --no_csv_formulas and --oo_separator command-line options have
+      been removed, and replaced with --csv_formula_output.<br>
+    </p>
+    <h3>MATScore --tag_span_details renamed</h3>
+    <p>Because the scorer now provides mismatch details for all
+      conditions, this flag has been renamed to
+      --tag_output_mismatch_details.<br>
+    </p>
+    <h3>MATScore spreadsheet output has changed</h3>
+    <p>Due to enhancements to the scorer, some of the columns in the
+      output spreadsheets have been renamed or moved, and others have a
+      slightly different interpretation. Full details <a
+        href="score_output.html">here</a>. <br>
+    </p>
+    <p> </p>
+    <h3>Command-line options to MATWorkspaceEngine have changed<br>
+    </h3>
+    <p>In previous releases, we deprecated, but retained, the "operate"
+      operation in MATWorkspaceEngine. This operation has finally been
+      removed in 2.0. If you had still been doing something like this:<br>
+    </p>
+    <pre>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATWorkspaceEngine mydirectory operate core modelbuild</span><br></pre>
+    <p>you should now do this:<br>
+    </p>
+    <pre>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATWorkspaceEngine mydirectory modelbuild core</span><br></pre>
+    <p>See the <a href="MATWorkspaceEngine.html">workspace
+        documentation</a> for more details.<br>
+    </p>
+    <p> </p>
+    <h2>Upgrading from version 1.2 to version 1.3</h2>
+    <h3>Web server security has been improved</h3>
+    We now provide a separate document on <a
+      href="workspace_security.html">Web server security</a> as it
+    pertains to workspace access. There are a number of new options to <a
+      href="MATWeb.html">MATWeb</a> to support improved security. The
+    most visible effect is that you can restrict access to workspaces
+    from the MAT UI by using the --workspace_container_directory option
+    when you start up the MAT Web server.<br>
+    <h3>Attribute to control right-to-left text display has moved</h3>
+    <p>In version 1.2, the text_right_to_left attribute lived on the
+      workflow element in task.xml; we anticipated that different
+      workflows might be used for different languages within the same
+      task. Since then, we've realized that the task is going to be the
+      appropriate level of encapsulation for language differences for
+      the foreseeable future. Furthermore, the current implementation of
+      right-to-left encoding did not work appropriately with workspaces.
+      Accordingly, we've moved this attribute to the web_customization
+      element, and it is now global to tasks.<br>
+    </p>
+    <h3>Corpus size iteration has changed<br>
+    </h3>
+    <p>The experiment engine has now been extended with general-purpose
+      iterators for sets of values and for value increments. So it's now
+      possible, for instance, to vary the number of model iterations
+      from 20 to 100 by increments of 10 without having to write a
+      separate model set specification for each possible value. These
+      iterators can be combined, in which case you'll get the
+      cross-product of the possible value settings, or you can define
+      your own iterators to get more sophisticated behavior (e.g.,
+      iterating over pairs of attribue-value sets). For the user, this
+      means that a couple of attributes have been removed from the
+      experiment engine, and a new set of elements and attributes has
+      been added.<br>
+    </p>
+    <p>In version 1.2, all you could iterate on was corpus size. The
+      mechanism for this iteration has now changed. In version 1.2, this
+      is what you'd do:<br>
+    </p>
+    <pre>  [...]<br>  &lt;model_sets dir="model_sets"&gt;<br>    <span style="font-weight: bold;">&lt;build_settings training_increment="4" </span><br style="font-weight: bold;"><span style="font-weight: bold;">                    truncate_to_increment="yes"/&gt;</span><br>    &lt;model_set name="test"&gt;<br>      &lt;training_corpus corpus="test" partition="train"/&gt;<br>    &lt;/model_set&gt;<br>  &lt;/model_sets&gt;<br>  [...]<br></pre>
+    <p>In version 1.3, it looks like this instead:<br>
+    </p>
+    <pre>  [...]<br>  &lt;model_sets dir="model_sets"&gt;<br>    <span style="font-weight: bold;">&lt;corpus_settings&gt;</span><br style="font-weight: bold;"><span style="font-weight: bold;">      &lt;iterator type="corpus_size" increment="4"/&gt;</span><br style="font-weight: bold;"><span style="font-weight: bold;">    &lt;/corpus_settings&gt;</span><br>    &lt;model_set name="test"&gt;<br>      &lt;training_corpus corpus="test" partition="train"/&gt;<br>    &lt;/model_set&gt;<br>  &lt;/model_sets&gt;<br>  [...]<br></pre>
+    <p>You can see that the size processing has been removed from the
+      &lt;build_settings&gt; and added to a new &lt;corpus_settings&gt;
+      element, which contains an instance of the new &lt;iterator&gt;
+      element to specify the type of the iteration. See the <a
+        href="experiment_xml.html">documentation</a> and <a
+        href="experiment_xml_use_cases.html">examples</a> for the
+      experiment engine for more details. Note that in version 1.2, you
+      had to specify explicitly that the iteration ends on an increment
+      exactly; in 1.3 this is the default, and to force the final corpus
+      size to be used, you'll need the force_last attribute:<br>
+    </p>
+    <pre>  [...]<br>  &lt;model_sets dir="model_sets"&gt;<br>    <span style="font-weight: bold;">&lt;corpus_settings&gt;</span><br style="font-weight: bold;"><span style="font-weight: bold;">      &lt;iterator type="corpus_size" increment="4" force_last="yes"/&gt;</span><br style="font-weight: bold;"><span style="font-weight: bold;">    &lt;/corpus_settings&gt;</span><br>    &lt;model_set name="test"&gt;<br>      &lt;training_corpus corpus="test" partition="train"/&gt;<br>    &lt;/model_set&gt;<br>  &lt;/model_sets&gt;<br>  [...]</pre>
+    <h3>Experiment spreadsheet columns have been expanded</h3>
+    <p>The experiment engine output spreadsheets have been slightly
+      expanded to include information about the run and model "families"
+      in addition to the actual run and model. This change follows from
+      the introduction of general iterators described above. See the
+      documentation on <a href="MATExperimentEngine.html">MATExperimentEngine</a>
+      for details.</p>
+    <h3>Experiment directory structure has changed</h3>
+    <p>In order to support the iterators in the experiment engine, we've
+      reorganized the structure of the experiment directory somewhat.
+      See the documentation on <a href="MATExperimentEngine.html">MATExperimentEngine</a>
+      for details.<br>
+    </p>
+    <h2>Upgrading from version 1.1 to version 1.2</h2>
+    <h3><span style="font-weight: bold;"></span>New native Windows port</h3>
+    <p>It is now possible to run MAT in Windows without Cygwin
+      installed.<br>
+    </p>
+    <h3>Single distribution bundle for all platforms</h3>
+    <p>Unlike previous versions, there is a single distribution bundle
+      for MAT 1.2 for all supported platforms. For compatibility with
+      Windows, this bundle is now a zip file.<br>
+    </p>
+    <h3>New tabbed terminal for Windows</h3>
+    <p>If you use mat_controller.sh or mat_controller.bat under Windows,
+      you'll find that there's a new tabbed terminal tool we're using,
+      which has the advantage of not requiring Cygwin.<br>
+    </p>
+    <h3>New version of Terminator.app for MacOS X 10.6</h3>
+    <p>If you're using mat_controller.sh under MacOS X, and you intend
+      to install 10.6, note that the previous version of Terminator.app,
+      which supports the tabbed terminal behavior in mat_controller.sh,
+      will not work in 10.6; you must install the newer version provided
+      with MAT 1.2.<br>
+    </p>
+    <h3>Tokenizer has changed</h3>
+    <p>In version 1.2, the original OCaml tokenizer and Carafe
+      trainer/tagger have been replaced by the Java reimplementations.
+      There are a number of important changes that are required as a
+      result. Among other things, the Java tokenizer produces slightly
+      different token boundaries than the original OCaml tokenizer. This
+      is problematic because the entire basis of most annotation
+      systems, including MAT, is the subdivision into words (tokens). In
+      order to have optimal performance, the tokenization of documents
+      which are to be automatically tagged should match the tokenization
+      of the documents which were used to create the tagger model. This
+      means that in order to migrate from version 1.1 to version 1.2,
+      among other things, you must retokenize your documents and update
+      any references to the OCaml tokenizer.<br>
+    </p>
+    <p>First, to retokenize your documents, we've provided the new <a
+        href="MATRetokenize.html">MATRetokenize</a> utility. Please back
+      up your data before you run this utility.<br>
+    </p>
+    <p>Next, if you refer to a tokenization step implementation in your
+      <a href="task_xml.html">task.xml</a> file, you must change all
+      occurrences of MAT.PluginMgr.CarafeTokenizationStep to
+      MAT.JavaCarafe.CarafeTokenizationStep. You may also need to
+      specify the heap_size attribute on the relevant tokenization
+      &lt;step&gt; in any workflow,&nbsp; if it turns out that the
+      default Java heap size isn't large enough for your purposes (this
+      attribute can also be specified on the command line; see the <a
+        href="carafe_engine.html">Carafe engine</a> documentation).<br>
+    </p>
+    <h3>Trainer/tagger has changed</h3>
+    <p>In version 1.2, the original OCaml tokenizer and Carafe
+      trainer/tagger have been replaced by the Java reimplementations.
+      There are a number of important changes that are required as a
+      result. Among other things, the model format for the Java engine
+      is completely different than the model format for the original
+      OCaml tokenizer. This means that you must rebuild all your models,
+      and update any references to the OCaml trainer/tagger.<br>
+    </p>
+    <p>First, retokenize your documents using MATRetokenize, as
+      described above, and update your tokenization steps.<br>
+    </p>
+    <p>Next, update your tagger and trainer settings in task.xml
+      according to the documentation provided for the <a
+        href="carafe_engine.html">Carafe engine</a>.<br>
+    </p>
+    <p>Next, if you refer to a tagging step in your <a
+        href="task_xml.html">task.xml</a> file, you must change all
+      occurrences of MAT.PluginMgr.CarafeTagStep to
+      MAT.JavaCarafe.CarafeTagStep. You may also need to specify the
+      heap_size attribute on the relevant tag &lt;step&gt; in any
+      workflow,&nbsp; if it turns out that the default Java heap size
+      isn't large enough for your purposes (this attribute can also be
+      specified on the command line; see the <a
+        href="carafe_engine.html">Carafe engine</a> documentation).
+      Similarly, if you have a &lt;model_build_settings&gt; entry, you
+      must change all occurrences of
+      MAT.CarafeModelBuilder.CarafeModelBuilder to
+      MAT.JavaCarafe.CarafeModelBuilder, and possibly specify the
+      heap_size attribute as well. (Note below that you must also change
+      the syntax of &lt;model_build_settings&gt;.)<br>
+    </p>
+    <p>Note that for the tagger, the prior_adjst attribute has been
+      renamed to prior_adjust. For the trainer, the engine attribute has
+      been eliminated, and the feature_set attribute as well; there's
+      now a new feature_spec attribute which refers to a file in which
+      you can describe your feature set, if you don't want to use the
+      default feature set. Also, the psa_iterations flag has been
+      removed, due to more numerous&nbsp; options in the Carafe trainer;<br>
+    </p>
+    <pre>psa_iterations="6"<br></pre>
+    <p>becomes<br>
+    </p>
+    <pre>training_method="psa" max_iterations="6"<br></pre>
+    <p> Because PSA no longer requires random segments, the
+      no_random_psa_segments flag has been removed.<br>
+    </p>
+    <p>Finally, use the same tools as before to build your models:
+      either MATModelBuild in file mode, or the modelbuild operation in
+      workspace mode.</p>
+    <h3>Internals of experiment directories have changed</h3>
+    <p>In order to support a more flexible way of specifying partitions
+      in experiments, the way the configuration of experiments is cached
+      has changed in version 1.2. What this means is that you will not
+      be able to invoke MATExperimentEngine on experiment directories
+      created using version 1.1 to regenerate the experiment scores.</p>
+    <h3>Experiment XML files have changed</h3>
+    <p>In order to support a more flexible way of specifying partitions
+      in experiments, we've changed the way partitions are specified in
+      the experiment XML files. We compare the relevant files below:<br>
+    </p>
+    <p>Version 1.1:<br>
+    </p>
+    <pre>&lt;experiment task='Named Entity'&gt;<br>  &lt;corpora dir="corpora"&gt;<br>    &lt;partition split_fraction=".2" ctype="split"/&gt;<br>    &lt;corpus name="test"&gt;<br>      &lt;pattern&gt;*.json&lt;/pattern&gt;<br>    &lt;/corpus&gt;<br>  &lt;/corpora&gt;<br>  &lt;model_sets dir="model_sets"&gt;<br>    &lt;model_set name="test" corpus="test"/&gt;<br>  &lt;/model_sets&gt;<br>  &lt;runs dir="runs"&gt;<br>    &lt;run_settings&gt;<br>      &lt;args steps="zone,tokenize,tag" workflow="Demo"/&gt;<br>    &lt;/run_settings&gt;<br>    &lt;run name="test" model="test" corpus="test"/&gt;<br>  &lt;/runs&gt;<br>&lt;/experiment&gt;</pre>
+    <p>Version 1.2:<br>
+    </p>
+    <pre>&lt;experiment task='Named Entity'&gt;<br>  &lt;corpora dir="corpora"&gt;<br>    &lt;partition name="train" fraction=".8"/&gt;<br>    &lt;partition name="test" fraction=".2"/&gt;<br>    &lt;corpus name="test"&gt;<br>      &lt;pattern&gt;*.json&lt;/pattern&gt;<br>    &lt;/corpus&gt;<br>  &lt;/corpora&gt;<br>  &lt;model_sets dir="model_sets"&gt;<br>    &lt;model_set name="test"&gt;<br>      &lt;training_corpus corpus="test" partition="train"/&gt;<br>    &lt;/model_set&gt;<br>  &lt;/model_sets&gt;<br>  &lt;runs dir="runs"&gt;<br>    &lt;run_settings&gt;<br>      &lt;args steps="zone,tokenize,tag" workflow="Demo"/&gt;<br>    &lt;/run_settings&gt;<br>    &lt;run name="test" model="test"&gt;<br>      &lt;test_corpus corpus="test" partition="test"/&gt;<br>    &lt;/run&gt;<br>  &lt;/runs&gt;<br>&lt;/experiment&gt;<br></pre>
+    <p>Note the following changes:<br>
+    </p>
+    <ul>
+      <li>The &lt;partition&gt; element now explicitly specifies named
+        partitions and their fractions. You are no longer restricted to
+        designating a corpus exclusively as test, exclusively as train,
+        or as a single split.</li>
+      <li>The remainder of the attributes of the &lt;partition&gt;
+        element have been moved to a new &lt;size&gt; element (not
+        exemplified here).<br>
+      </li>
+      <li>Multiple corpora, and partitions, can be associated with a
+        single &lt;model_set&gt; or &lt;run&gt;.&nbsp;</li>
+      <li>The "corpus" attributes of the &lt;model_set&gt; and
+        &lt;run&gt; arguments are no longer recognized. The
+        &lt;training_corpus&gt; and &lt;test_corpus&gt; child elements
+        replace them.</li>
+    </ul>
+    <h3>Settings in task.xml have changed</h3>
+    <p>In order to clarify how task settings are handled in MAT, a
+      number of changes have been made to the <a href="task_xml.html">task.xml</a>
+      file syntax.<br>
+    </p>
+    <p>First, the &lt;step&gt; element of &lt;step_implementations&gt;
+      no longer accepts arbitrary attributes. If you made use of this
+      feature to pass settings to the initialization methods of workflow
+      steps, you must now use the &lt;create_settings&gt; child element.
+      We doubt that anyone has made use of this feature.<br>
+    </p>
+    <p>Second, the &lt;step&gt; element of &lt;workflow&gt; no longer
+      accepts arbitrary attributes. If you make use of this feature to
+      pass settings to workflow steps, you must now use the
+      &lt;create_settings&gt;, &lt;ui_settings&gt;, or
+      &lt;run_settings&gt; child elements. The most likely situation
+      where this might arise is in passing defaults to the run methods
+      of steps. For instance, if you used this feature to increase the
+      Java heap size for Java Carafe, your task.xml file would have to
+      be revised as follows.<br>
+    </p>
+    <p>Version 1.1:<br>
+    </p>
+    <pre>  ...<br>  &lt;workflows&gt;<br>    &lt;workflow name="Demo" hand_annotation_available_at_end="yes"&gt;<br>      &lt;step name="zone"/&gt;<br>      &lt;step name="tokenize"/&gt;<br>      &lt;step name="tag" heap_size="2G"/&gt;<br>    &lt;/workflow&gt;<br>    ...<br>  &lt;/workflows&gt;<br>  ...<br></pre>
+    <p>Version 1.2:<br>
+    </p>
+    <pre>  ...<br>  &lt;workflows&gt;<br>    &lt;workflow name="Demo" hand_annotation_available_at_end="yes"&gt;<br>      &lt;step name="zone"/&gt;<br>      &lt;step name="tokenize"/&gt;<br>      &lt;step name="tag"&gt;<br>        &lt;run_settings heap_size="2G"/&gt;<br>      &lt;/step&gt;<br>    &lt;/workflow&gt;<br>    ...<br>  &lt;/workflows&gt;<br>  ...<br></pre>
+    <p>Second, the way settings are specified for model configurations
+      has changed. The name and class for the configuration are now
+      separated from the settings which are passed to the model builder,
+      as follows.<br>
+    </p>
+    <p>Version 1.1:<br>
+    </p>
+    <pre>  ...<br>  &lt;model_build_settings class="MAT.JavaCarafe.CarafeModelBuilder"<br>                        training_method="psa" max_iterations="6"/&gt;<br>  &lt;/model_build_settings&gt;<br>  ...<br></pre>
+    <p>Version 1.2:<br>
+    </p>
+    <pre>  ...<br>  &lt;model_config class="MAT.JavaCarafe.CarafeModelBuilder"&gt;<br>    &lt;build_settings training_method="psa" max_iterations="6"/&gt;<br>  &lt;/model_config&gt;<br>  ...<br></pre>
+    <p>Finally, the &lt;workflow&gt; element no longer accepts arbitrary
+      settings; these settings must be passed using the
+      &lt;ui_settings&gt; child element. No task appears to use this
+      option yet, so this shouldn't affect anyone.<br>
+    </p>
+    <h2>Upgrading from version 1.0 to version 1.1</h2>
+    <h3>Internals of experiment directories have changed</h3>
+    <p>In order to support a more flexible way of invoking the MAT
+      engine in experiments, the way the configuration of experiments is
+      cached has changed in version 1.1. What this means is that you
+      will not be able to invoke MATExperimentEngine on experiment
+      directories created using version 1.0 to regenerate the experiment
+      scores.<br>
+    </p>
+    <h3>Experiment XML files have changed</h3>
+    <p>In order to support a more flexible way of invoking the MAT
+      engine in experiments, we've changed the way corpus preprocessing
+      and test run processing are specified. In version 1.0, the MAT
+      engine was called as a command-line tool, and the options were
+      specified as a command line; in version 1.1, the options are
+      specified as XML attribute-value pairs. We compare the relevant
+      experiment XML blocks below:<br>
+    </p>
+    <p>Version 1.0:<br>
+    </p>
+    <pre>  &lt;corpora dir="corpora"&gt;<br>    &lt;prep&gt;--input_file_type xml-inline --workflow Align --steps 'zone,tokenize,align'&lt;/prep&gt;<br>    [...]<br>  &lt;/corpora&gt;<br><br>  &lt;runs dir="runs"&gt;<br>    &lt;run_settings&gt;<br>      &lt;args&gt;--steps zone,tokenize,tag --workflow Demo&lt;/args&gt;<br>    &lt;/run_settings&gt;<br>    [...]<br>  &lt;/runs&gt;<br></pre>
+    <p>Version 1.1:</p>
+    <pre>  &lt;corpora dir="corpora"&gt;<br>    &lt;prep input_file_type="xml-inline" workflow="Align" steps="zone,tokenize,align"/&gt;<br>    [...]<br>  &lt;/corpora&gt;<br><br>  &lt;runs dir="runs"&gt;<br>    &lt;run_settings&gt;<br>      &lt;args steps="zone,tokenize,tag" workflow="Demo"/&gt;<br>    &lt;/run_settings&gt;<br>    [...]<br>  &lt;/runs&gt;<br></pre>
+    <h3>New training engine configuration in task.xml</h3>
+    <p>Version 1.1 adds the ability to define different training
+      engines. Because of this change, if you've defined your own task
+      and you specified model build settings in your task.xml file, you
+      must add a class attribute to the model_build_settings element.
+      This attribute is not optional, and there is no default. If you're
+      using the default Carafe engine, the value you should use for this
+      attribute is MAT.CarafeModelBuilder.CarafeModelBuilder, as in the
+      following example:<br>
+    </p>
+    <pre>  &lt;model_build_settings class="MAT.CarafeModelBuilder.CarafeModelBuilder" <br>                        engine="anonTrain.native" feature_set="ANON-1"<br>                        psa_iterations="6"/&gt;</pre>
+    <h3>New folder in workspaces</h3>
+    <p>Version 1.1 adds the ability to import MAT JSON documents into
+      your workspaces which haven't yet been processed (as well as other
+      annotation formats, like XML inline). Because of this change, if
+      you have a workspace, you must add a directory to it. This
+      directory is expected by the MAT workspace engine. For each
+      workspace directory, do this:<br>
+    </p>
+    <pre>% mkdir &lt;workspace_dir&gt;/folders/rich_incoming<br></pre>
+    <h3>New command line option restriction for MATModelBuilder</h3>
+    <p>In version 1.1, it's possible to have multiple model build
+      configurations in your task.xml file. In order to ensure that the
+      correct configuration adds the appropriate command line options to
+      the MATModelBuilder executable, it was necessary to introduce a
+      new restriction on the&nbsp; --task option for MATModelBuilder: if
+      it appears, it must now be the first command-line option. In other
+      words, the following will now raise an error:<br>
+    </p>
+    <pre>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATModelBuilder \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_files '/path/to/my/docs/1[0-9][0-9].json' \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_dir /path/to/my/other/docs </span><span style="font-weight: bold;">--task "Named Entity" </span><span style="font-weight: bold;">\</span><br style="font-weight: bold;"><span style="font-weight: bold;">--lexicon_dir /path/to/my/lexicon/ --save_as_default_model</span></pre>
+    <h3>Change to how the default model is specified in task.xml</h3>
+    <p>In version 1.0, the default model was defined within the model
+      build settings. In version 1.1, because of the presence of
+      multiple model bulid configurations, we've separated the
+      specification of the default model in task.xml.<br>
+    </p>
+    <p>Version 1.0:<br>
+    </p>
+    <pre>  &lt;model_build_settings engine="anonTrain.native" feature_set="ANON-1"<br>                        psa_iterations="6" default_model="default_model"/&gt;</pre>
+    <p>Version 1.1:<br>
+    </p>
+    <pre>  &lt;model_build_settings class="MAT.CarafeModelBuilder.CarafeModelBuilder" <br>                        engine="anonTrain.native" feature_set="ANON-1"<br>                        psa_iterations="6"/&gt;<br>  &lt;default_model&gt;default_model&lt;/default_model&gt;<br></pre>
+    <br>
+    <br>
+  </body>
+</html>

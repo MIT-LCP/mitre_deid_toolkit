@@ -1,0 +1,610 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=windows-1252"
+      http-equiv="Content-Type">
+    <title>Standalone Viewer</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>The standalone viewer</h1>
+    <p>MAT's document component can be used, without the rest of MAT, to
+      view, annotate, align, or compare annotated documents. You may
+      want to embed this capability in your own Web tool or workflow.
+      This document describes how to include the appropriate Web pages
+      from the MAT distribution; how to generate a document which the
+      MAT document component can understand; and how to enable hand
+      annotation, comparison and alignment.<br>
+    </p>
+    <p>For instance, let's say you have a Java servlet which accesses a
+      database in which your annotations are stored. You might use our <a
+        href="java_overview.html">Java library</a> to produce a
+      serialized document in the appropriate format, retrieve it in your
+      Web application via AJAX, and pass this serialization to the
+      embedded standalone document viewer. Alternatively, you could
+      forward your annotations to your Web application in your own
+      format, and use our <a href="js_api.html">JavaScript library</a>
+      to create the appropriate document.<br>
+    </p>
+    <p>An example can be found in
+      $MAT_PKG_HOME/web/examples/standalone_viewer_example.html.<br>
+    </p>
+    <ul>
+      <li><a href="#Viewer_setup">Viewer setup</a></li>
+      <li><a href="#Creating_the_viewer">Creating the viewer</a></li>
+      <li><a href="#Creating_a_document">Creating a document</a></li>
+      <li><a href="#Creating_and_displaying_a_single">Creating and
+          displaying a single document</a></li>
+      <li><a href="#Displaying_aligned_documents">Displaying aligned
+          documents</a></li>
+      <li><a href="#Displaying_a_document_comparison">Displaying a
+          document comparison</a><br>
+      </li>
+      <li><a href="#Enabling_hand_annotation">Enabling hand annotation</a><br>
+      </li>
+      <li><a href="#Details:_the_viewer_object">Details: the viewer
+          object</a></li>
+      <li><a href="#Details:_the_tag_table">Details: the tag table</a></li>
+    </ul>
+    <h2><a name="Viewer_setup"></a>Viewer setup</h2>
+    <p>The following includes are required from
+      $MAT_PKG_HOME/web/htdocs:<br>
+    </p>
+    <ul>
+      <li>js/mat_utils.js</li>
+      <li>js/mat_core.js</li>
+      <li>js/core_ui.js</li>
+      <li>js/mat_doc_display.js</li>
+      <li>js/mat_standalone_doc_viewer.js</li>
+      <li>css/mat_core.css</li>
+    </ul>
+    <p>The Javascript files must be loaded in the order given. If you're
+      running the <a
+href="../../../../../branches/version_1_3_release/MAT/web/htdocs/doc/html/MATWeb.html">MAT
+
+
+
+
+
+
+
+
+
+
+
+
+        Web server</a>, you can load them in your document head as
+      follows (where "yourserver" is the host where the MAT Web server
+      is running):<br>
+    </p>
+    <pre>&lt;script type="text/javascript" src="http://yourserver:7801/MAT/js/mat_utils.js"&gt;&lt;/script&gt;<br>&lt;script type="text/javascript" src="http://yourserver:7801/MAT/js/mat_core.js"&gt;&lt;/script&gt;<br>&lt;script type="text/javascript" src="http://yourserver:7801/MAT/js/core_ui.js"&gt;&lt;/script&gt;<br>&lt;script type="text/javascript" src="http://yourserver:7801/MAT/js/mat_doc_display.js"&gt;&lt;/script&gt;<br>&lt;script type="text/javascript" src="http://yourserver:7801/MAT/js/mat_standalone_doc_viewer.js"&gt;&lt;/script&gt;<br>&lt;link rel="stylesheet" type="text/css" href="http://yourserver:7801/MAT/css/mat_core.css"&gt;<br></pre>
+    <p>Alternatively, you can copy these six files to your own Web
+      server.<br>
+    </p>
+    <p>No other files are required. Although the MAT UI relies heavily
+      on the Yahoo! UI Toolkit, the standalone doc viewer does not, nor
+      does it rely on any other toolkit.<br>
+    </p>
+    <h2><a name="Creating_the_viewer"></a>Creating the viewer</h2>
+    <p>In order to create the standalone viewer, you need, minimally, a
+      tag set and a DIV where the viewer will be rendered.<br>
+    </p>
+    <pre>&lt;script type="text/javascript"&gt;
+var Tags = [{label: "PERSON", css: "background-color: #CCFF66"},<br>            {label: "LOCATION", css: "background-color: #F99CC"},<br>            {label: "ORGANIZATION", css: "background-color: #99CCFF"}];<br><br>var docDiv = document.getElementById("docDiv");<br><br>// Set up the viewer.<br>var viewer = new MAT.DocDisplay.StandaloneViewer({<br>  tags: Tags,<br>  div: docDiv<br>});<br>&lt;/script&gt;<br></pre>
+    <p>There's a lot more you can do, which we'll return to when we look
+      at the viewer details. For now, let's move on to creating
+      documents.<br>
+    </p>
+    <h2><a name="Creating_and_displaying_a_single"></a>Creating and
+      displaying a single document</h2>
+    <p>The document you provide should be a Javascript object which
+      corresponds to the MAT JSON format, versions 1 or 2. For instance:<br>
+    </p>
+    <pre>&lt;script type="text/javascript"&gt;<br>var Document1 = {<br>  "signal": "David Asher is a former coordinator of North Korea policy at the State Department.",<br>  "metadata": {},<br>  "asets": [{"type": "ORGANIZATION", "attrs": [], "annots": [[65, 81]]}, <br>            {"type": "LOCATION", "attrs": [], "annots": [[39, 50]]},<br>            {"type": "PERSON", "attrs": [], "annots": [[0, 11]]}]<br>};<br>&lt;/script&gt;<br></pre>
+    <p>We assume that you'd create these documents automatically
+      somehow, by converting documents in your favorite format into MAT
+      JSON format, or from your previous interactions with MAT. The
+      document you pass can also be a JSON string in this format, rather
+      than the resulting structure, or, alternatively, you can use the
+      MAT JavaScript UI to create the appropriate document, e.g.:<br>
+    </p>
+    <pre>&lt;script type="text/javascript"&gt;<br>var Document1 = viewer.newDocument("David Asher is a former coordinator of North Korea policy at the State Department.");
+Document1.createAnnotation("PERSON", 0, 11);<br>Document1.createAnnotation("LOCATION", 39, 50);<br>Document1.createAnnotation("ORGANIZATION", 65, 81);<br>&lt;/script&gt;<br></pre>
+    <p>To display this document, just call renderSingleDocument():<br>
+    </p>
+    <pre>&lt;script type="text/javascript"&gt;<br>viewer.renderSingleDocument(Document1);<br>&lt;/script&gt;<br></pre>
+    <p>The viewer will reset itself before it displays the document, so
+      you can reuse the viewer as often as you want.<br>
+    </p>
+    <h2><a name="Displaying_aligned_documents"></a>Displaying aligned
+      documents<br>
+    </h2>
+    <p>You can also display an <a href="ui_alignment.html">alignment</a>
+      of multiple documents which all have the same document signal.
+      Keep in mind that this mechanism only works for span annotations.<br>
+    </p>
+    <pre>&lt;script type="text/javascript"&gt;
+viewer.renderDocumentAlignment([<br> {doc: Document1, position: "above", initial: "1"}, <br> {doc: Document2, position: "above", initial: "2"}, <br> {doc: GoldDocument, position: "behind", initial: "G"}<br>]);<br>&lt;/script&gt;<br></pre>
+    <p>In this example, the argument to renderDocumentAlignment is a
+      Javascript array of objects with the following keys and values:<br>
+    </p>
+    <table style=" text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style=" vertical-align: top;">key<br>
+          </th>
+          <th style=" vertical-align: top;">value<br>
+          </th>
+          <th style=" vertical-align: top;">description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">doc<br>
+          </td>
+          <td style="vertical-align: top;">a MAT JSON document<br>
+          </td>
+          <td style="vertical-align: top;">either a JSON string, a
+            Javascript object, or an object created by newDocument()<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">position<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">either "above" (annotations
+            appear above the text), "behind" (annotations appear behind
+            the text) or "below" (annotations appear below the text)<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">initial<br>
+          </td>
+          <td style="vertical-align: top;">a one-character string<br>
+          </td>
+          <td style="vertical-align: top;">a shorthand reference to the
+            document in the viewer<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>The stacking order of the documents is determined by the order of
+      the entries in the Javascript array: earlier elements are above
+      later elements. There can be only one element with a position of
+      "behind", obviously.<br>
+    </p>
+    <p>The viewer will reset itself before it displays the document
+      alignment, so you can reuse the viewer as often as you want.<br>
+    </p>
+    <h2><a name="Displaying_a_document_comparison"></a>Displaying a
+      document comparison</h2>
+    <p>Unlike document alignments, a true document <a
+        href="ui_comparison.html">comparison</a> works for both spanned
+      and spanless annotations. These documents are created by the
+      Python library, using the same pairing algorithm used by the
+      scorer. So in order to generate such a document, you'll need to do
+      some work in your own Web backend, either by capturing the output
+      of the <a href="MATCreateComparisonDocument.html">MATCreateComparisonDocument</a>
+      utility, or (if your Web backend is Python) by directly calling
+      the libraries which that utility calls. Once you have such a
+      document (either a JSON object or its corresponding string), you
+      can create the comparison view as follows:<br>
+    </p>
+    <pre>&lt;script type="text/javascript"&gt;
+viewer.renderDocumentComparison(doc);<br>&lt;/script&gt;<br></pre>
+    <p>or<br>
+    </p>
+    <pre>&lt;script type="text/javascript"&gt;
+viewer.renderDocumentComparison(doc, {<br>  pivot: {<br>    docName: ...,<br>    initial: ...<br>  }, <br>  others: [{<br>    position: ...,<br>    docName: ...,<br>    initial: ...<br>  }, ...]<br>});<br>&lt;/script&gt;<br></pre>
+    <p>In this second case, the second argument is a JavaScript object
+      which describes the documents, and gives you more control over how
+      the documents are referenced in the comparison view. The pivot is
+      the reference document; the others are the documents which you're
+      comparing to the reference document. The others array should be in
+      the same order as the documents that you passed to the comparison
+      creation document utility. The position and initial attributes
+      have the same interpretation as they do for document alignments;
+      the docName is a longer name by which you want the document to be
+      described. Note that you can't change the position of the pivot;
+      it is always behind the text.<br>
+    </p>
+    <h2><a name="Enabling_hand_annotation"></a>Enabling hand annotation</h2>
+    <p>If you want to do hand annotation in your document, you'll need
+      to add a few more headers, and you'll need to provide access to
+      the YAHOO! UI Toolkit, which we use to manage the annotation
+      popups.<br>
+    </p>
+    <p>Add the following headers immediately before the load line for
+      mat_standalone_doc_viewer.js:<br>
+    </p>
+    <pre>&lt;script type="text/javascript" src="http://yourserver:7801/MAT/resources/yui-2.6.0-dist/build/yuiloader/yuiloader.js"&gt;&lt;/script&gt;<br>&lt;script type="text/javascript" src="http://yourserver:7801/MAT/js/workbench_ui_popup_mgr.js"&gt;&lt;/script&gt;<br>&lt;link href="http://yourserver:7801/MAT/css/workbench_ui_annotation.css" rel="stylesheet" type="text/css"&gt;<br></pre>
+    <p>Once you've done this, you need to do three more things.<br>
+    </p>
+    <p>First, we need to ensure that YUI is loaded <b>before</b> we
+      create the viewer. Because of how browsers load documents, this is
+      harder than it should be. You'll need to place the code which
+      creates the viewer in an onload() function, and you'll <b>also</b>
+      need to make use of the
+      MAT.DocDisplay.StandaloneViewer.waitForYUI() function. Second,
+      create your viewer with the "annotatable" attribute set; and
+      third, enable hand annotation using the enableHandAnnotation
+      method. These steps are all illustrated here:<br>
+    </p>
+    <pre>&lt;html&gt;<br>&lt;head&gt;<br>....<br>&lt;script&gt;<br>function onload() {<br>  MAT.DocDisplay.StandaloneViewer.waitForYUI(function () {<br>    var viewer = new MAT.DocDisplay.StandaloneViewer({<br>      tags: Tags,<br>      annotatable: true,<br>      div: docDiv<br>    });<br><br>    viewer.enableHandAnnotation();<br>  });<br>}<br>&lt;/script&gt;<br>....<br>&lt;/head&gt;<br>&lt;body onload="onload()"&gt;<br>....<br>&lt;/body&gt;<br>&lt;/html&gt;<br></pre>
+    <p>These last two steps are separate so that if you want to control
+      whether hand annotation is enabled via an external radio button,
+      you can.<br>
+    </p>
+    <p><span style="font-weight: bold;">Note</span>: there is a bug in
+      Firefox 9 where, if the first element of the document body is a
+      block element whose default style has a top margin, such as
+      &lt;p&gt;, the annotation popup will insert an invisible monitor
+      element which erroneously blocks the collapse of the top margin of
+      that first block element. You can get around this by enclosing the
+      entire body of the document in a &lt;div&gt;.<br>
+    </p>
+    <h2><a name="Details:_the_viewer_object"></a>Details: the viewer
+      object</h2>
+    <p>When you create a viewer, there are a lot of parameters you can
+      set; by far, the most important is how you tell the viewer about
+      the annotations you want it to recognize. There are three possible
+      ways of doing this, with increasing levels of power and
+      complexity:<br>
+    </p>
+    <ul>
+      <li>The "tags" parameter allows you to define simple spanned
+        annotations. You can set attributes, but only in support of <a
+          href="annotation_intro.html">effective labels</a>.</li>
+      <li>The "atr" parameter allows you to define a <a
+          href="asd_json_reference.html#The_simplified_JSON">simplified
+          JSON annotation set descriptor</a>, which is a list of
+        complete annotation set descriptors, containing both spanned and
+        spanless annotations, with as many attributes as you want, with
+        as many types as you want. However, you're not able to specify
+        whether to alphabetize the labels or not in the legend, or to
+        specify a tag hierarchy for recursive menu display during
+        annotation.</li>
+      <li>The "taskATRFragment" parameter allows you to specify an <a
+          href="asd_json_reference.html#The_expanded_JSON">expanded JSON
+          annotation set descriptor</a>, which supports everything you
+        can specify with "atr", but also a number of display parameters
+        which "atr" does not support.</li>
+    </ul>
+    <p>Choose the parameter that best suits your needs, but choose only
+      one. You can use the <a href="MATAnnotationInfoToJSON.html"
+        target="iframetarget">MATAnnotationInfoToJSON</a> tool to
+      generate the simplified or expanded annotation set descriptors for
+      the "atr" or "taskATRFragment" parameters. </p>
+    <p>The viewer is instantiated with a single argument, a Javascript
+      object with the following keys and values:<br>
+    </p>
+    <table style=" text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style=" vertical-align: top;">key<br>
+          </th>
+          <th style=" vertical-align: top;">value<br>
+          </th>
+          <th style=" vertical-align: top;">description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">tags<br>
+          </td>
+          <td style="vertical-align: top;">a tag table<br>
+          </td>
+          <td style="vertical-align: top;">see above and <a
+              href="#Details:_the_tag_table">below</a>. Either this, or
+            atr, or taskATRFragment must be provided.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">atr<br>
+          </td>
+          <td valign="top">a more complex tag table<br>
+          </td>
+          <td valign="top">the fomat of this parameter must be a <a
+              href="asd_json_reference.html#The_simplified_JSON">simplified
+
+
+
+
+
+              JSON annotation set descriptor</a>. Either this, or tags,
+            or taskATRFragment must be provided.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">taskATRFragment<br>
+          </td>
+          <td valign="top">a most complex tag table<br>
+          </td>
+          <td valign="top">the format of this parameter must be an <a
+              href="asd_json_reference.html#The_expanded_JSON">expanded
+              JSON annotation set descriptor</a>. Either this, or tags,
+            or atr must be provided.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">div<br>
+          </td>
+          <td style="vertical-align: top;">a Javascript DOM object<br>
+          </td>
+          <td style="vertical-align: top;">the DOM object corresponding
+            to the DIV in which you'd like to view your output<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">taskName<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">the name you want to use if
+            the standalone viewer wants to display a task name.
+            Optional. This may not be used anywhere.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">annotatable<br>
+          </td>
+          <td style="vertical-align: top;">a boolean<br>
+          </td>
+          <td style="vertical-align: top;">if true, the viewer will be
+            set up to permit hand annotation. Optional. Default is
+            false. If true, you can then use the enableHandAnnotation()
+            and disableHandAnnotation() methods.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">textRightToLeft<br>
+          </td>
+          <td style="vertical-align: top;">a boolean<br>
+          </td>
+          <td style="vertical-align: top;">if true, the viewer will
+            display text right to left. Optional. Use this to display
+            documents in, e.g., Arabic or Hebrew.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">legendDiv<br>
+          </td>
+          <td style="vertical-align: top;">a Javascript DOM object<br>
+          </td>
+          <td style="vertical-align: top;">the DOM object corresponding
+            to the DIV in which you'd like to have the tag legend
+            rendered. Optional.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">callbacks<br>
+          </td>
+          <td style="vertical-align: top;">a Javascript object<br>
+          </td>
+          <td style="vertical-align: top;">Each key is the name of a
+            callback, and each value is a function. Use this object to
+            customize the behavior of the viewer when certain events
+            occur. These function names and their arglists are:<br>
+            <ul>
+              <li>uiError(msg):&nbsp; a function which will report an
+                error message string to your UI. If not defined, alert()
+                will be used.</li>
+              <li>uiInform(msg):&nbsp; a function which will report an
+                status message string to your UI. If not defined,
+                alert() will be used.</li>
+              <li>uiClearPane(div):&nbsp; a function which will clear
+                the DOM object argument. The default function removes
+                every child.</li>
+              <li>mouseOverAnnotations(contentObj): a function which
+                will display the content description object when the
+                mouse hovers over an annotation. The default does
+                nothing. The object has three key/value pairs: "type"
+                (either "content" or "admin"), "labels" (a list of
+                strings), "suffix" (basically, the initial from the
+                entry in the document comparison invocation, if
+                available).<br>
+              </li>
+              <li>cancelMouseOverAnnotations(): a function which is
+                called when the mouse stops hovering over an annotation.
+                The default does nothing.</li>
+            </ul>
+            There are a few more, but you'll never need them. Consult
+            the source code if you're curious.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">editorContainer<br>
+          </td>
+          <td valign="top">a Javascript object<br>
+          </td>
+          <td valign="top">Optional. A Javascript object which manages
+            an editor div. You might want this if, e.g., you want the
+            object to do something when the annotation is changed or
+            deleted. This object should implement the methods
+            getAnnotationDisplayDiv(), which should return a div into
+            which the display is rendered, and
+            notifyVisualDisplay(annot, disp), which notifies the
+            container that a display is available. The container is now
+            responsible for implementing the display API, namely calling
+            annot.addVisualDisplay(disp) and
+            annot.removeVisualDisplay(disp) at the appropriate times,
+            and also forceDisplayResponse() and
+            forceRemoveRedisplayResponse(), which should at least call
+            those same methods on the disp. Only one of editorDiv and
+            editorContainer can be specified.<br>
+            <br>
+            Consult the code if you're curious about this parameter.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">editorDiv<br>
+          </td>
+          <td valign="top">a Javascript DOM object<br>
+          </td>
+          <td valign="top">an HTML element in which any <a
+              href="ui_annotation_edit.html">annotation editors/viewers</a>
+            can be rendered. They will be popped up otherwise. Optional.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>For instance, let's say that you have a tag table in the variable
+      "Tags", as above; a div with the ID "docDiv", as above; a div with
+      the ID "legDiv", where you want the legend rendered; and a div
+      with the ID "updateDiv", where you want to display the annotation
+      that's being hovered over. You'd instantiate the viewer as
+      follows:<br>
+    </p>
+    <pre>var viewer = new MAT.DocDisplay.StandaloneViewer({<br>  tags: Tags,<br>  taskName: "Named Entity",<br>  div: document.getElementByID("docDiv"),<br>  legendDiv: document.getElementByID("legDiv"),<br>  callbacks: {<br>    mouseOverAnnotations: function(contentObj) {<br>      document.getElementByID("updateDiv").innerHTML = contentObj.labels.join(", ") + (contentObj.suffix || "");<br>    },<br>    cancelMouseOverAnnotations: function() {<br>      document.getElementByID("updateDiv").innerHTML = "";<br>    }<br>  }<br>});<br></pre>
+    <h3>Viewer methods</h3>
+    <table style=" text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <td style="vertical-align: top;">enableHandAnnotation()<br>
+          </td>
+          <td style="vertical-align: top;">If the annotatable key is
+            provided during configuration, you can turn on hand
+            annotation with this method. Hand annotation will only be
+            available with single documents, never with comparisons.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">disableHandAnnotation()<br>
+          </td>
+          <td style="vertical-align: top;">Turn off hand annotation
+            using this method.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">newDocument(signal)<br>
+          </td>
+          <td style="vertical-align: top;">Create a new document with
+            the specified signal. The result will be of type
+            MAT.Annotation.AnnotatedDoc. See mat_core.js for how to
+            interact with this object.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">renderSingleDocument(doc)<br>
+          </td>
+          <td style="vertical-align: top;">Render a single document to
+            the DIV configured for the viewer. The doc can either be the
+            result of newDocument() above, or a Javascript object in
+            MAT-JSON format, or a JSON string in that format.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">renderDocumentAlignment(comps)<br>
+          </td>
+          <td style="vertical-align: top;">Render an alignment of
+            multiple documents to the DIV configured for the viewer. See
+            <a href="#Displaying_aligned_documents">here</a> for more
+            details.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">renderDocumentComparison(doc)<br>
+            renderDocumentComparison(doc, details)<br>
+          </td>
+          <td valign="top">Render a comparison of multiple documents to
+            the DIV configured for the viewer. See <a
+              href="#Displaying_a_document_comparison">here</a> for
+            details.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">getDocument()<br>
+          </td>
+          <td style="vertical-align: top;">Retrieve a document which has
+            been displayed using renderSingleDocument(). You might want
+            to use this method to retrieve the results of annotation, if
+            you rendered the document using MAT-JSON instead of by
+            creating a new document using the newDocument() method.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">styleAnnotation(annot, params)<br>
+          </td>
+          <td valign="top">Allows you to assign special styling to
+            particular annotations. If properly configured, it returns
+            an undo function, which can be combined with other
+            functionality to style and unstyle annotations in order, for
+            instance. See the source code for details.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="Details:_the_tag_table"></a>Details: the tag table</h2>
+    <p>The tag table is a list of annotations which will be recognized
+      and displayed. It is a Javascript array of objects with the
+      following keys and values:<br>
+    </p>
+    <table style=" text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style=" vertical-align: top;">key<br>
+          </th>
+          <th style=" vertical-align: top;">value<br>
+          </th>
+          <th style=" vertical-align: top;">description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">label<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">an annotation label in the
+            MAT JSON document. Required.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">attrs<br>
+          </td>
+          <td style="vertical-align: top;">an array of two-element
+            arrays<br>
+          </td>
+          <td style="vertical-align: top;">if you want to associate a
+            visible label with an annotation label plus some
+            attribute-value pairs (e.g., if you want ENAMEX
+            TYPE="PERSON" to show up as PERSON in your display), you can
+            do this by specifying the attribute-value pairs here as an
+            array of two-element arrays, e.g., [["TYPE", "PERSON"]], and
+            then specifying the effectiveLabel key.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">effectiveLabel<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">see the description of attrs
+            immediately above. The visible label for a combination of an
+            annotation label plus some attribute-value pairs. <br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">css<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">a CSS specification for your
+            label (e.g., "background-color: blue"). Required.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>If you choose to display an annotation legend (see below), the
+      elements in the legend will appear in the same order you listed
+      them in the tag table. Remember, the CSS will apply to every
+      subspan of the marked text, and the text may be divided into
+      subspans if annotations overlap, so using left and right borders
+      is not recommended.</p>
+    <p> </p>
+  </body>
+</html>

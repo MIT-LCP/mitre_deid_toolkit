@@ -1,0 +1,1131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=windows-1252"
+      http-equiv="Content-Type">
+    <title>General Deidentification Customizations</title>
+    <!-- this will appear as tasks/<taskdir>/doc/<file>, and the doc CSS
+       is in css, so... -->
+    <link href="../../../../css/doc.css" rel="stylesheet"
+      type="text/css">
+  </head>
+  <body>
+    <h1>General Deidentification Customizations</h1>
+    <ul>
+      <li><a href="#The_task">The task</a><br>
+      </li>
+      <li><a href="#The_annotations">The annotations</a></li>
+      <li><a href="#Extensions_to_the_available_steps">Extensions to the
+          available steps</a></li>
+      <li><a href="#Additional_step_implementations">Additional step
+          implementations</a></li>
+      <li><a href="#MATEngine_example">MATEngine example</a></li>
+      <li><a href="#Training_lexicons_and_case_sensitivity">Training,
+          lexicons, and case sensitivity</a><br>
+      </li>
+      <li><a href="#Running_deidentification_experiments">Running
+          deidentification experiments</a><br>
+      </li>
+      <li><a href="#Customizing_deidentification_replacement">Customizing
+deidentification
+
+
+
+
+
+
+          replacement</a><br>
+      </li>
+      <li><a href="#Accessing_deidentification_from_Java">Accessing
+          deidentification from Java</a><br>
+      </li>
+      <li><a href="#Extensions_to_the_workspaces">Extensions to the
+          workspaces</a></li>
+      <li><a href="#Extensions_to_the_UI">Extensions to the UI</a></li>
+      <li><a href="#Flagged_unparseable_seeds_and_forced">Flagged
+          unparseable seeds and forced review</a> </li>
+      <li><a href="#Replacement_redaction_and_resynthesis">Replacement,
+          redaction and resynthesis</a></li>
+      <li><a href="#Extensions_to_the_task.xml_file">Extensions to the
+          task.xml file</a></li>
+      <li><a href="#Defining_your_own_deidentification_task">Defining
+          your own deidentification task</a></li>
+      <li><a href="#Using_deidentification_without_MIST">Using
+          deidentification without MIST</a></li>
+      <li><a href="#Version_history">Version history</a><br>
+      </li>
+    </ul>
+    <h2><a name="The_task"></a>The task</h2>
+    <p>The core MIST deidentification system is implemented as a task
+      within the MAT toolkit. You will not use this core
+      deidentification task directly; rather, you'll be using a further
+      specialization of the core deidentification task, e.g., the AMIA
+      or HIPAA task. Each task is a child task of the parent task class,
+      named "Deidentification", and the implementation of each task is a
+      subclass of the Deidentification.DeidTaskDescriptor Python class.
+      You can see evidence of both these parent-child relationships in
+      the task.xml file for your particular deidentification task.<br>
+    </p>
+    <p>Creating new deidentification tasks is very, very complicated,
+      and we don't have the resources to document the process. Please
+      consult the specific deidentification tasks you have in your
+      distribution and use them as models if you absolutely need to
+      build your own task.<br>
+    </p>
+    <h2><a name="The_annotations"></a>The annotations</h2>
+    <p>The zone and token annotations you'll use (see the discussion of
+      annotations <a href="../../../../html/annotation_intro.html">here</a>)
+      are just the default zone and token annotations. The content
+      annotations, which are the ones you'll add or correct, correspond
+      to the PII categories for your task: e.g., the HIPAA categories
+      for medical record deidentification. Refer to the documentation
+      for your specific deidentification task for more details.<br>
+    </p>
+    <h2><a name="Extensions_to_the_available_steps"></a>Extensions to
+      the available steps</h2>
+    <p>As we describe <a
+        href="../../../../html/tasks_and_workflows.html">here</a>, steps
+      are the basic activities that you undertake in a document. E.g.,
+      the <span style="font-weight: bold;">tokenize</span> step
+      typically identifies the word boundaries in the text. The typical
+      deidentification task has the following steps:<br>
+    </p>
+    <ul>
+      <li><span style="font-weight: bold;">zone</span>: find appropriate
+        the regions of the document to process, and find the word
+        boundaries in those regions. This step is a concatenation of the
+        core MAT zone step and the core MAT tokenize step, for
+        accidental historical reasons.</li>
+      <li><span style="font-weight: bold;">tag</span>: add PII
+        annotations, either automatically or by hand.</li>
+      <li><span style="font-weight: bold;">nominate</span>: create
+        replacement phrases for the regions of text tagged with PII
+        annotations, and store them in the PII annotations.</li>
+      <li><span style="font-weight: bold;">transform</span>: create a
+        new document using the replacement phrases.</li>
+    </ul>
+    <p>Note that the tokenize step found in the sample MAT task is not
+      used explicitly in MIST. <br>
+    </p>
+    <p>The <span style="font-weight: bold;">nominate</span> step
+      requires a <span style="font-weight: bold;">replacer</span>,
+      which is a strategy for generating replacement phrases. We discuss
+      replacers below.<br>
+    </p>
+    <p>The typical deidentification task arranges these steps into a
+      number of workflows:<br>
+    </p>
+    <ul>
+      <li>Hand annotation: zone, (hand) tag, nominate, transform</li>
+      <li>Review/repair: nominate, transform</li>
+      <li>Demo: zone, tag, nominate, transform</li>
+      <li>Resynthesize: tag, nominate, transform</li>
+    </ul>
+    <p>What's unusual about these four workflows is that the last of the
+      workflows applies to a different class of documents than the first
+      three. The resynthesize workflow is intended to apply to documents
+      which have been transformed into an obscure form, e.g., documents
+      which contain fillers like [PERSON] in place of the person names
+      in the original document. Under the resynthesize workflow, the tag
+      step is a simple pattern-matching operation, and the replacers
+      convert obscured documents into resynthesized documents. We
+      discuss resynthesis below.<br>
+    </p>
+    <h2><a name="Additional_step_implementations"></a>Additional step
+      implementations</h2>
+    <p>The steps of the deidentification task require the following step
+      implementations:<br>
+    </p>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Step implementation name<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">Deidentification.MultiZoneStepForUndo<br>
+          </td>
+          <td style="vertical-align: top;">This step provides default
+            undo capabilities for the compound zone step described
+            above. To be honest, it's not exactly clear why this
+            implementation is necessary.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">Deidentification.ResynthZoneStep<br>
+          </td>
+          <td style="vertical-align: top;">This step is a step which
+            does nothing, specifically in the case of zoning in the
+            Resynthesize workflow; no zoning is necessary, and we can't
+            permit the default zoning to apply. At the moment, the
+            Resynthesize workflow does not contain a zone step; this
+            implementation may exist for historical reasons.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">Deidentification.ResynthTagStep<br>
+          </td>
+          <td style="vertical-align: top;">The implementation of the tag
+            step in the Resynthesize workflow. This tag set merely needs
+            to do pattern-matching, rather than invoke an engine like
+            Carafe.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">Deidentification.NominateStep<br>
+          </td>
+          <td style="vertical-align: top;">The implementation of the
+            nominate step.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">Deidentification.TransformStep<br>
+          </td>
+          <td style="vertical-align: top;">The implementation of the
+            transform step.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>As described <a href="../../../../html/task_workflow_ref.html">here</a>,
+      steps can also take key-value pair arguments which can be
+      specified in the task.xml file or in the invocation of the MAT
+      engine. We document the arguments for these steps here.<br>
+    </p>
+    <h3>Deidentification.NominateStep</h3>
+    <p>The following options might be generally useful for the nominate
+      step:<br>
+    </p>
+    <table style=" text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Command-line option<br>
+          </th>
+          <th style=" vertical-align: top;">XML attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--replacer<br>
+          </td>
+          <td style="vertical-align: top;">replacer</td>
+          <td style="vertical-align: top;">one of the replacer UI names
+            shown <a href="#Extensions_to_the_task.xml_file">below</a><br>
+          </td>
+          <td style="vertical-align: top;">The name of the replacement
+            strategy to be used. If the workflow has more than one
+            replacer available, this setting is obligatory. This is most
+            likely the only one of these settings you'll ever use.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--replacement_map<br>
+          </td>
+          <td style="vertical-align: top;">replacement_map</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">You can customize your
+            replacement using a JSON string which describes a set of
+            if-then rules which you can apply to your clear -&gt; clear
+            match. See <a
+              href="#Customizing_deidentification_replacement">Customizing
+deidentification
+
+
+
+
+
+
+              replacement</a> below.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--replacement_map_file<br>
+          </td>
+          <td style="vertical-align: top;">replacement_map_file</td>
+          <td style="vertical-align: top;">a filename<br>
+          </td>
+          <td style="vertical-align: top;">You can also pass in your
+            replacement customization inside a file.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--dont_nominate<br>
+          </td>
+          <td style="vertical-align: top;">dont_nominate</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">A comma-separated list of
+            labels for which nominations should not be proposed. By
+            default, nominations are proposed for all content
+            annotations.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--flag_unparseable_seeds<br>
+          </td>
+          <td style="vertical-align: top;">flag_unparseable_seeds</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">A comma-separated list of
+            labels whose annotations should be flagged in "clear -&gt;
+            clear" replacement (see <a
+              href="#Replacement_redaction_and_resynthesis">below</a>)
+            when the phrase in the original document could not be parsed
+            appropriately (and thus whose replacements might not have
+            the appropriate fidelity). Currently, only dates, URLs,
+            phone numbers, and can be flagged in this way; no labels are
+            flagged by default. Any flagged elements must be <a
+              href="#Flagged_unparseable_seeds_and_forced">corrected</a>
+            before the transform step is executed.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>The nominate step also accepts the following options, but they're
+      pretty exotic and you're very unlikely to use them (they're also
+      not particularly well tested or supported):<br>
+    </p>
+    <table style=" text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Command-line option<br>
+          </th>
+          <th style=" vertical-align: top;">XML attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--cache_case_sensitivity<br>
+          </td>
+          <td style="vertical-align: top;">cache_case_sensitivity</td>
+          <td style="vertical-align: top;">a semicolon-separated
+            sequence of tag names, e.g. 'PERSON;LOCATION'<br>
+          </td>
+          <td style="vertical-align: top;">In some cases, the replacer
+            for the given tag maintains an internal cache, to ensure,
+            e.g., that variations in names are replaced consistently
+            throughout a document. Names and institutions are the most
+            obvious replacers which use a cache. By default, the caches
+            are not case-sensitive; this setting allows the user to
+            specify that some of them are. You will likely never need
+            this setting.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--cache_scope<br>
+          </td>
+          <td style="vertical-align: top;">cache_scope</td>
+          <td style="vertical-align: top;">a semicolon-separated
+            sequence of &lt;tag&gt;,doc|batch|none, e.g.
+            'PERSON,batch;LOCATION;doc'<br>
+          </td>
+          <td style="vertical-align: top;">By default, if there is a
+            cache for a tag replacer strategy, its scope is the
+            document; at each document boundary, the cache is flushed.
+            If you want to change this scope, you can declare that it
+            persists for the entire document batch ('batch') or turn off
+            cacheing entirely ('none'). You will likely never need this
+            setting.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--resource_file_repl<br>
+          </td>
+          <td style="vertical-align: top;">resource_file_repl</td>
+          <td style="vertical-align: top;">a semicolon-separated
+            sequence of &lt;file&gt;=&lt;repl&gt;<br>
+          </td>
+          <td style="vertical-align: top;">The replacement strategies
+            are driven by a large number of data files which are used as
+            sources for randomly created fillers. In some cases, you may
+            want to replace these files with files of your own. We're
+            not going to document the way this works, or how to use it,
+            because it's just too arcane; the source file
+            core/python/ReplacementEngine.py in the deidentification
+            source code will help you understand how to use it.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3>Deidentification.TransformStep</h3>
+    <p>The transform step allows you to insert a prologue into your
+      file.<br>
+    </p>
+    <table style=" text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Command-line option<br>
+          </th>
+          <th style=" vertical-align: top;">XML attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--prologue<br>
+          </td>
+          <td style="vertical-align: top;">prologue</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">Specify the text of a
+            prologue to insert into the transformed document. You may
+            wish to do this, e.g., to assert that all names in the
+            document are fake. This option takes preference over
+            --prologue_file.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--prologue_file<br>
+          </td>
+          <td style="vertical-align: top;">prologue_file</td>
+          <td style="vertical-align: top;">a filename<br>
+          </td>
+          <td style="vertical-align: top;">Specify a file which contains
+            the text of a prologue to insert into the transformed
+            document. You may wish to do this, e.g., to assert that all
+            names in the document are fake. The file is assumed to be in
+            UTF-8 encoding. --prologue takes preference over this
+            option. If the filename is not an absolute filename, it will
+            be interpreted relative to the directory of the task which
+            is being trained for. (This is because this option more
+            likely to be provided in your task.xml file rather than on
+            the command line.)<br>
+            <br>
+            <span style="font-weight: bold;">Note</span>: if you
+            subsequently attempt to create a raw file from the
+            transformed MAT document, you must save it using an
+            appropriate encoding. E.g., if your prologue file contains
+            characters which can't be encoded in ASCII, then you can't
+            use the default ASCII output encoding for your raw file. <br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--dont_transform<br>
+          </td>
+          <td style="vertical-align: top;">dont_transform</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">A comma-separated list of
+            annotation labels you do not want to convert when generating
+            a transformed document. E.g., you may want to generate a
+            variant of your transformed corpus in which dates aren't
+            redacted.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="MATEngine_example"></a>MATEngine example</h2>
+    <p>Here's a standard use of MATEngine in this task. Let's say you
+      want to prepare a deidentified copy of a document with fake but
+      realistic English replacement PII elements, in rich format, and
+      you have a prologue in prologue.txt that you want to insert, and
+      you have a default model in your task. Here's how it works:<br>
+    </p>
+    <pre>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATEngine --task 'My Deid Task' --workflow Demo \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--steps 'zone,tag,nominate,transform' --replacer 'clear -&gt; clear' \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file /path/to/my/file.txt --input_file_type raw \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--output_file /path/to/my/resynth/file.txt.json --output_file_type mat-json \<br>--tagger_local --prologue_file prologue.txt<br></span><span style="font-weight: bold;"></span></pre>
+    <p>The --tagger_local option is required because by default,&nbsp;
+      the Carafe tagging task attempts to contact the tagging server.<br>
+    </p>
+    <h2><a name="Training_lexicons_and_case_sensitivity"></a>Training,
+      lexicons, and case sensitivity</h2>
+    <p>MIST is distributed with a default feature specification file,
+      which provides reasonable performance. If you received MIST via a
+      zip distribution, the default Carafe feature specification for
+      MIST is found in src/tasks/core/resources/amia.fspec. You may want
+      to try to improve your performance by customizing these training
+      features. The <a
+        href="../../../../html/carafe_engine.html#The_Carafe_documentation">Carafe
+
+
+
+        documentation</a> will help you customize this feature
+      specification. You can provide this customized feature
+      specification to the <a
+        href="../../../../html/carafe_engine.html">trainer</a> via the
+      --feature_spec option.<br>
+    </p>
+    <p>The Carafe engine supports the specification of lexicons to aid
+      in model training. Although the behavior in MIST doesn't differ
+      from that in the core MAT system, it's worth mentioning that the
+      capitalization in your lexicons <a
+href="../../../../carafe_engine.html#A_note_about_feature_specifications_">interacts</a>
+      with the Carafe feature specification. Please follow the
+      instructions carefully.<br>
+    </p>
+    <h2><a name="Running_deidentification_experiments"></a>Running
+      deidentification experiments</h2>
+    <p>The sample experiment described <a
+href="../../../../html/experiment_xml_use_cases.html#A_simple_experiment">here</a>
+      is a good place to start for constructing experiments for the
+      MATExperimentEngine. The primary differences you should keep in
+      mind are:<br>
+    </p>
+    <ul>
+      <li>The name of the task in the experiment XML file must
+        correspond to the name of your deidentification task</li>
+      <li>There is no <span style="font-weight: bold;">tokenize</span>
+        step in the deidentification family of tasks</li>
+    </ul>
+    <p>So if your task is named 'My Deid Task', then your simple
+      experiment might look like this:<br>
+    </p>
+    <pre>&lt;experiment task='My Deid Task'&gt;<br>  &lt;corpora dir="corpora"&gt;<br>    &lt;partition name="train" fraction=".8"/&gt;<br>    &lt;partition name="test" fraction=".2"/&gt;<br>    &lt;corpus name="deid"&gt;<br>      &lt;pattern&gt;*.json&lt;/pattern&gt;<br>    &lt;/corpus&gt;<br>  &lt;/corpora&gt;<br>  &lt;model_sets dir="model_sets"&gt;<br>    &lt;model_set name="deid_model"&gt;<br>      &lt;training_corpus corpus="deid" partition="train"/&gt;<br>    &lt;/model_set&gt;<br>  &lt;/model_sets&gt;<br>  &lt;runs dir="runs"&gt;<br>    &lt;run_settings&gt;<br>      &lt;args steps="zone,tag" workflow="Demo"/&gt;<br>    &lt;/run_settings&gt;<br>    &lt;run name="test_run" model="deid_model"&gt;<br>      &lt;test_corpus corpus="deid" partition="test"/&gt;<br>    &lt;/run&gt;<br>  &lt;/runs&gt;<br>&lt;/experiment&gt;</pre>
+    <h2><a name="Customizing_deidentification_replacement"></a>Customizing
+deidentification
+
+
+
+
+
+
+      replacement</h2>
+    <p>In MIST 1.2, we added a (very experimental) capability to
+      customize the deidentification replacement. This capability is
+      available only with clear -&gt; clear replacement. To understand
+      how to use it, you'll need to know a bit more about how the
+      replacement works.<br>
+    </p>
+    <p>Each replacement strategy consists of a digester and a renderer.
+      The digester produces a pattern which describes the features of
+      the digested element (e.g., for a phone number, was an area code
+      present). The digested pattern also contains the raw source
+      filler, and, in the case of the clear digester, the parsed form of
+      the input in some cases (e.g., for names and locations). The
+      renderer uses the pattern to generate its replacement, and, in the
+      case of the clear renderer, attempts to apply any customization
+      rules it finds.<br>
+    </p>
+    <p>The customization rules are provided to the nominate step either
+      with the replacement_map or the replacement_map_file option. The
+      replacement map is a JSON string which has the format described
+      immediately below; the replacement_map_file provides a filename
+      which contains such a string.<br>
+    </p>
+    <p>The JSON string described a JSON hash (object) whose keys are the
+      file basenames which you're trying to deidentify; e.g., if you're
+      trying to deidentify /path/to/my/file.txt as in the example above,
+      the key for that file would be "file.txt". As a special case, if
+      you're accessing the MIST capability via the Web service, the name
+      of the file should be "&lt;cgi&gt;". The values of these keys
+      should be another JSON object whose keys are the names of the
+      labels you're targeting. So if you have rules for file.txt which
+      target the DATE tag, your replacement map will look like this so
+      far:<br>
+    </p>
+    <pre>{"file.txt": {"DATE": ...}}<br></pre>
+    <p>The label key values are also JSON objects. These objects can
+      have two keys: caseSensitive (either true or false) and rules,
+      which should be a list of 2-element lists, where the first element
+      of each sublist is the antecedent and the second is the
+      consequent. The antecedent and consequent are each themselves JSON
+      objects. The antecedent is a recursive structure which describes a
+      subset of the digested pattern; the consequent contains two keys,
+      seed and pattern, each of which describe updates to the seed and
+      pattern, respectively.<br>
+    </p>
+    <p>Much of the details of this needs to be derived from the source
+      code, but we provide a couple examples here.<br>
+    </p>
+    <p>Let's say you want to replace all occurrences of the last name
+      "Marshall" for the NAME tag in the file file.txt with the last
+      name "Bigelow". Your specification will look like this:<br>
+    </p>
+    <pre>{"file.txt":<br> {"NAME": <br>  {"rules": [[{"parse": {"lastName": "Marshall"}}, {"seed": {"lastName": "Bigelow"}}]]}}}<br></pre>
+    <p>All eligible rules apply. So if you want to replace the first
+      name "Betty" with the first name "Phyllis", you can add another
+      rule:<br>
+    </p>
+    <pre>{"file.txt":<br> {"NAME": <br>  {"rules": [[{"parse": {"lastName": "Marshall"}}, {"seed": {"lastName": "Bigelow"}}],<br>             [{"parse": {"firstName": "Betty"}}, {"seed": {"firstNameAlts": ["Phyllis"]}}]]}}}<br></pre>
+    <p>If you want to replace them only when they're together, do this:<br>
+    </p>
+    <pre>{"file.txt":<br> {"NAME": <br>  {"rules": [[{"parse": {"lastName": "Marshall", "firstName": "Betty"}}, <br>              {"seed": {"lastName": "Bigelow", "firstNameAlts": ["Phyllis"]}}]]}}}<br></pre>
+    <p>If you only want to replace the literal string "Betty Marshall",
+      do this:<br>
+    </p>
+    <pre>{"file.txt":<br> {"NAME": <br>  {"rules": [[{"input": "Betty Marshall"}, <br>              {"seed": {"lastName": "Bigelow", "firstNameAlts": ["Phyllis"]}}]]}}}<br></pre>
+    <p>(Note that the input key is available for all tags, while the
+      details of the parse and pattern keys differ from tag to tag).<br>
+    </p>
+    <p>Let's say you want to control how much dates are shifted (dates
+      are shifted by a consistent amount throughout a single document).
+      Do this:<br>
+    </p>
+    <pre>{"file.txt":<br> {"DATE":<br>  {"rules": [[{}, {"pattern": {"deltaDay": 5}}]]}}}<br></pre>
+    <p>The deltaDay attribute of the pattern controls the date shift,
+      and this rule applies the shift to all dates (because the
+      antecedent is empty).<br>
+    </p>
+    <p>Finally, let's say you want to do a consistent substitution of
+      certain IDs, e.g., patient IDs, for correlation with an external
+      data escrow application which manages deidentification for your
+      structured records. If your tag is IDNUM, you can do this:<br>
+    </p>
+    <pre>{"file.txt":<br> {"IDNUM":<br>  {"rules": [[{"input": "PATNO67897"}, {"seed": {"id": "ID9938273"}}]]}}}<br></pre>
+    <p>In the future, we hope to flesh out and further document this
+      capability.<br>
+    </p>
+    <h2><a name="Accessing_deidentification_from_Java"></a>Accessing
+      deidentification from Java</h2>
+    <p>The MAT toolkit comes with a Java API which allows you to read
+      and write MAT JSON documents, and access services provided by the
+      <a href="../../../../html/MATWeb.html">MATWeb</a> application. You
+      can find documentation for the Java API under the "Core developer
+      documentation" in your documentation sidebar.<br>
+    </p>
+    <p>One common use of the Java API is in incorporating
+      deidentification capabilities in a larger Java application. Here's
+      a Java fragment which shows you how to do that. Remember, you must
+      make sure you have all the jars in the following directories in
+      your class path:<br>
+    </p>
+    <ul>
+      <li>src/MAT/lib/mat/java/lib</li>
+      <li>src/MAT/lib/mat/java/java-mat-core/dist</li>
+      <li>src/MAT/lib/mat/java/java-mat-engine-client/dist</li>
+    </ul>
+    <pre>import java.util.*;<br>import org.mitre.mat.core.*;<br>import org.mitre.mat.engineclient.*;<br><br>String res = "";<br>/* Modify the URL as needed. Only the host and port are required. */<br>String url = <a class="moz-txt-link-rfc2396E" href="http://localhost:7801/">"http://localhost:7801"</a>;<br><br>/* This should be the name of your task, as expted by MATEngine. */<br>String task = "HIPAA Deidentification";<br>/* This should be the name of the workflow, as expected by MATEngine. */<br>String workflow = "Demo";<br>/* This should be the step sequence to perform, as expected by MATEngine. */<br>String steps = "zone,tag,nominate,transform";<br>HashMap&lt;String, String&gt; attrMap = new HashMap&lt;String, String&gt;();<br>/* This should be the name of the replacer you want to use. */<br>attrMap.put("replacer", "clear -&gt; clear");<br><br>MATDocument doc = new MATDocument();<br><br>/* Your input string is the argument to setSignal(). */<br>doc.setSignal("Hello World");<br><br>/* Here's where you connect to the server. */<br>MATCgiClient client = new MATCgiClient(url);<br>try {<br>    MATDocument resultDoc = (MATDocument) client.doSteps(doc, task,<br>       workflow, steps, attrMap);<br>    res = resultDoc.getSignal();<br>} catch (MATEngineClientException ex) {<br>    /* Handle the error. */<br>    System.out.println("Processing failed: " + ex.getMessage());<br>}<br>/* Do something with the retrieved deidentified text. */<br>System.out.println(res);<br></pre>
+    <h2><a name="Extensions_to_the_workspaces"></a>Extensions to the
+      workspaces</h2>
+    <p>As we describe <a
+        href="../../../../html/files_and_workspaces.html">here</a>,
+      workspaces are actively-managed directory structures which
+      encapsulate the standard workflows in MAT. Workspaces in the
+      deidentification task have three extra document folders:<br>
+    </p>
+    <ul>
+      <li><span style="font-weight: bold;">redacted, rich</span>:
+        documents corresponding to documents in the core folder which
+        have been redacted. These documents are in the rich <a
+          href="../../../../html/mat_json_format.html">MAT JSON format</a>
+        which encodes the annotations.</li>
+      <li><span style="font-weight: bold;">redacted, raw</span>:
+        documents corresponding to documents in the core folder which
+        have been redacted, as raw UTF-8 text.</li>
+      <li><span style="font-weight: bold;">nominated</span>: documents
+        which bear replacement nominations.<br>
+      </li>
+    </ul>
+    <p>In addition, the core folder has two new operations:<br>
+    </p>
+    <p> <span style="font-weight: bold;">redact</span> clears and
+      populates the "redacted, rich" and "redacted, raw" folders in
+      parallel, by applying a replacer to the specified documents in the
+      core folder. This operation is intended to apply only to original
+      documents, to produce redacted documents; the inverse resynthesize
+      operation isn't available via the workspace. This operation is the
+      equivalent of performing both the nominate and transform steps
+      described above. It has the following options:<br>
+    </p>
+    <table style=" text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Command-line option<br>
+          </th>
+          <th style=" vertical-align: top;">XML attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--replacer<br>
+          </td>
+          <td style="vertical-align: top;">replacer</td>
+          <td style="vertical-align: top;">one of the replacer UI names
+            shown <a
+              href="general.html#Extensions_to_the_task.xml_file">below</a><br>
+          </td>
+          <td style="vertical-align: top;">The name of the replacement
+            strategy to be used. If the workflow has more than one
+            replacer available, this setting is obligatory. This is most
+            likely the only one of these settings you'll ever use.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--dont_limit_to_gold<br>
+          </td>
+          <td style="vertical-align: top;">dont_limit_to_gold</td>
+          <td style="vertical-align: top;">"yes" (XML)<br>
+          </td>
+          <td style="vertical-align: top;">Under normal circumstances,
+            the redaction will apply only to gold and reconciled
+            documents. If this flag is present, it applies to all
+            documents.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--retain_existing<br>
+          </td>
+          <td style="vertical-align: top;">retain_existing</td>
+          <td style="vertical-align: top;">"yes" (XML)<br>
+          </td>
+          <td style="vertical-align: top;">Don't clear the redacted
+            folders first.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p> <span style="font-weight: bold;">nominate</span> performs just
+      the nominate step and inserts a copy of the document which is
+      decorated with nominations into the "nominated" folder. This
+      latter folder supports the <span style="font-weight: bold;">transform</span>
+      operation, which removes the document from the "nominated" folder
+      and performs the remainder of the <span style="font-weight:
+        bold;">redact</span> operation. This alternative, two-step
+      workflow is provided for situations where the user wishes (or <a
+        href="#Flagged_unparseable_seeds_and_forced">needs</a>) to
+      review the nominations. It has the following options:<br>
+    </p>
+    <table style=" text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Command-line option<br>
+          </th>
+          <th style=" vertical-align: top;">XML attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--replacer<br>
+          </td>
+          <td style="vertical-align: top;">replacer</td>
+          <td style="vertical-align: top;">one of the replacer UI names
+            shown <a
+              href="general.html#Extensions_to_the_task.xml_file">below</a><br>
+          </td>
+          <td style="vertical-align: top;">The name of the replacement
+            strategy to be used. If the workflow has more than one
+            replacer available, this setting is obligatory. This is most
+            likely the only one of these settings you'll ever use.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--dont_limit_to_gold<br>
+          </td>
+          <td style="vertical-align: top;">dont_limit_to_gold</td>
+          <td style="vertical-align: top;">"yes" (XML)<br>
+          </td>
+          <td style="vertical-align: top;">Under normal circumstances,
+            the nomination&nbsp; will apply only to gold and reconciled
+            documents. If this flag is present, it applies to all
+            documents.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>As of version 2.0.2, the "nominated" folder now locks its files
+      for editing when they're shown in the UI. Accordingly, this folder
+      now supports the "force_unlock" operation on the command line,
+      analogous to the "core" folder.<br>
+    </p>
+    <h2><a name="Extensions_to_the_UI"></a>Extensions to the UI</h2>
+    <h3>File mode enhancements<br>
+    </h3>
+    <p>The normal file and workspace mode document window configurations
+      described <a href="../../../../html/use_ui.html">here</a> and <a
+        href="../../../../html/ui_workspaces.html">here</a>. The
+      nomination and transformation steps require enhancements to the
+      UI, as shown in this section. The document exhibited is drawn from
+      the CMC free text corpus of deidentified radiology reports.<br>
+    </p>
+    <p>First, we show the result of the automated tag step:<br>
+    </p>
+    <p><img alt="[cmc autotag output]" src="cmc_autotag.jpg"
+        height="650" width="1020"><br>
+    </p>
+    <p>Note not just the additional steps in the workflow, but also the
+      menu labeled "Replacer" at the bottom of the Controls area. This
+      menu allows you to select the replacement method for the PII
+      elements. The nominate step requires a replacer; here we've
+      selected "clear -&gt; []". We correct the automated tagging output
+      and mark it gold: </p>
+    <p><img alt="[cmc corrected document]" src="cmc_tag.jpg"
+        height="650" width="1020"><br>
+    </p>
+    <p>Now, we apply the nominate step:<br>
+    </p>
+    <p><img alt="" src="cmc_nominate.jpg" height="650" width="1020"><br>
+    </p>
+    <p>Once the nominate step is completed, a table appears in a tab in
+      the details pane below the document showing each PII, along with
+      its type, its location in the document, and its proposed
+      replacement. The final transform step splits the document pane:<br>
+    </p>
+    <p><img alt="[cmc transformed doc]" src="cmc_transform.jpg"
+        height="650" width="1019"><br>
+    </p>
+    <p>You'll also discover that the "File" menu in the menubar now has
+      a "Save replacement..." option which allows you to save the
+      replacement in the same way you can save the original document. <br>
+    </p>
+    <h3>Workspace enhancements<br>
+    </h3>
+    <p>If you're in a workspace, the relevant point you'll notice a
+      difference is when you're viewing a document in the core folder
+      which you've marked gold:<br>
+    </p>
+    <p><img alt="[cmc workspace doc]" src="cmc_ws_doc.jpg" height="650"
+        width="1019"><br>
+    </p>
+    <p>Like the file mode case, the "Controls" area now has a replacer
+      menu, and the operations menu allows you to access the new redact
+      and nominate operations. Unlike file mode, the result of the
+      redact operation will be a new document tab, rather than a split
+      in the existing tab.<br>
+    </p>
+    <p>The new operations are available only when the document status is
+      gold. Note that your task may have a default replacer specified in
+      the workspace operation declaration in <a
+        href="../../../../html/task_xml.html">task.xml</a>; if so, the
+      redact and nominate operations will not require that the replacer
+      be specified (but they will respect a menu selection if one is
+      made).<br>
+    </p>
+    <h3>Working with replacements</h3>
+    <p>The UI has two important enhancements available at the conclusion
+      of the nominate step. First, when you mouse over an annotation,
+      the redaction is shown in the status line below the text as well
+      as in the table below the main document pane:</p>
+    <p><img alt="[hover]" src="cmc_nominate_hover.jpg" height="649"
+        width="1017"><br>
+    </p>
+    <p>In addition, if you're not satisfied with the replacement, you
+      can edit the replacement by clicking on the appropriate cell in
+      the "Replacement" column in the table below the main document
+      pane:<br>
+    </p>
+    <p><img alt="[edit]" src="cmc_nominate_edit.jpg" height="650"
+        width="1019"><br>
+    </p>
+    <p>If you modify the replacement and click "OK", the result will be
+      what's used as the replacement (at least, as long as you don't
+      undo and redo the "nominate" step). <br>
+    </p>
+    <p><span style="font-weight: bold;">Note</span>: this is not the
+      procedure for marking a previously unmarked PII; if you want to do
+      that, you have the opportunity after the "tag" step to review and
+      modify the automated annotations.<br>
+    </p>
+    <h2><a name="Flagged_unparseable_seeds_and_forced"></a>Flagged
+      unparseable seeds and forced review</h2>
+    <p>If you set up your task to flag unparseable seeds in the nominate
+      step, the document will be marked in such a way that whenever it's
+      presented, it will warn you that unparseable seeds are present and
+      must be reviewed, and the nomination table 'Replacement' column
+      will contain at least one cell with a red background: </p>
+    <p><img alt="[Nominate with unparseable]"
+        src="cmc_nominate_w_unparseable.jpg" height="648" width="1017"><br>
+    </p>
+    Clicking on this cell to review the nomination clears the warning
+    flag for that element. If the unparseable element is a date, you'll
+    be presented with the current date offset as a guide:<br>
+    <p><img alt="[Unparseable review]"
+        src="cmc_nominate_unparseable_review.jpg" height="650"
+        width="1018"><br>
+    </p>
+    <p>If you attempt to transform the document before you clear all
+      these flags, the transform step will fail and you'll get an error.<br>
+    </p>
+    <p>The process in workspaces is quite similar. If you attempt the
+      "Redact" operation in the "core" folder, you'll get an error if
+      the nominate step generated any of these unparseable flags; in
+      this situation, you should employ the alternative two-step
+      workflow, by performing the "Nominate" operation instead.<br>
+    </p>
+    <p> </p>
+    <h2><a name="Replacement_redaction_and_resynthesis"></a>Replacement,
+      redaction and resynthesis</h2>
+    <p>The nomination step generates replacement fillers for the PII
+      elements identified by the content annotations. We identify two
+      types of replacement strategies:<br>
+    </p>
+    <ul>
+      <li><span style="font-weight: bold;">redaction</span>, where the
+        PII element is converted from clear text to some obscured form</li>
+      <li><span style="font-weight: bold;">resynthesis</span>, where the
+        PII element is converted to clear text, from either an obscured
+        form or clear text</li>
+    </ul>
+    <p>The core deidentification system provides three basic types of
+      redaction:<br>
+    </p>
+    <ul>
+      <li>replacement with a bracketed PII name: "John Smith" -&gt;
+        "[PERSON]"</li>
+      <li>replacement with a slightly more elaborate pattern-oriented
+        format, compatible with the output of the University of
+        Pittsburgh's De-ID system: "John Smith" -&gt; "**NAME[AAA BBB]"</li>
+      <li>replacement of alphanumeric characters with characters of the
+        same type: "John Smith" -&gt; "Pqty Muwqd"</li>
+    </ul>
+    Either of the first two outputs is a candidate for resynthesis, as
+    is the original clear text.<br>
+    <br>
+    The replacement engine itself is inspired by the replacement engine
+    written by Özlem Uzuner's team to prepare the corpora for the AMIA
+    2006 evaluation of deidentification technologies in medical
+    documents. We have completely rewritten it, and expanded it
+    considerably. <br>
+    <p>The replacement engine first gathers a set of features from the
+      input PII. For instance, in the case of names, it attempts to
+      reproduce the number of tokens, the capitalization pattern,
+      whether they correspond to a name with the last name first, etc.
+      For dates, it attempts to preserve the offset from the earliest
+      date in the document, as well as the specific details of how the
+      date was formatted. Any features which cannot be determined from
+      the input are assigned randomized values based on a weighted,
+      hand-crafted estimation of the frequency of the possible values.</p>
+    <p>Once the feature values are determined, the engine generates
+      replacement fillers. In the case of redaction, the fillers are
+      trivially produced from the gathered features; in the case of
+      resynthesis, the problem is considerably more complex, because our
+      target is realistic English clear text. In the resynthesis case,
+      the tokens for the replacement fillers are drawn from a variety of
+      sources, including weighted lists of first and last names provided
+      by the US Census, and lists of cities, states, streets, medical
+      facilities and ZIP codes derived from various on-line resources.
+      The replacement fillers are assembled based on the features the
+      engine has already gathered; so, for instance, if the engine has
+      determined that a name consists of a last name followed by a first
+      name and an initial (as it might determine from a pattern like
+      **NAME[AAA, BBB M] or a PII such as "Philips, Bruce R."), it will
+      generate a new filler like “Ahmad, Jane Q”. Similarly, date
+      offsets are preserved, so that the pair of dates Jan. 17 and Jan.
+      20 are shifted, but the 3 day difference is preserved. The engine
+      also caches replaced name tokens on a document-by-document basis;
+      so "AAA" will correspond to "Ahmad" throughout the document shown.</p>
+    <p>The resynthesis engine can be modified in a number of ways: where
+      the replacement fillers are drawn from (e.g., an external lexicon
+      or the corpus itself), how the fillers are constructed (whether
+      they're replaced whole or reconstructed token-by-token), and how
+      the fillers are cached for repetition (by document, by corpus, or
+      without any cacheing). We will not document those customizations
+      right now.</p>
+    <h2><a name="Extensions_to_the_task.xml_file"></a>Extensions to the
+      task.xml file</h2>
+    <p>Each workflow in this task can be associated with replacers. This
+      is specified in the &lt;settings&gt; section of task.xml. The
+      specification pairs attribute-value settings, where the first
+      attribute-value pair is an arbitrary name of a replacer set and a
+      comma-separated list of replacer implementations, and the second
+      attribute-value pair is "&lt;name&gt;_workflows" and a
+      comma-separated list of workflow names. The interpretation is that
+      the specified replacers are available during the nomination step
+      of the specified workflows. Here's an example:<br>
+    </p>
+    <pre>    &lt;settings&gt;<br>      &lt;setting&gt;<br>        &lt;name&gt;redaction_replacers&lt;/name&gt;<br>        &lt;value&gt;BracketReplacementEngine.BracketReplacementEngine,CharacterReplacementEngine.CharacterReplacementEngine,ClearReplacementStrategy.ClearReplacementEngine&lt;/value&gt;<br>      &lt;/setting&gt;<br>      &lt;setting&gt;<br>        &lt;name&gt;redaction_replacers_workflows&lt;/name&gt;<br>        &lt;value&gt;Demo,Hand annotation,Review/repair&lt;/value&gt;<br>      &lt;/setting&gt;      <br>      &lt;setting&gt;<br>        &lt;name&gt;resynthesis_replacers&lt;/name&gt;<br>        &lt;value&gt;BracketReplacementEngine.BracketResynthesisEngine&lt;/value&gt;<br>      &lt;/setting&gt;<br>      &lt;setting&gt;<br>        &lt;name&gt;resynthesis_replacers_workflows&lt;/name&gt;<br>        &lt;value&gt;Resynthesize&lt;/value&gt;<br>      &lt;/setting&gt;<br>    &lt;/settings&gt;<br></pre>
+    <p>So the interpretation here is that the "Resynthesize" workflow
+      has the replacer BracketReplacementEngine.BracketResynthesisEngine
+      available, and the other three workflows have the other replacers
+      available.<br>
+    </p>
+    <p>Here are the available default replacers:<br>
+    </p>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Implementation<br>
+          </th>
+          <th style="vertical-align: top;">UI name<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">BracketReplacementEngine.BracketReplacementEngine<br>
+          </td>
+          <td style="vertical-align: top;">clear&nbsp;-&gt;&nbsp;[&nbsp;]<br>
+          </td>
+          <td style="vertical-align: top;">Maps clear text PIIs to the
+            bracketed name of the tag, e.g., "John Smith" -&gt;
+            "[PERSON]"<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">CharacterReplacementEngine.CharacterReplacementEngine<br>
+          </td>
+          <td style="vertical-align: top;">clear&nbsp;-&gt;&nbsp;char&nbsp;repl<br>
+          </td>
+          <td style="vertical-align: top;">Obscures clear text PIIs by
+            replacing alphanumeric characters with characters of the
+            same type: "John Smith" -&gt; "Pqty Muwqd"</td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">ClearReplacementStrategy.ClearReplacementEngine<br>
+          </td>
+          <td style="vertical-align: top;">clear&nbsp;-&gt;&nbsp;clear<br>
+          </td>
+          <td style="vertical-align: top;">Replaces clear text PIIs with
+            fake, synthesized but realistic clear text PIIs<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">BracketReplacementEngine.BracketResynthesisEngine<br>
+          </td>
+          <td style="vertical-align: top;">[&nbsp;]&nbsp;-&gt;&nbsp;clear<br>
+          </td>
+          <td style="vertical-align: top;">Maps PIIs obscured with the
+            BracketReplacementEngine to clear text<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>There are also replacers available to manage the De-ID-style
+      replacement, but those have to be customized in a child task.<br>
+    </p>
+    <h2><a name="Defining_your_own_deidentification_task"></a>Defining
+      your own deidentification task</h2>
+    <p>At some point, you may want to define your own deidentification
+      task. We really don't recommend this, because much of the magic to
+      make this work is undocumented. If you must do this, start by
+      copying the entire directory structure of an existing
+      deidentification task (your distribution will contain at least
+      one). <span style="font-weight: bold;">Do not copy the core task</span>.
+      <br>
+    </p>
+    <p>Once you've copied the task directory, you'll need to make the
+      following changes to that task to so that MIST can recognize it:<br>
+    </p>
+    <ul>
+      <li>Change the name attribute of the &lt;task&gt; element in the
+        task.xml file to something new.</li>
+      <li>Change the name of all Python libraries and classes. In order
+        to do this, rename all the files in the python/ subdirectory of
+        the new task, rename all the classes within them, rename any
+        module references which correspond to Python file names you've
+        changed, and change all the corresponding names in the task.xml
+        file to match. These class names can be found in the various
+        class attributes of the elements in that file, and in the
+        settings described in the extensions section above. Note that
+        only some of the redaction and resynthesis class names will have
+        to be changed; some of the classes will have been provided by
+        the core task. Only change the names of mentioned classes whose
+        Python names you've changed.</li>
+    </ul>
+    At this point, you can use <a
+      href="../../../../html/MATManagePluginDirs.html">MATManagePluginDirs</a>
+    to install the new task, and edit it further to change the
+    annotations, etc. If you change the annotations, note that you'll
+    also have to change the way your task maps the annotations to
+    replacer categories. Typically, this is controlled by reference to a
+    class-level variable "categories" in the Python class which is the
+    Python class corresponding to your task (as specified in the class
+    attribute of the &lt;task&gt; element in task.xml). This section of
+    the code is pretty hairy; we don't have the resources to document
+    the procedure in any more detail than this.<br>
+    <br>
+    Unless you intend to provide documentation for your task, you can
+    remove the &lt;doc_enhancement_class&gt; element from your task.xml
+    file. You do not need to change the name of any JS or CSS files
+    which are included with the task you've copied. You can change them
+    if you want, in which case you must also change their references in
+    your task.xml file.<br>
+    <h2><a name="Using_deidentification_without_MIST"></a>Using
+      deidentification without MIST</h2>
+    <p>The replacement engine can be run independently of MIST, from
+      either Python or Java. The instructions for setting up this
+      option, as well as supporting code, can be found in
+      src/tasks/core/standalone. See the README file in that directory
+      for further details.<br>
+    </p>
+    <h2><a name="Version_history"></a>Version history</h2>
+    <h3>2.0.2</h3>
+    <ul>
+      <li>Fixed a wide range of bugs related to assigned documents and
+        the "nominated" and "redacted, raw" and "redacted, rich" folders
+        in workspaces.</li>
+      <li>Added edit locks for the "nominated" folder for the case where
+        files are opened in the UI.</li>
+      <li>Added the force_unlock operation to the "nominated" folder.<br>
+      </li>
+    </ul>
+    <h3>2.0.1</h3>
+    <ul>
+      <li>Updated the default MIST feature specification file to include
+        a lexicon feature, without which --lexicon_dir has no effect.<br>
+      </li>
+    </ul>
+    <h3>2.0</h3>
+    <ul>
+      <li>Code updates for compatibility with MAT 2.0.<br>
+      </li>
+    </ul>
+    <h3>1.3.1</h3>
+    <ul>
+      <li>Created resources for running the replacement engine without
+        MIST.</li>
+      <li>Created resources for running the replacement engine under
+        Jython.</li>
+      <li>Modified LOCATION replacement to use the input pattern as a
+        seed, in parallel with other replacement types.</li>
+      <li>Improved LOCATION processing to eliminate the possibility of
+        null replacements.</li>
+      <li>Introduced the COUNTRY pattern.</li>
+      <li>Refactored management of replacement frequencies and pattern
+        specification to simply the engine slightly.</li>
+      <li>Fixed a bug with replacement key cacheing where names which
+        share a last name ended up sharing a replacement.</li>
+      <li>Added hospital initials.</li>
+      <li>Expanded the OTHER category to capture capitalization status
+        and abbrevation status, and support arbitrary resource
+        replacement files.</li>
+      <li>Ensured that the replacement engine can pass through
+        annotations which have no replacement category.</li>
+      <li>Ensured that the replacement engine can pass through
+        annotations which it is explicitly instructed not to replace.</li>
+      <li>Ensured that AGE fillers will never be replaced with
+        themselves, and will never be negative.</li>
+      <li>Ensured that street numbers never start with 0.</li>
+      <li>Ensured that tokenization applies in batch mode to batch
+        replacements.</li>
+      <li>Removed spurious entries from the nickname file.</li>
+      <li>Fixed a long-standing, subtle bug where patterns which are
+        repopulated from frequency information were not respecting the
+        specified dependencies between pattern attributes when
+        determining the order in which these attributes would be
+        assigned values. <br>
+      </li>
+    </ul>
+    <h3>1.3</h3>
+    <ul>
+      <li>Improved test facility for AMIA.</li>
+      <li>Added the ability to flag unparseable elements (e.g., of DATE)
+        for review. Added review capabilities to UI.</li>
+      <li>Added heuristics for determining name gender.<br>
+      </li>
+    </ul>
+    <h3>1.2</h3>
+    <ul>
+      <li>Added the AMIA task to the distribution.</li>
+      <li>Improved and enhanced replacement cacheing.</li>
+      <li>Added the ability to replace resource files.</li>
+      <li>Added replacement map capabilities for PERSON, DATE, ID.</li>
+      <li>Added the ability to include a prologue file.<br>
+      </li>
+    </ul>
+    <p> </p>
+  </body>
+</html>

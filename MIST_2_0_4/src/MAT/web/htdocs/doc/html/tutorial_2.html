@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Tutorial 2: Build a Model</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Tutorial 2: Build a model</h1>
+    <p>Now that you've completed <a href="tutorial_1.html">Tutorial 1</a>,
+      let's move on to how you might use your tagged documents to build
+      a model. We're going to use the same simple named entity task that
+      comes with MAT, and we're going to assume that your task is
+      installed (see <a href="tutorial_1.html#Install_the_task">step 1
+        in Tutorial 1</a> if it isn't). Where Tutorial 1 involved the
+      UI, this tutorial (and the next one) involves one of the
+      command-line tools. Like Tutorial 1, we're going to do this
+      tutorial in <a href="files_and_workspaces.html">file mode</a>.
+      And because this tutorial involves the command line, make sure
+      you're familiar with the "Conventions" section in your
+      platform-specific instructions in the "Getting Started" section of
+      the documentation. </p>
+    <p>As we saw in Tutorial 1, the sample task contains ten raw ASCII
+      files in the directory MAT_PKG_HOME/sample/ne/resources/data/raw.
+      The sample task also contains annotated versions of these files,
+      in MAT_PKG_HOME/sample/ne/resources/data/json. (These files aren't
+      necessarily correctly annotated; we prepared them using an
+      automated tagger, and haven't corrected them. But that's not
+      particularly important for this exercise.) Rather than ask you to
+      hand-annotate all ten of these documents, we'll use the
+      already-annotated versions to build a model.<br>
+    </p>
+    <p>The tool we're going to use here is <a
+        href="MATModelBuilder.html">MATModelBuilder</a>.<br>
+    </p>
+    <h2>Step 1: Build a model, version 1</h2>
+    <p>In a shell:<br>
+    </p>
+    <pre>Unix:<br><br>$ <span style="font-weight: bold;">cd $MAT_PKG_HOME</span><br>$ <span style="font-weight: bold;">bin/MATModelBuilder --task 'Named Entity' --model_file /tmp/ne_model \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_files "$PWD/sample/ne/resources/data/json/*.json"</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">cd %MAT_PKG_HOME%</span><br>&gt; <span style="font-weight: bold;">bin\MATModelBuilder.cmd --task "Named Entity" --model_file %TMP%\ne_model \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_files "%CD%\sample\ne\resources\data\json\*.json"</span><br></pre>
+    <p>Each call to the model builder requires a task, just as the UI
+      required in Tutorial 1. The --model_file directive tells the tool
+      where to save the model, and the --input_files directive tells the
+      tool which files to use. There are many other arguments available
+      to this tool; see the <a href="MATModelBuilder.html">tool
+        documentation</a> for more details.<br>
+    </p>
+    <p>When you run this, you should see something like the following
+      output:<br>
+    </p>
+    <pre><span style="font-family: sans-serif;"><span style="font-family: monospace;">Processed 10 sequences . . . beginning parameter estimation..<br><br>Number of features = 32602<br>Number of states   = 7<br><br>Stochastic Gradient Descent Training (with PSA) over 10 sequences<br>	 maxEpochs= 6; batchSize= 1; max_iters= 60<br>	 The eta's are initialized to 0.1 [val etas = Array.fill(nfs)(initialLearningRate)]<br>	 p_alpha= 0.9999; p_beta= 0.99; n= 10; k= 1000.0; big_m= 200999.9999999996; small_m= 20.202020202017938<br>Epoch 1 complete (of 6)<br>.Epoch 2 complete (of 6)<br>Epoch 3 complete (of 6)<br>.Epoch 4 complete (of 6)<br>Epoch 5 complete (of 6)<br>.Epoch 6 complete (of 6)<br><br>...Training completed in 0.663765 seconds<br>There are 32602 features: 0 have a zero weight and 32602 have a non-zero weight.</span><br></span></pre>
+    <p>The default behavior of the model builder is specified in the <a
+        href="task_xml.html">task.xml</a> file associated with this
+      task.<br>
+    </p>
+    <p>We've successfully built a model, but we're not going to use it
+      quite yet.<br>
+    </p>
+    <h2>Step 2: Build a model, version 2</h2>
+    <p>Our task has also been configured, in the task.xml file, to
+      recognize the location of a <span style="font-weight: bold;">default
+
+
+
+
+        model</span>. The default model is a location, usually a
+      relative pathname referring to the directory which contains the
+      task.xml file or one of its descendants, which is checked by
+      default when the MAT tools look for a model in file mode. The user
+      has the option of overwriting the default model when
+      MATModelBuilder is called. Let's do that, so we can make use of
+      the default model in the next tutorial.<br>
+    </p>
+    <p>In a shell:<br>
+    </p>
+    <pre>Unix:<br><br>$ <span style="font-weight: bold;">cd $MAT_PKG_HOME</span><br>$ <span style="font-weight: bold;">bin/MATModelBuilder --task 'Named Entity' --save_as_default_model \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_files "$PWD/sample/ne/resources/data/json/*.json"</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">cd %MAT_PKG_HOME%</span><br>&gt; <span style="font-weight: bold;">bin\MATModelBuilder.cmd --task "Named Entity" --save_as_default_model \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_files "%CD%\sample\ne\resources\data\json\*.json"</span><br></pre>
+    <p>The output you see should be similar to that in step 1.<br>
+    </p>
+    <h2>Step 3: Clean up (optional)</h2>
+    <p>If you're not planning on doing any other tutorials, and you
+      don't want the "Named Entity" task hanging around, remove it as
+      shown in the final step of <a href="tutorial_1.html">Tutorial 1</a>.<br>
+    </p>
+    <p>This concludes Tutorial 2.<br>
+    </p>
+  </body>
+</html>

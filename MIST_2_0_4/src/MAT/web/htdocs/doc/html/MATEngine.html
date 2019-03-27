@@ -1,0 +1,509 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Processing Engine</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Processing Engine</h1>
+    <h2>Description</h2>
+    <p>The processing engine manages the execution of a sequence of
+      steps against a set of files.<br>
+      <br>
+      Note that you should never use <a href="MATEngine.html">MATEngine</a>
+      to save files into workspace; use <a
+        href="MATWorkspaceEngine.html">MATWorkspaceEngine</a> instead. </p>
+    <h2>Usage</h2>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATEngine</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATEngine.cmd</span><br><br>Usage: MATEngine [core options] [input/output/task options] [other options]<br><br>Options:<br>  -h, --help            show this help message and exit<br><br>  Core options:<br>    --other_app_dir=dir<br>                        additional directory to load a task from. Optional and repeatable.<br>    --settings_file=file<br>                        a file of settings to use which overwrites existing settings. The file should a<br>                        Python config file in the style of the template in etc/MAT_settings.config.in. <br>                        Optional.<br>    --task=task         name of the task to use. Obligatory if the system knows of more than one task.<br>                        Known tasks are: ...<br>    --debug             Enable debug output.<br>...<br></pre>
+    <p>If no arguments are provided to MATEngine, the help message above
+      is presented. The complete list of options is presented once a
+      task argument is provided. Note that the core options must precede
+      the input, output and task options, which must precede any other
+      options (this is because the later options are added progressively
+      as the earlier options are discovered).<br>
+    </p>
+    <p>The MAT engine is embedded in a number of other locations, such
+      as the <a href="task_xml.html#workspace_of_task">specification of
+        workspace operations</a> and the preprocessing and test corpus
+      processing in the <a href="experiment_xml.html">experiment engine
+        specifications</a>. Both of these specifications use XML as
+      their configuration language. Accordingly, we describe both the
+      command line options and their XML equivalents here (with the
+      exception of the core options immediately below, which don't have
+      any XML equivalents).<br>
+    </p>
+    <h2>Core options</h2>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <td style="vertical-align: top;">--other_app_dir &lt;dir&gt;<br>
+          </td>
+          <td style="vertical-align: top;">If present, a directory to
+            look in to find a MAT task specification. This directory
+            must contain a task.xml file which describes the task. This
+            is only necessary if 'MATManagePluginDirs install' has not
+            been called on the task directory.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--task &lt;s&gt;<br>
+          </td>
+          <td style="vertical-align: top;">The name of a task, as
+            specified in some task.xml file. Required. The known tasks
+            are reported here.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--settings_file<br>
+          </td>
+          <td style="vertical-align: top;">A file of settings to use
+            which overwrites existing settings. The file should be a
+            Python config file in the style of the template in
+            etc/MAT_settings.config.in. Optional.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>MATEngine also makes the <a href="common_cmdline_options.html">common
+
+
+
+
+
+
+
+        options</a> available.<br>
+    </p>
+    <p>Once a task argument is present, MATEngine summarizes the
+      workflow structure for the task before it prints out the full
+      option list:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATEngine --task 'Named Entity'</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATEngine.cmd --task "Named Entity"<br><br></span>Error: workflow must be specified<br>Usage: MATEngine [core options] [input/output/task options] [other options]<br><br>Named Entity :<br>  available workflows:<br>    Hand annotation : steps zone, tokenize, tag<br>    Review/repair : steps <br>    Demo : steps zone, tokenize, tag<br><br>...<br></pre>
+    <p>The remainder of the options can be grouped into a number of
+      categories.<br>
+    </p>
+    <h2>Task options</h2>
+    <p>The task options control what is done to each input file. A
+      workflow must be specified. You can either apply new steps (with
+      the --steps flag), or undo existing steps (with the --undo_through
+      flag). If neither is specified, the tool operates as a (somewhat
+      expensive) transducer between the input and output formats.<br>
+    </p>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Command line option<br>
+          </th>
+          <th style="vertical-align: top;">XML attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--workflow &lt;s&gt;<br>
+          </td>
+          <td style="vertical-align: top;">workflow<br>
+          </td>
+          <td style="vertical-align: top;">The name of a workflow, as
+            specified in some task.xml file </td>
+          <td style="vertical-align: top;">Required. The known workflows
+            for a given task are specified in the "available workflows"
+            subsections in the listing of available tasks printed after
+            the usage string.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--steps &lt;s&gt;<br>
+          </td>
+          <td style="vertical-align: top;">steps<br>
+          </td>
+          <td style="vertical-align: top;">A comma-concatenated sequence
+            of workflow steps<br>
+          </td>
+          <td style="vertical-align: top;">Some ordered subset of the
+            steps in the specified workflow. The steps for a given
+            workflow are specified in the "available workflows"
+            subsections in the listing of available tasks printed after
+            the usage string. If no steps are specified, none will be
+            applied.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--undo_through &lt;s&gt;<br>
+          </td>
+          <td style="vertical-align: top;">undo_through<br>
+          </td>
+          <td style="vertical-align: top;">A step in the current
+            workflow </td>
+          <td style="vertical-align: top;">All possible steps already
+            done in the document which follow this step are undone,
+            including this step, before any of the steps in --steps are
+            applied. You can use this flag in conjunction with --steps
+            to rewind and then reapply operations.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--print_steps &lt;s&gt;<br>
+          </td>
+          <td style="vertical-align: top;">&lt;not available&gt;<br>
+          </td>
+          <td style="vertical-align: top;">A comma-concatenated sequence
+            of workflow steps</td>
+          <td style="vertical-align: top;">Some subset of the steps in
+            the specified workflow. Verbose details about these steps
+            will be printed as they're performed (so the step subset
+            should also be a subset of the steps listed in --steps). The
+            steps should be concatenated with a comma. Only available in
+            the unembedded MATEngine.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2>Input options</h2>
+    <p>The input options specify the input files. You can specify
+      individual files, or directories (possibly filtering their
+      contents using a regular expression). You must specify a file
+      type. For raw files, you can also specify an input character
+      encoding.<br>
+    </p>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Command line option<br>
+          </th>
+          <th style="vertical-align: top;">XML attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--input_file &lt;f&gt;<br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;">The file to process. Either
+            this or --input_dir must be specified. A single dash ('-')
+            will cause the engine to read from standard input.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--input_dir &lt;d&gt;<br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;">The directory to process.
+            Either this or --input_file must be specified.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--input_file_re &lt;s&gt;<br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;">If --input_dir is specified,
+            a regular expression to match the filenames in the directory
+            against. The pattern must cover the entire filename (and
+            only the filename, not the full path).<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--input_encoding &lt;e&gt;<br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;">Input character encoding for
+            raw files. Default is ASCII.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--input_file_type &lt;t&gt;<br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;">The file type of the input.
+            One of the available <a href="readers_and_writers.html">readers
+
+
+
+
+
+
+
+
+
+              and writers</a>. Required.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2>Output options</h2>
+    <p>The output options specify how the result is saved. If you don't
+      specify any output options, the result will be ignored. You can
+      specify an output file for an input file, or an output directory
+      and/or name mapping for an input directory. You must also specify
+      the output format; usually, you'll want this to be one of the rich
+      formats, but "raw" is useful in some rare circumstances. Finally,
+      you can specify an output character encoding for raw files.<br>
+    </p>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Command line option<br>
+          </th>
+          <th style="vertical-align: top;">XML attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--output_file &lt;f&gt;<br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;">Where to save the output.
+            Optional. Must be paired with --input_file. A single dash
+            ('-') will cause the engine to write to standard output.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--output_dir &lt;d&gt;<br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;">Where to save the output.
+            Optional. Must be paired with --input_dir.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--output_fsuff &lt;s&gt;<br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;">The suffix to add to each
+            filename when --output_dir is specified. If absent, the name
+            of each file will be identical to the name of the file in
+            the input directory.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--output_file_type &lt;t&gt;<br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;">The type of the file to save.
+            One of the available <a href="readers_and_writers.html">readers
+
+
+
+
+
+
+
+
+
+              and writers</a>. Required if either --output_file or
+            --output_dir is specified.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--output_encoding &lt;e&gt;<br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;">Output character encoding for
+            raw files. Default is ASCII.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2>Other options</h2>
+    <p>The readers and writers described above may introduce additional
+      options, which are described <a href="readers_and_writers.html">here</a>.
+      These options must follow the input and output options.<br>
+    </p>
+    <p>Finally, it's possible for <a href="task_workflow_ref.html">the
+        implementation of individual steps</a> to contribute
+      command-line arguments to MATEngine. There may be default values
+      for these arguments defined in your task, and these command-line
+      specifications override those defaults.<br>
+    </p>
+    <p>The general options for automated tagging are:<br>
+    </p>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Command line option<br>
+          </th>
+          <th style="vertical-align: top;">XML attribute</th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--tagger_local<br>
+          </td>
+          <td style="vertical-align: top;">tagger_local<br>
+          </td>
+          <td style="vertical-align: top;">"yes" (XML)<br>
+          </td>
+          <td style="vertical-align: top;">Don't try to contact a remote
+            tagger server; rather, start up a local command.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--tagger_model &lt;f&gt;<br>
+          </td>
+          <td style="vertical-align: top;">tagger_model<br>
+          </td>
+          <td style="vertical-align: top;">string<br>
+          </td>
+          <td style="vertical-align: top;">Provide a tagger model file.
+            Obligatory if no model is specified in the task step and no
+            default model is present in the task.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>In addition, the <a href="carafe_engine.html">Carafe tagger</a>
+      provides other tagging options.<br>
+    </p>
+    <h2>Examples</h2>
+    <h3>Example 1</h3>
+    <p>Let's say you have a task named "My Task", with a workflow named
+      "All" which contains steps "zone", "tokenize" and "tag" as in the
+      <a href="sample_task.html">sample 'Named Entity' task</a>. In
+      order to zone and tokenize a raw document /path/to/my/document.txt
+      and save the result to a MAT JSON document:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATEngine --task "My Task" --workflow All \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--steps 'zone,tokenize' --input_file /path/to/my/document.txt \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file_type raw --output_file /path/to/my/document.txt.json \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--output_file_type mat-json</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATEngine.cmd --task "My Task" --workflow All \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--steps "zone,tokenize" --input_file c:\path\to\my\document.txt \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file_type raw --output_file c:\path\to\my\document.txt.json \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--output_file_type mat-json</span><br></pre>
+    <h3>Example 2</h3>
+    <p>Let's say you want to undo the tokenize step from the document
+      above:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATEngine --task "My Task" --workflow All \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--undo_through 'tokenize' --input_file /path/to/my/document.txt.json \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file_type mat-json --output_file /path/to/my/document.txt.notoks.json \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--output_file_type mat-json</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATEngine.cmd --task "My Task" --workflow All \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--undo_through "tokenize" --input_file c:\path\to\my\document.txt.json \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file_type mat-json --output_file c:\path\to\my\document.txt.notoks.json \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--output_file_type mat-json</span><br></pre>
+    <h3>Example 3</h3>
+    <p>Let's say you want to process the document as in example 1, but
+      you don't have any interest in saving the results (e.g., you're
+      just testing to see if it breaks):<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATEngine --task "My Task" --workflow All \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--steps 'zone,tokenize' --input_file /path/to/my/document.txt \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file_type raw</span><span style="font-weight: bold;"></span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATEngine.cmd --task "My Task" --workflow All \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--steps "zone,tokenize" --input_file c:\path\to\my\document.txt \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file_type raw</span><span style="font-weight: bold;"></span><br></pre>
+    <h3>Example 4</h3>
+    <p>Let's say you want to process the document as in example 1, and
+      you want to see the result, but you don't want to bother saving it
+      to a file:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATEngine --task "My Task" --workflow All \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--steps 'zone,tokenize' --input_file /path/to/my/document.txt \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file_type raw --output_file -</span><span style="font-weight: bold;"> --output_file_type mat-json<br><br></span>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATEngine.cmd --task "My Task" --workflow All \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--steps "zone,tokenize" --input_file c:\path\to\my\document.txt \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file_type raw --output_file -</span><span style="font-weight: bold;"> --output_file_type mat-json</span><br></pre>
+    <h3>Example 5</h3>
+    <p>Let's say you want to process the document as in example 1, but
+      you want to see the intermediate results:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATEngine --task "My Task" --workflow All \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--steps 'zone,tokenize' --input_file /path/to/my/document.txt \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file_type raw --output_file /path/to/my/document.txt.json \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--output_file_type mat-json --print_steps 'zone,tokenize'</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATEngine.cmd --task "My Task" --workflow All \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--steps "zone,tokenize" --input_file c:\path\to\my\document.txt \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file_type raw --output_file c:\path\to\my\document.txt.json \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--output_file_type mat-json --print_steps "zone,tokenize"</span><br></pre>
+    <h3>Example 6</h3>
+    <p>Let's say you have the output of example 1, but you want to
+      retokenize it. You can simultaneously specify the undo and redo
+      steps. The undo steps will be performed first.<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATEngine --task "My Task" --workflow All \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--undo_through 'tokenize' --steps tokenize \<br>--input_file /path/to/my/document.txt.json \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file_type mat-json --output_file /path/to/my/document.txt.retoks.json \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--output_file_type mat-json</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATEngine.cmd --task "My Task" --workflow All \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--undo_through "tokenize" --steps tokenize \<br>--input_file c:\path\to\my\document.txt.json \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file_type mat-json --output_file c:\path\to\my\document.txt.retoks.json \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--output_file_type mat-json</span><br></pre>
+    <h3>Example 7</h3>
+    <p>Let's say you have a directory full of text files in
+      /path/to/my/documents which you want to process, and you want the
+      results to have the identical names, but in
+      /path/to/my/jsondocuments:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATEngine --task "My Task" --workflow All \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--steps 'zone,tokenize' --input_dir /path/to/my/documents \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file_type raw --output_file /path/to/my/jsondocuments \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--output_file_type mat-json<br><br></span>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATEngine.cmd --task "My Task" --workflow All \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--steps "zone,tokenize" --input_dir c:\path\to\my\documents \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file_type raw --output_file c:\path\to\my\jsondocuments \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--output_file_type mat-json</span><br></pre>
+    <h3>Example 8</h3>
+    <p>Let's say you want to process your documents as in example 7, but
+      you want to save them back to /path/to/my/documents, with an
+      additional suffix:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATEngine --task "My Task" --workflow All \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--steps 'zone,tokenize' --input_dir /path/to/my/documents \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file_type raw --output_file /path/to/my/documents \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--output_file_type mat-json --output_fsuff '.json'</span><span style="font-weight: bold;"></span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATEngine.cmd --task "My Task" --workflow All \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--steps "zone,tokenize" --input_dir c:\path\to\my\documents \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file_type raw --output_file c:\path\to\my\documents \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--output_file_type mat-json --output_fsuff ".json"</span><br></pre>
+    <h3>Example 9</h3>
+    <p>Let's say you have a directory like the one that would be created
+      in example 8, with raw and MAT JSON documents intermixed. But all
+      the files you want to process end with ".txt":<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATEngine --task "My Task" --workflow All \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--steps 'zone,tokenize' --input_dir /path/to/my/documents \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file_type raw --output_file /path/to/my/documents \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--output_file_type mat-json --output_fsuff '.json' \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file_re '.*[.]txt'</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATEngine.cmd --task "My Task" --workflow All \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--steps "zone,tokenize" --input_dir c:\path\to\my\documents \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file_type raw --output_file c:\path\to\my\documents \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--output_file_type mat-json --output_fsuff ".json" \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file_re ".*[.]txt"</span><br></pre>
+    <p>Note that the regular expression is a Python regular expression,
+      and that it must be enclosed in single quotes on the Unix command
+      line to suppress any bash command-line preprocessing (double
+      quotes should be used in Windows, as usual).<br>
+    </p>
+    <h3>Example 10</h3>
+    <p>Let's say your "tag" step in the "All" workflow is implemented as
+      a Carafe tag step. By default, MATEngine <a
+        href="carafe_engine.html#The_tagging_engine">attempts to contact
+        the MATWeb server</a> for tagging (because the MATWeb server
+      doubles as a proxy for a tagging service, which doesn't need to be
+      started up every time you want to tag a document). You can provide
+      a Carafe model, and ensure that the engine starts up Carafe itself
+      rather than trying to contact MATWeb, as follows:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATEngine --task "My Task" --workflow All \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--steps 'zone,tokenize,tag' --input_file /path/to/my/document.txt \<br>--tagger_local --tagger_model /path/to/my/model \<br style="font-weight: bold;"></span><span style="font-weight: bold;">--input_file_type raw --output_file /path/to/my/document.txt.json \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--output_file_type mat-json<br><br></span>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATEngine.cmd --task "My Task" --workflow All \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--steps "zone,tokenize,tag" --input_file c:\path\to\my\document.txt \<br>--tagger_local --tagger_model c:\path\to\my\model \<br style="font-weight: bold;"></span><span style="font-weight: bold;">--input_file_type raw --output_file c:\path\to\my\document.txt.json \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--output_file_type mat-json</span><br></pre>
+    <p>Note that this model overrides any model specified in the task
+      file.<br>
+    </p>
+    <h3>Example 11</h3>
+    <p>Like example 10, except on the output of example 1 (that is,
+      zoning and tokenization are already done):<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATEngine --task "My Task" --workflow All \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--steps 'tag' --input_file /path/to/my/document.txt.json \<br>--tagger_local --tagger_model /path/to/my/model \<br style="font-weight: bold;"></span><span style="font-weight: bold;">--input_file_type mat-json --output_file /path/to/my/document.txt.tagged.json \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--output_file_type mat-json</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATEngine.cmd --task "My Task" --workflow All \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--steps "tag" --input_file c:\path\to\my\document.txt.json \<br>--tagger_local --tagger_model c:\path\to\my\model \<br style="font-weight: bold;"></span><span style="font-weight: bold;">--input_file_type mat-json --output_file c:\path\to\my\document.txt.tagged.json \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--output_file_type mat-json</span><br></pre>
+    <h3>Example 12</h3>
+    <p>Let's say that you have some XML documents which contain XML
+      content annotations, and you have an "align" step which will align
+      the annotation boundaries with token boundaries after you've
+      tokenized the document. Furthermore, you want all the tags which
+      aren't names of annotations in your task to be preserved in the
+      signal, so you provide the --xml_input_is_overlay option, which is
+      an option enabled by the <a href="readers_and_writers.html">xml-inline
+
+
+
+
+
+        reader</a>:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATEngine --task "My Task" --workflow Import \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--steps 'zone,tokenize,align' --input_file /path/to/my/document.xml \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file_type xml-inline --xml_input_is_overlay \<br>--output_file /path/to/my/document.xml.json \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--output_file_type mat-json<br><br></span>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATEngine.cmd --task "My Task" --workflow Import \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--steps "zone,tokenize,align" --input_file c:\path\to\my\document.xml \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file_type xml-inline --xml_input_is_overlay \<br>--output_file c:\path\to\my\document.xml.json \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--output_file_type mat-json</span><br><span style="font-weight: bold;"></span></pre>
+    <h3>Example 13</h3>
+    <p>Let's say that you want to do example 12 in two steps: first
+      convert to MAT JSON format, then process. To do the conversion,
+      simply call MATEngine without any steps:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATEngine --task "My Task" --workflow Import \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file /path/to/my/document.xml \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file_type xml-inline --xml_input_is_overlay \<br>--output_file /path/to/my/document_unprocessed.xml.json \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--output_file_type mat-json</span><br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATEngine --task "My Task" --workflow Import \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--steps 'zone,tokenize,align' \<br>--input_file /path/to/my/document_unprocessed.xml.json \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file_type mat-json \<br>--output_file /path/to/my/document.xml.json \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--output_file_type mat-json</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATEngine.cmd --task "My Task" --workflow Import \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file c:\path\to\my\document.xml \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file_type xml-inline --xml_input_is_overlay \<br>--output_file c:\path\to\my\document_unprocessed.xml.json \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--output_file_type mat-json</span><br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATEngine.cmd --task "My Task" --workflow Import \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--steps "zone,tokenize,align" \<br>--input_file c:\path\to\my\document_unprocessed.xml.json \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file_type mat-json \<br>--output_file c:\path\to\my\document.xml.json \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--output_file_type mat-json</span><br></pre>
+  </body>
+</html>

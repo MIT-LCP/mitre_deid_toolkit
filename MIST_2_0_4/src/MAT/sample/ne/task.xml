@@ -1,0 +1,157 @@
+<!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+     file LICENSE for license terms. -->
+<tasks>
+  <task name='Named Entity'>
+    <annotation_set_descriptors all_annotations_known='no'
+                                inherit='category:zone,category:token'>
+      <annotation_set_descriptor category='content' name='content'>
+        <annotation label='PERSON'/>
+        <annotation label='LOCATION'/>
+        <annotation label='ORGANIZATION'/>
+      </annotation_set_descriptor>
+    </annotation_set_descriptors>
+    <annotation_display>
+      <label name='PERSON' accelerator='P' css='background-color: #CCFF66'/>
+      <label name='LOCATION' accelerator='L' css='background-color: #FF99CC'/>
+      <label name='ORGANIZATION' accelerator='O' css='background-color: #99CCFF'/>
+    </annotation_display>
+    <workflows>
+      <workflow name='Hand annotation'>
+        <step name='zone'/>
+        <step name='tokenize'/>
+        <step pretty_name='hand tag' name='tag' by_hand='yes'/>
+      </workflow>
+      <workflow name='Tokenless hand annotation'>
+        <step name='zone'/>
+        <step pretty_name='hand tag' name='tag' by_hand='yes'/>
+      </workflow>
+      <workflow hand_annotation_available_at_end='yes' name='Review/repair'/>
+      <workflow hand_annotation_available_at_end='yes' name='Demo'>
+        <step name='zone'/>
+        <step name='tokenize'/>
+        <step name='tag'/>
+      </workflow>
+      <workflow name='Align'>
+        <step name='zone'/>
+        <step name='tokenize'/>
+        <step name='align'/>
+      </workflow>
+    </workflows>
+    <step_implementations>
+      <step name='tokenize' class='MAT.JavaCarafe.CarafeTokenizationStep'/>
+      <step name='zone' class='MAT.PluginMgr.WholeZoneStep'/>
+      <step name='align' class='MAT.PluginMgr.AlignStep'/>
+      <step workflows='Demo' name='tag' class='MAT.JavaCarafe.CarafeTagStep'/>
+      <!-- for undo -->
+      <step name='tag' class='MAT.PluginMgr.TagStep'/>
+    </step_implementations>
+    <model_config class='MAT.JavaCarafe.CarafeModelBuilder'>
+      <build_settings training_method='psa' max_iterations='6'/>
+    </model_config>
+    <model_config config_name='alt_model_build'
+                  class='MAT.JavaCarafe.CarafeModelBuilder'/>
+    <default_model>default_model</default_model>
+    <workspace>
+      <operation name='autotag'>
+        <settings steps='tag' workflow='Demo'/>
+      </operation>
+      <operation name='modelbuild'>
+        <settings/>
+      </operation>
+      <operation name='import'>
+        <settings steps='zone,tokenize' workflow='Hand annotation'/>
+      </operation>
+    </workspace>
+  </task>
+  <task name='Enhanced Named Entity'>
+    <annotation_set_descriptors all_annotations_known='no'
+                                inherit='category:zone,category:token'>
+      <annotation_set_descriptor category='content' name='content'>
+        <annotation label='PERSON'/>
+        <annotation label='LOCATION'/>
+        <annotation label='ORGANIZATION'/>
+        <attribute of_annotation="PERSON,LOCATION,ORGANIZATION" name="nomtype">
+          <choice>Proper name</choice>
+          <choice>Noun</choice>
+          <choice>Pronoun</choice>
+        </attribute>
+        <attribute of_annotation="LOCATION" name="is_political_entity" type="boolean"/>
+        <annotation label="LOCATED_EVENT"/>
+        <attribute of_annotation="LOCATED_EVENT" type="annotation" name="actor">
+          <label_restriction label="PERSON"/>
+        </attribute>
+        <attribute of_annotation="LOCATED_EVENT" type="annotation" name="location">
+          <label_restriction label="LOCATION"/>
+          <label_restriction label="ORGANIZATION"/>
+        </attribute>
+        <annotation label="PERSON_COREF" span="no"/>
+        <attribute of_annotation="PERSON_COREF" type="annotation" aggregation="set" name="mentions">
+          <label_restriction label="PERSON"/>
+        </attribute>
+        <annotation label="LOCATION_RELATION" span="no"/>
+        <attribute of_annotation="LOCATION_RELATION" type="annotation" name="located">
+          <label_restriction label="ORGANIZATION"/>
+          <label_restriction label="PERSON"/>
+        </attribute>
+        <attribute of_annotation="LOCATION_RELATION" type="annotation" name="location">
+          <label_restriction label="LOCATION"/>
+        </attribute>
+      </annotation_set_descriptor>
+    </annotation_set_descriptors>
+    <annotation_display>
+      <label name='PERSON' accelerator='P' css='background-color: #CCFF66' edit_immediately="yes"/>
+      <label name='LOCATION' accelerator='L' css='background-color: #FF99CC' edit_immediately="yes"/>
+      <label name='ORGANIZATION' accelerator='O' css='background-color: #99CCFF' edit_immediately="yes"/>
+      <label name='PERSON_COREF' accelerator='C' css='background-color: lightgreen' edit_immediately="yes"/>
+      <label name='LOCATED_EVENT' accelerator='E' css='background-color: pink' edit_immediately="yes"/>
+      <label name='LOCATION_RELATION' accelerator='R' css='background-color: orange' edit_immediately="yes"/>
+    </annotation_display>
+    <workflows>
+      <workflow name='Hand annotation'>
+        <step name='zone'/>
+        <step name='tokenize'/>
+        <step pretty_name='hand tag' name='tag' by_hand='yes'/>
+      </workflow>
+      <workflow name='Tokenless hand annotation'>
+        <step name='zone'/>
+        <step pretty_name='hand tag' name='tag' by_hand='yes'/>
+      </workflow>
+      <workflow hand_annotation_available_at_end='yes' name='Review/repair'/>
+      <workflow hand_annotation_available_at_end='yes' name='Demo'>
+        <step name='zone'/>
+        <step name='tokenize'/>
+        <step name='tag'/>
+      </workflow>
+      <workflow name='Align'>
+        <step name='zone'/>
+        <step name='tokenize'/>
+        <step name='align'/>
+      </workflow>
+    </workflows>
+    <step_implementations>
+      <step name='tokenize' class='MAT.JavaCarafe.CarafeTokenizationStep'/>
+      <step name='zone' class='MAT.PluginMgr.WholeZoneStep'/>
+      <step name='align' class='MAT.PluginMgr.AlignStep'/>
+      <step workflows='Demo' name='tag' class='MAT.JavaCarafe.CarafeTagStep'/>
+      <!-- for undo -->
+      <step name='tag' class='MAT.PluginMgr.TagStep'/>
+    </step_implementations>
+    <model_config class='MAT.JavaCarafe.CarafeModelBuilder'>
+      <build_settings training_method='psa' max_iterations='6'/>
+    </model_config>
+    <model_config config_name='alt_model_build'
+                  class='MAT.JavaCarafe.CarafeModelBuilder'/>
+    <default_model>default_enhanced_model</default_model>
+    <workspace>
+      <operation name='autotag'>
+        <settings steps='tag' workflow='Demo'/>
+      </operation>
+      <operation name='modelbuild'>
+        <settings/>
+      </operation>
+      <operation name='import'>
+        <settings steps='zone,tokenize' workflow='Hand annotation'/>
+      </operation>
+    </workspace>
+  </task>
+</tasks>

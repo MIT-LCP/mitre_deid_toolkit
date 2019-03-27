@@ -1,0 +1,113 @@
+# Copyright (C) 2012 The MITRE Corporation. See the toplevel file
+# LICENSE for license terms.
+
+STANDALONE LIBRARIES FOR THE MIST REPLACEMENT ENGINE
+----------------------------------------------------
+
+This directory contains tools and examples for running the MIST
+replacement engine without the rest of MIST. By design, the MIST
+replacement engine has no dependencies on the remainder of MIST. 
+
+You can run the MIST replacement engine in Python, or in Java using
+Jython (http://www.jython.org). 
+
+In order to run the MIST replacement engine, you'll need:
+
+- the python/ and resources/ subdirectories of the MIST core task
+  (typically, the src/tasks/core directory in your MIST distribution) 
+
+- the python/ and resources/ subdirectories of your own task
+  (typically, a directory in src/tasks in your MIST distribution)
+
+- the lib/python subdirectory of this directory
+
+- if you're using Jython, the lib/java subdirectory of this directory
+
+- a defined subclass of
+  StandaloneReplacementEngine.StandaloneReplacementEngine for your
+  task. This subclass should require no arguments for
+  initialization. The AMIA task contains an example of such a subclass
+  definition in python/AMIAReplacementEngine.py.
+
+SAMPLE REPLACEMENT SCRIPT
+-------------------------
+
+The script bin/docReplace.py illustrates how the standalone
+replacement engine can be used. This script can also serve as a
+general-purpose test for your replacement engine. For convenience, it
+uses MAT JSON as its source format; however, this is purely for
+illustration. No MIST or MAT libraries beyond the ones listed above
+are used.
+
+Here's an example for AMIA. Let's say you're in src/tasks in the MIST
+distribution, which means you have the following directories:
+
+core/python
+core/resources
+AMIA/python
+AMIA/resources
+core/standalone/bin
+
+Let's say you have a MAT JSON file appropriate for the AMIA task in
+file.json. Then you'd invoke the test script as follows (all examples
+in this README are provided for Unix):
+
+% python core/standalone/bin/docReplace.py --task_py_dir AMIA/python \
+--task_resource_dir AMIA/resources file.json "clear -> clear" \
+core/python core/resources AMIAReplacementEngine AMIAStandaloneReplacementEngine
+
+(The backslashes, as is traditional, indicate a wrapped line.) This
+invocation will print to standard output the modified signal, together
+with the labels and modified spans of the replaced PII.
+
+BUILDING THE JYTHON JAR
+-----------------------
+
+If you want to call the replacement engine from Java, you can use the
+Jython library. The MIST Jython JAR file is found in
+lib/java/dist/mist_replacer.jar. In order to use it, you must have
+Jython installed (we've tested against 2.5.2). 
+
+If you need to rebuild the MIST Jython JAR file (you shouldn't have
+to, but just in case), do this:
+
+% cd lib/java/src
+% javac -cp <jython_252_jar> org/mitre/mist/replacement/*.java
+% jar cf ../dist/mist_replacer.jar org/mitre/mist/replacement/*.class
+
+where <jython_252_jar> is the jython.jar file in your Jython
+installation. 
+
+SAMPLE JAVA APPLICATION
+-----------------------
+
+The file bin/MISTReplacement.java is an example implementation very
+similar to bin/docReplace.py above. I've chosen to rely on the MAT
+Java libraries here, because digesting raw JSON in Java is
+painful. However, the MAT libraries are NOT required to use the
+replacement engine; they're used only to disassemble the example data
+file.
+
+Compile the example as follows:
+
+% cd bin
+% javac -cp <jython_252_jar>:../lib/java/dist/mist_replacer.jar:<mat_root>/lib/mat/java/lib/jackson-core-lgpl-1.4.3.jar:<mat_root>/lib/mat/java/lib/jackson-mapper-lgpl-1.4.3.jar:<mat_root>/lib/mat/java/java-mat-core/dist/java-mat-core.jar MISTReplacement.java 
+
+where <jython_252_jar> is as above, and <mat_root> is the src/MAT
+directory in your MIST distribution. 
+
+Run this example from src/tasks in your MIST distribution similarly to
+bin/docReplace.py. Assume the following directories:
+
+core/python
+core/resources
+AMIA/python
+AMIA/resources
+core/standalone/bin
+core/standalone/lib/python
+core/standalone/lib/java
+
+% java -cp core/standalone/bin:<jython_252_jar>:core/standalone/lib/java/dist/mist_replacer.jar:<mat_root>/lib/mat/java/lib/jackson-core-lgpl-1.4.3.jar:<mat_root>/lib/mat/java/lib/jackson-mapper-lgpl-1.4.3.jar:<mat_root>/lib/mat/java/java-mat-core/dist/java-mat-core.jar \
+MISTReplacement --task_py_dir AMIA/python --task_resource_dir AMIA/resources \
+file.json "clear -> clear" core/standalone/lib/python core/python \
+core/resources AMIAReplacementEngine AMIAStandaloneReplacementEngine

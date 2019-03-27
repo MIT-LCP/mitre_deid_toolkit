@@ -1,0 +1,28 @@
+<experiment task='Named Entity'>
+  <corpora dir="corpora">
+    <partition name="train" fraction=".8"/>
+    <partition name="test" fraction=".2"/>
+    <!-- we have to mark gold to make it visible to the model builder -->
+    <prep input_file_type="xml-inline" workflow="Align" mark_gold="yes" steps="zone,tokenize,align"/>
+    <corpus name="test">
+      <pattern>*.xml</pattern>
+    </corpus>
+  </corpora>
+  <model_sets dir="model_sets">
+    <!-- again, use dir to override. training_increment is also an option for build.
+         Actually, you can repeat model_sets. -->
+    <model_set name="test">
+      <training_corpus corpus="test" partition="train"/>
+    </model_set>
+  </model_sets>
+  <runs dir="runs">
+    <!-- and you can repeat runs -->
+    <run_settings>
+      <prep_args output_file_type="mat-json" undo_through="tag" workflow="Demo"/>
+      <args steps="tag" workflow="Demo"/>
+    </run_settings>
+    <run name="test" model="test">
+      <test_corpus corpus="test" partition="test"/>
+    </run>
+  </runs>
+</experiment>

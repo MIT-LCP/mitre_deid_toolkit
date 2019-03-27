@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Advanced Workspace Maintenance</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Advanced workspace maintenance</h1>
+    <p>MAT workspaces are quite powerful. We described the basics for
+      individual users <a href="workspaces.html">here</a>, <a
+        href="ui_workspaces.html">here</a>, and <a href="tallal.html">here</a>.
+      We've covered importing documents, annotating them, building
+      models, automated tagging, and correction, and also touched on
+      workspace logging. In this document, we discuss some more advanced
+      capabilities that the workspaces provide.<br>
+    </p>
+    <ul>
+      <li><a href="#Multiple_annotators">Multiple annotators</a></li>
+      <li><a href="#Document_assignment">Document assignment</a></li>
+      <li><a href="#Inspecting_the_state_of_the_workspace">Inspecting
+          the state of the workspace</a><br>
+      </li>
+    </ul>
+    <h2><a name="Multiple_annotators"></a>Multiple annotators</h2>
+    <p>One of the major innovations in MAT 2.0 is that workspaces
+      support multiple annotators. All annotation within workspaces is
+      attributed to a particular human annotator, or to the automated
+      tagging engine. This is not a security feature, and no security
+      (e.g., a password) is associated with it; it's merely to partition
+      responsibility. The usernames don't need to match your system
+      username, but you might find it convenient to set them up that
+      way. You can declare multiple annotators when you create a
+      workspace:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATWorkspaceEngine /tmp/ne_workspace create \<br>--task 'Named Entity' --initial_users user1</span><b>,user2</b><br style="font-weight: bold;"><br style="font-weight: bold;">Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATWorkspaceEngine.cmd %TMP%\ne_workspace create \<br>--task "Named Entity"</span><span style="font-weight: bold;"> --initial_users "user1,user2"<br></span><span style="font-weight: bold;"></span></pre>
+    <p>or later:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATWorkspaceEngine /tmp/ne_workspace \<br>register_users user1</span><b> user2</b><br style="font-weight: bold;"><br style="font-weight: bold;">Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATWorkspaceEngine.cmd %TMP%\ne_workspace </span><span style="font-weight: bold;">\<br>register_users user1 user2</span><br></pre>
+    <p>You can list the registered users with the <a
+        href="MATWorkspaceEngine.html#list_users">list_users</a>
+      operation.<br>
+    </p>
+    <h2><a name="Document_assignment"></a>Document assignment</h2>
+    <p>In the default situation, when you import a document, it's
+      available for annotation by any of the workspace users (it's <b>unassigned</b>).
+
+      You can change this by assigning a document to a user, and perhaps
+      even to multiple users for duplicate annotation. You can assign a
+      document to a user when you import it:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">cd $MAT_PKG_HOME</span><br>% <span style="font-weight: bold;">bin/MATWorkspaceEngine /tmp/ne_workspace import --strip_suffix ".txt" \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--file_type raw --assign --users user1,user2 \<br>"core" sample/ne/resources/data/raw/voa2.txt </span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">cd %MAT_PKG_HOME%</span><br>&gt; <span style="font-weight: bold;">bin\MATWorkspaceEngine.cmd %TMP%\ne_workspace import --strip_suffix ".txt" \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--file_type raw --assign --users "user1,user2" \<br>"core" %CD%\sample\ne\resources\data\raw\voa2.txt </span><br></pre>
+    <p>You can also assign a document after it's imported (but only if
+      it hasn't been modified by a human yet):<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATWorkspaceEngine /tmp/ne_workspace assign \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--users user1,user2 voa2</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATWorkspaceEngine.cmd %TMP%\ne_workspace assign \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--users "user1,user2" voa2</span>
+</pre>
+    <p>These assignments will be in addition to any assignments made
+      when you import.<br>
+    </p>
+    <p>In an upcoming release, we will make <a
+        href="ui_reconciliation.html">reconciliation</a> available in
+      workspaces, so multiply-assigned documents can be reconciled
+      within the context of the workspaces.<br>
+    </p>
+    <h2><a name="Inspecting_the_state_of_the_workspace"></a>Inspecting
+      the state of the workspace</h2>
+    <p>The workspace <a href="MATWorkspaceEngine.html#list">list</a>
+      operation allows you to list the contents of all the folders in
+      the workspace, and the <a
+        href="MATWorkspaceEngine.html#dump_database">dump_database</a>
+      operation shows you the contents of the workspace database. You
+      may find these operations useful for debugging.<br>
+    </p>
+  </body>
+</html>

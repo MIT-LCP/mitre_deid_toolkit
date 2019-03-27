@@ -1,0 +1,214 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Tutorial 1: Load and Hand Tag a Document</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Tutorial 1: Load and hand tag a document</h1>
+    <p>To get our feet wet with MAT, let's load and hand tag a document.
+      We're going to use a task that comes with MAT, which is a simple
+      task for named entity tagging (identifying people, organizations
+      and locations). Make sure you're familiar with the "Conventions"
+      section in your platform-specific instructions in the "Getting
+      Started" section of the documentation. We're going to do this
+      tutorial in <a href="files_and_workspaces.html">file mode</a>.<br>
+    </p>
+    <h2><a name="Install_the_task"></a>Step 1: Install the task</h2>
+    <p>While the named entity task is included in the distribution, it
+      is not installed yet. The named entity task implementation is in
+      the sample/ne subdirectory of MAT_PKG_HOME. Install it as follows:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">cd $MAT_PKG_HOME</span><br>% <span style="font-weight: bold;">bin/MATManagePluginDirs install $PWD/sample/ne</span><br><br>Windows native:<br><br style="font-weight: bold;">&gt; <span style="font-weight: bold;">cd %MAT_PKG_HOME%</span><br style="font-weight: bold;">&gt; <span style="font-weight: bold;">bin\MATManagePluginDirs.cmd install %CD%\sample\ne</span><br></pre>
+    <p>(If you received this distribution as a tarball, you won't have
+      to do this with any tasks you find in src/tasks inside the
+      tarball; these will have been installed as part of the overall
+      installation procedure.)<br>
+    </p>
+    <h2><a name="Start_the_UI"></a>Step 2: Start the UI</h2>
+    <p>Open another terminal, and start the Web server (see <a
+        href="start_web.html">here</a> for more details):<br>
+    </p>
+    <pre>Unix:<br><br>% <b>$MAT_PKG_HOME/bin/MATWeb</b><br><br>Windows native:<br><br>&gt; <b>%MAT_PKG_HOME%\bin\MATWeb</b><br></pre>
+    <p>Then open your Firefox browser and:<br>
+    </p>
+    <ul>
+      <li>Ensure that popups are not blocked for localhost (you can
+        check this in the Firefox preferences window under the Content
+        tab).</li>
+      <li>In the Firefox preferences window in the General tab, ensure
+        that "Always ask me where to save files" is selected.</li>
+    </ul>
+    Then, navigate to <a href="http://localhost:7801/MAT/workbench">http://localhost:7801/MAT/workbench</a>
+    (see <a href="start_ui.html">here</a> for more details).
+    <h2>Step 3: Load a document</h2>
+    <p>You're now ready to load a document.<br>
+    </p>
+    <ul>
+      <li>In the UI, select File -&gt; Open file... . You'll see a popup
+        window.</li>
+      <li>Set the task dropdown menu to "Named Entity", if it isn't
+        already set.</li>
+      <li>Select "Hand annotation" as your workflow.</li>
+      <li>Press the "Browse" button next to "Input", and navigate to
+        MAT_PKG_HOME/sample/ne/resources/data/raw. Select any of the
+        files in that directory.</li>
+      <li>The document type should already be "raw", and encoding should
+        be "ascii".</li>
+      <li>Press the "Open" button, which should be active as soon as you
+        select an input file.</li>
+    </ul>
+    <p>You should now see a window with a tab which contains the
+      document:<br>
+    </p>
+    <p><img alt="[voa2 raw]" src="../img/voa2_ha_raw.jpg" height="645"
+        width="980"><br>
+    </p>
+    <p>At the right, you'll see a menu where you can change the
+      workflow. You'll see immediately below a status line, which
+      contains each of the steps in the workflow; steps which are
+      finished will be grayed out, and none should be grayed out at the
+      moment. Below the status line are a forward button (move one step
+      forward), a backward button, and a reload button. Below this
+      section, you'll see a tag legend.<br>
+    </p>
+    <p>Within the document tab, you'll see a tagging status area at the
+      top which tells you that hand annotation is unavailable.<br>
+    </p>
+    <p> The document has two icons at the right end of its tab. The "-"
+      will hide the document, and the "x" will close it. The Tabs menu
+      at the top of the UI provides a way of showing it once it's
+      hidden. Try hiding and showing the document. If you press the "x"
+      by mistake, just follow the instructions in this step above to
+      load the document again.</p>
+    <h2>Step 4: Prepare the document for hand tagging</h2>
+    <p>You're now ready to prepare the document for hand tagging. In
+      order for the document to be hand taggable, it should usually be
+      tokenized; i.e., the basic word elements must be identified. In
+      addition, the regions of the document which might contain
+      interesting elements must be identified (this is called "zoning").<br>
+    </p>
+    <p>Press the forward button. The zone step should be grayed out. You
+      shouldn't see any change in the document tab, because this
+      particular task treats the entire document as potentially
+      interesting; if there were uninteresting areas, they would be
+      grayed out in the document text:<br>
+    </p>
+    <p><img alt="[voa2 zoned]" src="../img/voa2_ha_zone.jpg"
+        height="664" width="1019"><br>
+    </p>
+    <p>Press the forward button again. The tokenize step should be
+      grayed out, and all the words in the document should be surrounded
+      by faint boxes. These outlines show you where the system believes
+      the word boundaries are, which will be relevant in a moment:<br>
+    </p>
+    <p><img alt="[voa2 zoned and toked]"
+        src="../img/voa2_ha_zone_tok.jpg" height="645" width="981"><br>
+    </p>
+    <ul>
+    </ul>
+    <p>In the tagging status area, it should now say "Hand annotation: <b>available</b>
+      (swipe or left-click)".<br>
+    </p>
+    <p>You're now in the "hand tag" step. Note that this step is
+      special, in that the user performs it, not the MAT engine. The
+      "hand tag" step is a placeholder for your annotation activity.<br>
+    </p>
+    <h2>Step 5: Insert some tags</h2>
+    <p>There are two ways to select text to tag. You can swipe using the
+      mouse (click left, hold, and move), or click left on an individual
+      word. The system will expand the selection to the nearest word
+      boundaries, and pop up a tagging menu. You can select the
+      appropriate tag with the mouse, or use the keyboard accelerators
+      (in parentheses in the menu).<br>
+    </p>
+    <p>If you need to remove or change a tag, just click on it. You'll
+      get a popup menu that will allow you to do what you want.<br>
+    </p>
+    <h2>Step 6: Save the document</h2>
+    <p>Select "File -&gt; Save..." in the menu bar, and then select
+      "mat-json". You should be prompted with a file save dialog. Put
+      this file somewhere you can find it again; we'll come back to it
+      in a bit. Give it a name like "annotated_doc.json".<br>
+    </p>
+    <p>What you're doing is saving your document, along with its
+      annotations. MAT uses <span style="font-weight: bold;">standoff
+        annotations</span>, which record an annotation by recording
+      offsets into the document, rather than <span style="font-weight:
+        bold;">in-line annotations</span>, where the annotations would
+      be inserted into the document text directly (e.g., XML). MAT's
+      standoff annotation format is <a href="mat_json_format.html">our
+        own format</a>, built on top of the Javascript Object Notation
+      (JSON).<br>
+    </p>
+    <p><span style="font-weight: bold;">Note</span>: if you're having
+      trouble finding the document you saved, please keep in mind that
+      the browser, not the MAT UI, is responsible for saving your file.
+      In particular, if you haven't configured your browser to prompt
+      you for where to save your file, it will be saved to your
+      browser's download directory. To fix this in Firefox, see the
+      documentation on<a href="start_web.html"></a> <a
+        href="start_ui.html">starting the UI</a>.</p>
+    <h2>Step 7: Close and reload the annotated document, with logging<br>
+    </h2>
+    <p>Finally, you'll close and reload this document, so you can see
+      how loading an annotated document differs from loading a raw
+      document. We'll also see how to start and stop the MAT UI logger.<br>
+    </p>
+    <p>To close the document, press the "x" in the upper-right corner of
+      the document pane. <br>
+    </p>
+    <p>Now, let's start the logger.<br>
+    </p>
+    <ul>
+      <li>In the menubar at the top of the UI, press "Logging is off
+        (press to start)". It should change color, and tell you that
+        logging is on.<br>
+      </li>
+    </ul>
+    <p>Now, let's reload the document. All our actions will be logged.<br>
+    </p>
+    <ul>
+      <li>In the UI, select "File -&gt; Open file..." . You'll see a
+        popup window.</li>
+      <li>Set the task dropdown menu to "Named Entity", if it isn't
+        already set.</li>
+      <li>Select "Hand annotation" as your workflow.</li>
+      <li>Press the "Browse" button next to "Input", and navigate to the
+        document you just saved.</li>
+      <li>Select "mat-json" as the document type. The encoding should
+        automatically switch to utf-8, and it should not be editable.<br>
+      </li>
+      <li>Press the "Open" button, which should be active as soon as you
+        select an input file.</li>
+    </ul>
+    <p>A tab should appear which shows your annotated document, and the
+      automatic steps you've already performed on the document should be
+      visible on the right.<br>
+    </p>
+    <h2>Step 8: View the logging output</h2>
+    <p>In this open window, add and remove some annotations, then press
+      the logging button again. The browser will download a CSV file
+      which contains the contents of the log. Open the file in your
+      favorite spreadsheet application to see how your actions were
+      logged, and see the <a href="logger.html">logger documentation</a>
+      for a description of the logger output.<br>
+    </p>
+    <h2>Step 9: Shut down the Web server</h2>
+    <p>Shut down your Web server by typing "exit" in the window where
+      you started the Web server. More details <a href="start_web.html">here</a>.<br>
+    </p>
+    <h2>Step 10: Clean up (optional)</h2>
+    <p>If you're not planning on doing any other tutorials, and you
+      don't want the "Named Entity" task hanging around, remove it as
+      follows:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">cd $MAT_PKG_HOME</span><br>% <span style="font-weight: bold;">bin/MATManagePluginDirs remove $PWD/sample/ne<br></span><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">cd %MAT_PKG_HOME%</span>%<br>&gt; <span style="font-weight: bold;">bin\MATManagePluginDirs.cmd remove %CD%\sample\ne</span><span style="font-family: sans-serif;"></span></pre>
+    <p>This concludes Tutorial 1.<br>
+    </p>
+  </body>
+</html>

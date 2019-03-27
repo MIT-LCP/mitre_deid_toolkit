@@ -1,0 +1,355 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=windows-1252"
+      http-equiv="Content-Type">
+    <title>Span Annotation</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Span annotation<br>
+    </h1>
+    <p>The Web UI that comes with MAT is a rich, logging-enabled tool
+      for viewing, processing and annotating your documents. We describe
+      how to use it here.<br>
+    </p>
+    <ul>
+      <li><a href="#The_file_menu">The file menu</a></li>
+      <ul>
+      </ul>
+      <li><a href="#Loading_and_viewing_files_in_file_mode">Loading and
+          viewing files in file mode</a></li>
+      <ul>
+        <li><a href="#The_Load_document_dialog">The "Load document"
+            dialog</a></li>
+        <li><a href="#The_file_mode_document_window">The file mode
+            document window<br>
+          </a></li>
+      </ul>
+      <li><a href="#Annotating">Annotating</a></li>
+      <ul>
+        <li><a href="#Adding_an_annotation">Adding an annotation</a></li>
+      </ul>
+      <ul>
+        <li><a href="#Removing_an_annotation">Removing an annotation</a></li>
+        <li><a href="#Adding_an_overlapping_annotation">Adding an
+            overlapping annotation</a><br>
+        </li>
+        <li><a href="#Modifying_an_annotation_extent">Modifying an
+            annotation extent<br>
+          </a></li>
+        <li><a href="#Autotagging">Autotagging</a></li>
+      </ul>
+    </ul>
+    <p>We assume that you've started the <a href="start_web.html">Web
+        server</a> and the <a href="start_ui.html">UI</a>.<br>
+    </p>
+    <p><span style="font-weight: bold;">Note</span>: because of its
+      current implementation, the UI can become extremely sluggish with
+      files which contain large numbers of annotations. We have found
+      that, if your document contains token annotations, ~100K is the
+      practical limit for raw documents given current browser and
+      JavaScript implementations. </p>
+    <h2><a name="The_file_menu"></a>The file menu</h2>
+    <p>The file menu looks like this:<br>
+    </p>
+    <p><img alt="[file menu]" src="../img/ui_filemenu.jpg" height="310"
+        width="594"><br>
+    </p>
+    <p>The five things you can do from this menu are:<br>
+    </p>
+    <ul>
+      <li><a href="#Loading_and_viewing_files_in_file_mode">Open a file</a></li>
+      <li><a href="ui_alignment.html">Align files</a><br>
+      </li>
+      <li><a href="ui_comparison.html">Compare files<br>
+        </a></li>
+      <li><a href="ui_reconciliation.html">Reconcile files</a><br>
+      </li>
+      <li><a href="#Loading_and_interacting_with_workspaces">Open a
+          workspace</a><br>
+      </li>
+      <li><a href="#The_Update_workspace_key_dialog">Update the
+          workspace key</a></li>
+    </ul>
+    <p>Each of these operations brings up a dialog so you can proceed.
+      In this section, we'll focus on simple span annotation in file
+      mode, accessible via "Open file...". <br>
+    </p>
+    <h2><a name="Loading_and_viewing_files_in_file_mode"></a>Loading and
+      viewing files in file mode</h2>
+    <h3><a name="The_Load_document_dialog"></a>The "Load document"
+      dialog<br>
+    </h3>
+    <p>When you select "File -&gt; Open file...", you'll be presented
+      with the following dialog:<br>
+    </p>
+    <p><img style=" width: 483px; height: 246px;" alt="[load document
+        dialog]" src="../img/ui_loaddocument.jpg"><br>
+    </p>
+    <p>The "Task" menu will be active, and the "Workflow" and "Input"
+      elements will be disabled. Once you select an item from the "Task"
+      menu, the "Workflow" menu will be enabled; once you select a
+      workflow, the "Input" element will be enabled. If MAT knows of
+      only one element for either the task or the workflow, those
+      elements will be automatically selected for you.<br>
+    </p>
+    <p>The workflows are established in your <a href="task_xml.html">task
+
+
+
+
+
+
+        configuration file</a>. Choose the workflow that's appropriate
+      for what you're going to do. E.g., in the "Named Entity" task:<br>
+    </p>
+    <ul>
+      <li>"Demo" allows you to autotag and correct documents<br>
+      </li>
+      <li>"Hand annotation" allows you to hand annotate from scratch,
+        with tokenization</li>
+      <li>"Tokenless hand annotation" allows you to hand annotate,
+        without tokenization</li>
+      <li>"Review/repair" allows you to correct documents<br>
+      </li>
+    </ul>
+    <p>In addition to those, the "Workflow" menu allows you to open a
+      document read-only, and to open a <a
+        href="ui_reconciliation.html">reconciliation</a> or <a
+        href="ui_comparison.html">comparison</a> document:</p>
+    <p><img alt="[file menu with workflow]"
+        src="../img/ui_loaddocument_wf.jpg" height="248" width="485"><br>
+    </p>
+    <p>Select the appropriate document type and encoding for the
+      document. If the document is a raw document, select "raw" from the
+      "Document type" menu; or, select "mat-json" for rich annotated
+      documents in the <a href="mat_json_format.html">MAT JSON format</a>
+      (other <a href="readers_and_writers.html">document types</a> will
+      also be available). The encoding for MAT JSON documents will be
+      fixed as utf-8. You also have the option of providing an optional
+      memo, which will be echoed in the "Tabs" menu and the document
+      title bar. Once you've filled out the appropriate elements, the
+      "Open" button will be enabled:<br>
+    </p>
+    <p><img style=" width: 482px; height: 246px;" alt="[load document
+        open]" src="../img/ui_loaddocument_filled.jpg"><br>
+    </p>
+    <p>If you press the "Open" button, the dialog will vanish and you'll
+      see a new tab in the upper left region of your window, and the
+      task-related information about your document will appear in the
+      upper right region.</p>
+    <h3><a name="The_file_mode_document_window"></a>The file mode
+      document window</h3>
+    <p>At this point, your UI will look like this:<br>
+    </p>
+    <p><img alt="" src="../img/voa2_ha_raw.jpg" height="645" width="980"><br>
+    </p>
+    <p>The tab contains the basename of the document, and the hand
+      annotation status is shown above the document text, below the tab
+      (here, it says "Hand annotation unavailable"). At the right end of
+      the title tab, there are two icons. The "-" hides the document,
+      and the "x" closes it; you can make a hidden document visible
+      again using the <a href="ui_settings.html#The_tabs_menu">"Tabs"
+        menu</a>.</p>
+    <p>In the upper right region, you see the task controls on top, with
+      a more complete description of the document name, the workflow
+      menu, and a sequence of steps. The arrows below the steps allow
+      you to move one step forward or one step backward; the "Reload"
+      button allows you to reload the document. Below the task controls
+      is the tag legend.<br>
+    </p>
+    <p>The "up" arrow to the right of the "Controls" and "Legend" labels
+      allows you to contract that section of the task information.<br>
+    </p>
+    When there's an active tab, the "File -&gt; Save..." submenu is
+    enabled:<br>
+    <p><img alt="[raw plus menu]" src="../img/voa2_ha_raw_menu.jpg"
+        height="445" width="679"><br>
+    </p>
+    This menu allows you to save the document in various formats.<span
+      style="font-weight: bold;"> Note</span>: if you're having trouble
+    finding the document you saved, please keep in mind that the
+    browser, not the MAT UI, is responsible for saving your file. In
+    particular, if you haven't configured your browser to prompt you for
+    where to save your file, it will be saved to your browser's download
+    directory. To fix this in Firefox, see the documentation on <a
+      href="start_ui.html">starting the UI</a>.
+    <ul>
+    </ul>
+    Here's another view of the UI, after two steps (zone and tokenize)
+    have been applied by pressing the forward button:<br>
+    <p><img alt="" src="../img/voa2_ha_zone_tok.jpg" height="645"
+        width="981"><br>
+    </p>
+    The following changes are visible:<br>
+    <ul>
+      <li>The two steps we've advanced through are grayed in the task
+        controls, indicating that they're completed.</li>
+      <li>The document is clearly marked as modified, both explicitly in
+        the task controls and by the presence of a prepended "*" in the
+        document tab.</li>
+      <li>The document now displays the token boundaries.</li>
+      <li>The hand annotation status line now reads "Hand annotation
+        available (swipe or left-click)".</li>
+    </ul>
+    <h2><a name="Annotating"></a>Annotating</h2>
+    <p>Whenever the hand annotation status line reads "Hand annotation
+      available (swipe or left-click)", you may edit the content
+      annotations for your document.<br>
+    </p>
+    <h3><a name="Adding_an_annotation"></a>Adding an annotation</h3>
+    <p>To add an annotation, either swipe or left-click in the document
+      text where there are no content annotations. Swiping selects a
+      range of tokens; left-clicking selects a single token. In this
+      example, we've swiped:<br>
+    </p>
+    <p><img alt="[add annotation]" src="../img/ui_addannotation.jpg"
+        height="446" width="679"><br>
+    </p>
+    <p>The annotation menu pops up automatically. In this example, where
+      the text is previously unannotated, the menu contains, for each
+      content annotation, the option to add that annotation. The menu
+      items are styled with the same CSS that the resulting annotation
+      will be styled with. Optionally, the menu may present a keyboard
+      accelerator; here, if you press "O" when the menu is visible, it's
+      identical to selecting "Add ORGANIZATION" from the annotation
+      menu. The result is shown here:<br>
+    </p>
+    <p><img alt="[added annotation]" src="../img/ui_annotationadded.jpg"
+        height="445" width="678"><br>
+    </p>
+    <p>If you place your mouse over the annotation you've added, the
+      tagging information line immediately below the text changes to
+      show the name of the annotation:<br>
+    </p>
+    <p><img alt="[hover]" src="../img/ui_annotationaddedhover.jpg"
+        height="447" width="680"><br>
+    </p>
+    <p>And now that you've added an annotation, your annotation popup
+      will provide the option of repeating the last annotation. If, say,
+      you move on to annotate "Pakistan" as a location in the third
+      line, and then make another selection, you'll see "Repeat
+      LOCATION" as an option in your annotation popup:<br>
+    </p>
+    <p><img alt="[repeat annotation]"
+        src="../img/ui_annotationaddedrepeat.jpg" height="447"
+        width="680"><br>
+    </p>
+    <p>Note that this option always has the keyboard accelerator "=". So
+      in this case, you can mark this next occurrence of "Pakistan" as a
+      location either by pressing the "L" or "=" keys, or by selecting
+      "Add LOCATION" or "Repeat LOCATION" from the annotation popup
+      menu.<br>
+    </p>
+    <h3><a name="Removing_an_annotation"></a>Removing an annotation</h3>
+    <p>To remove an annotation, left-click the annotation:<br>
+    </p>
+    <p><img alt="[add or modify]"
+        src="../img/ui_removereplaceautotag.jpg" height="447"
+        width="680"><br>
+    </p>
+    <p>From the menu, select "Delete annotation", or press the "-" key.
+      The annotation will be removed. If you'd rather replace the
+      annotation with a different one, simply select that option with
+      the mouse or via the keyboard accelerator; the current annotation
+      will be removed and the new one added.</p>
+    <h3><a name="Adding_an_overlapping_annotation"></a>Adding an
+      overlapping annotation</h3>
+    <p>In some cases, you'll want to add annotations which overlap each
+      other. To do this, swipe the region of text you wish to add an
+      annotation to. Do <b>not</b> left-click on an existing annotation
+      without swiping; the UI will interpret this as a request to
+      perform an operation on the annotation (i.e., autotag, delete, or
+      replace).<br>
+    </p>
+    <img alt="[add or modify annotation]"
+      src="../img/ui_addormodifyannotation.jpg" height="447" width="680">
+    <p>If you select "Add LOCATION" in this case, you'll now see a
+      "stacked" display of the overlapping annotations:<br>
+    </p>
+    <img alt="[stacked annotations]"
+      src="../img/ui_annotationstacked.jpg" height="446" width="682">
+    <p>The stacking order is currently arbitrary,. You may discover that
+      when you add an annotation, it might become the annotation behind
+      the text, and the new annotation may be moved to above the text.<br>
+    </p>
+    <p><b>Note</b>: this stacked view is only available during hand
+      annotation. If hand annotation is not enabled, the stacking will
+      "collapse" into a single line, and if you hover your mouse over
+      overlapping annotations in that case, you'll see, in the tagging
+      information line, all the annotations at that position. In a
+      future release, it may be possible to force the stacked view when
+      hand annotation is not available.<br>
+    </p>
+    <h3><a name="Modifying_an_annotation_extent"></a>Modifying an
+      annotation extent<br>
+    </h3>
+    <p> As you can see, when you swipe over an existing annotation, you
+      have the option of modifying the extent of that annotation. If the
+      region contains multiple overlapping annotations, one of two
+      things will happen. In the first case, if each "layer" has no more
+      than one annotation on it, the popup menu will present you with
+      the option of modifying the extent of the annotation on a
+      particular layer:</p>
+    <p><img alt="[stacked modify]"
+        src="../img/ui_annotationstackedmodify.jpg" height="475"
+        width="682"><br>
+    </p>
+    <p>If any layer has more than one annotation under the swipe,
+      instead of having a separate entry for each layer, there will be a
+      single option "Modify extent...", and when you choose it, you'll
+      be presented with an opportunity to choose the annotation which
+      you intend to modify. The extent of your swipe will be shown by a
+      dotted-line box; any annotation which overlaps with this box is
+      eligible to be selected to be modified:<br>
+    </p>
+    <p><img alt="[stacked modify multiple]"
+        src="../img/ui_annotationstackedmodifymultiple.jpg" height="476"
+        width="683"><br>
+    </p>
+    <p>You may cancel the modification, either by pressing "Cancel" or
+      closing the popup using the "x" in the upper right corner. If you
+      select an annotation outside the boundary box, you'll be presented
+      with an error and the modification will be cancelled.<br>
+    </p>
+    <h3><a name="Autotagging"></a>Autotagging</h3>
+    <p>You'll notice, above, that when you select an annotation, the
+      popup menu contains not just the options to replace or remove, but
+      also to "Autotag matches". If you select this option, all the
+      eligible spans in the text which are not yet marked and match the
+      existing span will be assigned the same annotation label as the
+      already-annotated span. If you select a span of text which covers
+      multiple annotated segments, the autotag process will be applied
+      to each annotated segment. Autotagging has the following
+      properties:<br>
+    </p>
+    <ul>
+      <li>By default, it is case-sensitive; so "George" and "george"
+        will not match. You can control whether autotagging is case
+        sensitive via the "View -&gt; Autotagging is case-sensitive"
+        switch.<br>
+      </li>
+      <li>It normalizes span-internal whitespace; so any sequence of
+        whitespace in your already-annotated span will match any
+        sequence of whitespace in the corresponding position in the
+        target spans.</li>
+      <li>It will not annotate in untaggable regions, nor will it
+        annotate any span which is already annotated.<br>
+      </li>
+      <li>It is sensitive to specific boundaries. If your document is
+        tokenized, the autotagging will only match spans whose
+        boundaries match token boundaries. If your document is not
+        tokenized, the span must be delimited by default by either
+        whitespace or a zone or document edge. Your task maintainer can
+        augment this behavior by specifying the
+        tokenless_autotag_delimiters property in the <a
+          href="task_xml.html">task configuration file</a>.</li>
+    </ul>
+    <p></p>
+    <p></p>
+    <p></p>
+  </body>
+</html>

@@ -1,0 +1,304 @@
+<!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+<html>
+<head>
+  <META http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>MAT Workbench</title>
+  <script type="text/javascript" src="/MAT/resources/PAT_YUI_DIRECTORY/build/yuiloader/yuiloader.js" ></script>
+  <script type="text/javascript" src="/MAT/js/mat_utils.js"></script>
+  <script type="text/javascript" src="/MAT/js/mat_core.js"></script>
+  <script type="text/javascript" src="/MAT/js/core_ui.js"></script>
+  <script type="text/javascript" src="/MAT/js/workbench_ui.js"></script>
+  <script type="text/javascript" src="/MAT/js/workbench_ui_popup_mgr.js"></script>
+  <script type="text/javascript" src="/MAT/js/mat_doc_display.js"></script>
+  <script type="text/javascript" src="/MAT/js/mat_yui_connector.js"></script>
+<style title="tag_styles">
+</style>
+<!-- First, set up the core initializations. Then, load the task specializations.
+     Finally, set up the YAHOO! loader. -->
+
+<script type="text/javascript">
+
+var UI = null;
+                     
+var MATContext = null;
+
+MAT.Initializations.push(MAT.WorkbenchUI.loadYUIExtensions);
+
+MAT.Version = "PAT_MAT_VERSION";
+
+MAT.Initializations.push(function () {
+  if (window.JSON === undefined) {
+    window.JSON = YAHOO.lang.JSON;
+  }
+  UI = new MAT.WorkbenchUI(true);
+  MATContext = new MAT.Context(UI, "/MAT/cgi/MATCGI.cgi", "/MAT", PAT_TASKS_OF_INTEREST);
+  MATContext.backend.setConnector(MAT.YUIBackendConnector);
+  MATContext.backend.loadTasks();
+});
+</script>
+
+PAT_TASK_JAVASCRIPT
+PAT_TASK_CSS
+<script type="text/javascript">
+
+// Set up YUI.
+
+MAT.setYUILoaderBase("/MAT/resources/PAT_YUI_DIRECTORY/build/");
+
+// Instantiate and configure Loader: 
+MAT.withYUILoaded(// ["event", "logger", "selector", "menu", "container", "utilities"]
+                  ["datatable", "event", "logger", "selector", "menu", "container",
+                   "button", "resize", "yahoo", "json", "tabview",
+                   "layout"], function () {
+  //this is your callback function; you can use 
+  //this space to call all of your instantiation 
+  //logic for the components you just loaded.
+  // Note the forward reference to ui_init.
+  YAHOO.util.Event.onDOMReady(MAT.initialize);
+});
+
+</script>
+  <!-- ideally, these should load AFTER YUI, but YUI inserts its stuff
+       at the end of the head. I'm putting things here wistfully... -->
+  <link href="/MAT/css/mat_core.css" rel="stylesheet" type="text/css">
+  <link href="/MAT/css/workbench_ui.css" rel="stylesheet" type="text/css">
+  <link href="/MAT/css/workbench_ui_annotation.css" rel="stylesheet" type="text/css">
+</head>
+<!-- <body> -->
+<body class="yui-skin-sam">
+
+<div id="appmenubarcontainer"></div>
+<div id="layoutcenter" class="resizeableTabSet"></div>
+<div id="layoutright">
+  <div id="controlcontainer"></div>
+  <div id="legendcontainer"></div>
+</div>
+<div id="layoutbottom" class="resizeableTabSet">
+</div>
+
+<!-- First, we need to upload a file. Then, we need to
+     select the steps involved. Finally, we need to invoke
+     the tool via AJAX and, in the first cut, just format the
+     result. -->
+
+<!-- File upload is a bit of a pain in the ass, because you can't
+     really do it from Javascript. So I can't use AJAX to retrieve
+     the CGI result. See the workaround in mat_core.js. -->
+
+<div id="workspaceNewDialog" style="visibility: hidden">
+<div class="hd">Open workspace</div>
+<div class="bd">
+<form id="workspaceControlForm" action="/MAT/cgi/MATCGI.cgi" method="get">
+
+<table class="docInput">
+<tr><td>User ID:</td>
+    <td><input id="userid" type="text"
+               onchange = "UI.updateWorkspaceDialog('userId');"
+               size=32 name="userid"</td></tr>
+<tr><td>Workspace key:</td>
+    <td><input id="workspaceKey" type="text" 
+               onchange = "UI.updateWorkspaceDialog('workspaceKey');"
+               size=32 name="workspace_key" disabled></td></tr>
+<tr><td>Directory:</td><td><input id="workspaceDirName" type="text" name="workspace_dir"
+                              onchange = "UI.updateWorkspaceDialog('workspaceDir');"
+                              size=32 disabled></td></tr>
+<tr><td></td><td><p style="width: 16em">(Note: directory is on the
+                              server, not the client)</p></td></tr>
+<tr><td></td><td>
+        <input id="workspaceReadOnly" type="checkbox" name="workspace_read_only"> read-only
+</td></tr>
+</table>
+
+</form>
+</div> <!-- close bd -->
+</div> <!-- close workspaceNewDialog -->
+
+<div id="workspaceUpdateKeyDialog" style="visibility: hidden">
+<div class="hd">Update workspace key</div>
+<div class="bd">
+
+<table class="docInput">
+<tr><td>Workspace key:</td>
+    <td><input id="workspaceKeyUpdate" type="text" 
+               size=32 name="workspace_key_update"></td></tr>
+</table>
+
+</form>
+</div> <!-- close bd -->
+</div> <!-- close workspaceUpdateKeyDialog -->
+
+<div id="xmlSaveDialogTemplate" style="visibility: hidden">
+<div class="hd">Save as xml-inline</div>
+<div class="bd">
+<form action="/MAT/cgi/MATCGI.cgi" method="post">
+<table class="docInput">
+<tr>    <td>Underlying signal is XML:</td>
+<td><input type="checkbox" name="signal_is_xml"></td>
+    </tr>
+<tr>    <td>Annotation types to exclude (comma-separated):</td>
+<td><input type="text" name="xml_output_tag_exclusions"></td></tr>
+<tr>    <td>Exclude MAT document metadata:</td>
+<td><input type="checkbox" name="xml_output_exclude_metadata"></td></tr>
+</table>
+<p>More information <a href = '/MAT/doc/html/readers_and_writers.html#inline_xml_rw' target='_blank'>here</a>.
+</form>
+</div> <!-- close bd -->
+</div> <!-- close xmlSaveDialog -->
+
+<div id="fileNewDialogTemplate" style="display: none">
+<!-- <div class="hd">Load document</div> -->
+<div class="bd">
+<form id="controlForm" action="/MAT/cgi/MATCGI.cgi" method="post">
+
+<table class="docInput">
+<tbody class="taskandworkflow" id="taskandworkflow">
+<tr><td>Task:</td>
+    <td><select id="taskmenu" name="task"
+    onchange="UI.updateFileDialog(this, 'taskMenu');">
+        <option value="">Select task...</option></select></td></tr> 
+<tr><td>Workflow/mode:</td><td>
+        <select id="workflowmenu" name="workflow"
+        onchange="UI.updateFileDialog(this, 'workflowMenu');"
+        disabled>
+          <option value="">Select workflow/mode...</option></select>
+    </td></tr>
+</tbody> <!-- taskandworkflow -->
+<tr><td>Input:</td><td><input id="fileUpload" type="file" name="input"
+                              onchange="UI.updateFileDialog(this, 'inputFile');"
+                              disabled></td></tr>
+<tr>
+  <td>Document type:</td>
+  <td><select id="filetypemenu" name="file_type" onchange="UI.updateFileDialogEncodingInfo(this);">
+</select></td></tr>
+<tbody id="filetypedetails" style="display: none"></tbody>
+<tr><td>Encoding: </td>
+    <td><input id="charEncoding" type="text" name="encoding" value="ascii"></td></tr>
+<tr><td>Memo: </td>
+    <td><input id="memoInput" type="text" name="memo" value=""> (optional)</td></tr>    
+</table>
+</form>
+</div> <!-- close bd -->
+</div> <!-- close fileNewDialogTemplate -->
+
+<!-- Here's the template for the multifile task dialog (comparison, etc.). -->
+<div id="multipleFileTaskDialogTemplate" style="display: none">
+<div class="hd"><span id="multiFileHeader"></span> documents</div>
+<div class="bd">
+<form id="multiFileForm" action="/MAT/cgi/MATCGI.cgi" method="post">
+<table id="multiFileTable" class="docInput">
+<tr><td>Task:</td>
+    <td colspan=2><select id="taskmenu" name="task"
+    onchange="UI.updateMultiFileDialog(this, 'taskMenu');">
+        <option value="">Select task...</option></select></td></tr>
+<tr><td><span id="multiFilePrompt"></span>:</td><td colspan=2><select id="adddocmenu" disabled>
+  <option>Load document...
+</select> <input type="button" id="docsubmitmenu" value="Go!"
+                 onclick="UI.updateMultiFileDialog(this, 'addFileButton')" disabled></td></tr>
+<tr id="selectRefText" style="display: none"><td colspan=3><em>Use radio buttons to select reference document:</em></td></tr>
+</table>
+</form>
+</div> <!-- close bd -->
+</div> <!-- close multipleFileTaskDialogTemplate -->
+
+<!-- Here's the body of all the annotation displays. -->
+
+<div id="docColumnContainerTemplate" style="display: none" class="docColumnContainer">
+<div class="docHeader"><span id="modestatus"></span></div>
+<div id = "docOutputDiv" class="docPaneContainer overflowable">
+</div>
+<div class="docFooter"><span id="annotstatus"></span></div>
+</div> <!-- close docColumnContainerTemplate -->
+
+<!-- Here's the control for the workflow document -->
+
+<div id="workflowDocumentControlDivTemplate" class="collapsibleDiv controlDiv" style="display:none">
+<!-- the header will contain the task -->
+<div class="hd">Controls</div>
+<div class="bd">
+<form id="taggedDocumentForm" action="/MAT/cgi/MATCGI.cgi" method="post">
+<table class="docInput">
+<tr><td colspan=2 id="titlefield"></td></tr>
+<tr class="writeonly"><td>Workflow:</td><td>
+        <select id="panel_workflowmenu" name="workflow" disabled>
+          <option value="">Select workflow...</option></select> 
+    </td></tr>
+<tr class="writeonly"><td>Status:</td>
+    <td><span class="stepbuttonspan" id="stepbuttonspan"></span></td></tr>
+<tr class="writeonly"><td></td><td>
+        <button class="verticallyAligned" id="step_backward_button"><img src="/MAT/img/caret_backward.gif" alt="[Forward]"></button>
+        <button class="verticallyAligned" id="step_forward_button"><img src="/MAT/img/caret_forward.gif" alt="[Backward]"></button>
+        <input class="verticallyAligned" type="button" id="reload_button" value="Reload">
+    </td></tr>
+</table>
+</form>
+<hr>
+</div> <!-- close bd -->
+</div> <!-- close workflowDocumentControlDivTemplate -->
+
+<!-- Here's the control for the comparison document -->
+
+<div id="comparisonDocumentControlDivTemplate" class = "collapsibleDiv controlDiv" style="display:none">
+<div class="hd">Details</div>
+<div class="bd">
+  <div id="titlefield"></div>
+  <div id="docList"></div>
+  <hr>
+</div> <!-- close bd -->
+</div> <!-- close comparisonDocumentControlDivTemplate -->
+
+<!-- Here's the control for the workspace panel -->
+
+<div id="workspaceControlDivTemplate" class = "collapsibleDiv controlDiv" style="display:none">
+<!-- the header will contain the task -->
+<div class="hd">Controls</div>
+<div class="bd">
+
+<table>
+<tr><td id="titlefield" colspan=3></td></tr>
+<tr><td>Task:</td><td style="padding-right:15px"><span id="taskfield"></span></td>
+    <td style="text-align: right; padding-left:15px">User: </td><td style="text-align: right"><span id="useridfield"></span></td></tr>
+<tr><td>Folder:</td><td style="padding-right: 15px">
+        <select id="foldermenu" name="folder">
+          <option value="">Select folder...</option></select>
+          <img id="busyimg" src="/MAT/img/busy.gif" style="display: none; vertical-align: middle">
+        </td><td style="text-align: right; padding-left: 15px" colspan=2><input type="button" id="refreshbutton" value="Refresh"></td></tr>
+<tr><td>Logging:</td><td><span id="loggingfield"></span></td></tr>    
+</table>
+<hr>
+</div> <!-- close bd -->
+</div> <!-- close workspaceControlDivTemplate -->
+
+<!-- Here's the control for the reconciliation document. -->
+
+<div id="reconciliationDocumentControlDivTemplate" class = "collapsibleDiv controlDiv" style="display:none">
+<div class="hd">Details</div>
+<div class="bd">
+  <div id="titlefield"></div>
+<hr>
+</div> <!-- close bd -->
+</div> <!-- close comparisonDocumentTemplate -->
+
+<!-- Here's the template for the workspace document control. -->
+
+<div id="workspaceDocumentControlDivTemplate" class = "collapsibleDiv controlDiv" style="display:none">
+<div class="hd">Controls</div>
+<div class="bd">
+<table class="docInput">
+<tr><td colspan=2 id="titlefield"></td></tr>
+<tr><td>Folder:</td><td><span id="folderfield"></span></td></tr>
+<tbody id="fieldblock"></tbody>
+<tr><td>Operations:</td><td>
+        <select id="panel_operationmenu" disabled>        
+        </select></td></tr>
+<tr><td></td><td> <input type="button" id="do_operation_button" value="Go!" disabled>
+  <img id="busyimg" src="/MAT/img/busy.gif" style="display: none; vertical-align: middle"></td>
+</tr>
+<tr><td>Logging:</td><td><span id="loggingfield"></span></td></tr>    
+</table>
+<hr>
+</div> <!-- close bd -->
+</div> <!-- close workspaceDocumentControlDivTemplate -->
+
+</body>
+</html>

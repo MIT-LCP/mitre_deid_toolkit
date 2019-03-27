@@ -1,0 +1,497 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Scoring and Comparison</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Scoring and comparison</h1>
+    <p>MAT uses a common algorithm for comparing two documents to each
+      other, and for producing common scoring statistics based on that
+      comparison. This algorithm underlies both the <a
+        href="ui_comparison.html">comparison view</a> and <a
+        href="MATScore.html">MATScore</a>, and will soon support a
+      general approach to reconciling conflicting annotations.<br>
+    </p>
+    <p>MAT's approach to scoring and comparison is extremely flexible
+      and powerful. It does not cover all possible cases of annotations
+      you might wish to compare, but it covers a large number of them.<br>
+    </p>
+    <ul>
+      <li><a href="#When_you_need_to_understand_scoring_and">When you
+          need to understand scoring and comparison, and when you don't</a><br>
+      </li>
+      <li><a href="#The_comparison_algorithm">The comparison algorithm<br>
+        </a></li>
+      <ul>
+        <li><a href="#Similarity_profiles_">Similarity profiles</a></li>
+        <li><a href="#The_Kuhn-Munkres_algorithm">The Kuhn-Munkres
+            algorithm</a></li>
+        <li><a href="#Segmenting_Kuhn-Munkres">Segmenting Kuhn-Munkres</a></li>
+        <li><a href="#Stratifying_Kuhn-Munkres">Stratifying Kuhn-Munkres</a><br>
+        </li>
+      </ul>
+      <li><a href="#Defining_similarity_profiles">Defining similarity
+          profiles</a></li>
+      <ul>
+        <li><a href="#Strata">Strata</a></li>
+        <li><a href="#Tag_profiles">Tag profiles</a></li>
+        <li><a href="#Dimensions">Dimensions</a></li>
+        <li><a href="#Default_profiles">Default profiles</a></li>
+        <li><a href="#Multiple_profiles">Multiple profiles</a><br>
+        </li>
+      </ul>
+      <li><a href="#Scoring_profiles_and_the_scorer">Scoring profiles
+          and the scorer</a></li>
+      <ul>
+        <li><a href="#Aggregations">Aggregations</a></li>
+        <li><a href="#Decompositions">Decompositions</a></li>
+        <li><a href="#Label_limitations">Label limitations</a></li>
+        <li><a href="#Multiple_profiles_">Multiple profiles</a><br>
+        </li>
+      </ul>
+      <li><a href="#Acknowledgements">Acknowledgements</a><br>
+      </li>
+    </ul>
+    <h2><a name="When_you_need_to_understand_scoring_and"></a>When you
+      need to understand scoring and comparison, and when you don't</h2>
+    <p>MAT's scoring and comparison algorithm is meant to do something
+      reasonably intelligent in the following cases:<br>
+    </p>
+    <ul>
+      <li>when your task consists exclusively of spanned annotations</li>
+      <li>when your task consists of spanned annotations, together with
+        spanless annotations whose annotation-valued attributes have
+        label restrictions which consist exclusively of spanned
+        annotations</li>
+    </ul>
+    <p>So if your task looks like this:<br>
+    </p>
+    <pre>&lt;annotation_set_descriptors&gt;<br>  &lt;annotation_set_descriptor&gt;<br>    &lt;annotation label="PERSON"/&gt;<br>    &lt;annotation label="LOCATION"/&gt;<br>    &lt;annotation label="ORGANIZATION"/&gt;<br>  &lt;/annotation_set_descriptor&gt;<br>&lt;/annotation_set_descriptors&gt; <br></pre>
+    <p>or this:<br>
+    </p>
+    <pre>&lt;annotation_set_descriptors&gt;<br>  &lt;annotation_set_descriptor&gt;<br>    &lt;annotation label="PERSON"/&gt;<br>    &lt;annotation label="LOCATION"/&gt;<br>    &lt;annotation label="ORGANIZATION"/&gt;<br>    &lt;annotation label="RELATION" span="no"/&gt;<br>    &lt;attribute of_annotation="RELATION" type="annotation" name="arg"&gt;<br>      &lt;label_restriction label="LOCATION"/&gt;<br>    &lt;/attribute&gt;<br>  &lt;/annotation_set_descriptor&gt;<br>&lt;/annotation_set_descriptors&gt; <br></pre>
+    <p>you don't really have to know anything more about this algorithm
+      in order to compare and score, but if your task looks like this
+      (note that "RELATION" is spanned rather than spanless):<br>
+    </p>
+    <pre>&lt;annotation_set_descriptors&gt;<br>  &lt;annotation_set_descriptor&gt;<br>    &lt;annotation label="PERSON"/&gt;<br>    &lt;annotation label="LOCATION"/&gt;<br>    &lt;annotation label="ORGANIZATION"/&gt;<br>    &lt;annotation label="RELATION"/&gt;<br>    &lt;attribute of_annotation="RELATION" type="annotation" name="arg"&gt;<br>      &lt;label_restriction label="LOCATION"/&gt;<br>    &lt;/attribute&gt;<br>  &lt;/annotation_set_descriptor&gt;<br>&lt;/annotation_set_descriptors&gt;<br></pre>
+    <p>you probably do. And, of course, if you're not interested in the
+      defaults that MAT provides in this case, or if you want to have
+      multiple similarity or score configurations, you'll have to learn
+      about the algorithm in order to customize it.<br>
+    </p>
+    <ul>
+    </ul>
+    <h2><a name="The_comparison_algorithm"></a>The comparison algorithm</h2>
+    <p>The MAT comparison algorithm uses a set of configurable <b>similarity
+
+
+
+        profiles</b> to create similarity metrics for the <b>Kuhn-Munkres</b>
+      bipartite set algorithm, and executes the algorithm in relevant
+      subsets, and in a <b>stratified</b> manner that ensures that
+      annotations are compared in an appropriate order. Here's how it
+      works.<br>
+    </p>
+    <h3><a name="Similarity_profiles_"></a>Similarity profiles<br>
+    </h3>
+    <p>The MAT comparison algorithm begins with a set of <b>similarity
+        profiles</b>. These are declarative descriptions, for particular
+      labels, how these labels should be compared: what dimensions of
+      the annotation to use, how the dimensions should be compared, how
+      the similarity of each dimension contributes to the similarity of
+      the whole.<br>
+    </p>
+    <p>The &lt;similarity_profile&gt; element is an immediate child of
+      the toplevel &lt;<a href="task_xml.html#task">task</a>&gt;
+      element. Here's an example:<br>
+    </p>
+    <pre>&lt;similarity_profile&gt;<br>  &lt;tag_profile true_labels="PERSON,ORGANIZATION"&gt;<br>    &lt;dimension name="_label" weight="2"/&gt;<br>    &lt;dimension name="_span" method="overlap" weight="8" overlap_match_lower_bound=".8"/&gt;<br>    &lt;dimension name="nomtype" weight="1"/&gt;<br>  &lt;/tag_profile&gt;<br>&lt;/similarity_profile&gt;<br></pre>
+    <p>So consider a PERSON annotation over characters 10 - 20 with
+      nomtype = PRO in document 1, vs. an ORGANIZATION annotation over
+      characters 11 - 20 with nomtype = NAM in document 2. The labels
+      don't match (so the _label dimension contribution will be 0 of a
+      possible 2); the nomtype values don't match (so the nomtype
+      dimension contribution will be 0 of a possible 1), and the spans
+      overlap in 9 out of a possible 10 characters (so the _span
+      contribution will be 8 out of a possible 8, since the overlap is
+      .9 and .8 is the lower bound for what counts as a full match). So
+      the similarity of these two annotations, given this profile, would
+      be (0 * 2) + (8 * 8) + (0 * 1)/(2 + 8 + 1), or about .73. <br>
+    </p>
+    <p>As you can see, you can specify special dimensions, like _span or
+      _label, or attributes of the annotations listed in the
+      true_labels. We describe the defaults, and the currently available
+      methods and dimensions, <a href="#Defining_similarity_profiles">here</a>.</p>
+    <h3><a name="The_Kuhn-Munkres_algorithm"></a>The Kuhn-Munkres
+      algorithm</h3>
+    <p>Once we establish the similarities, we invoke the <b>Kuhn-Munkres</b>
+      bipartite set algorithm (otherwise known as the Hungarian
+      algorithm). Kuhn-Munkres gives you the best match among two sets,
+      given similarity measures among the set elements. The similarity
+      profiles provide these measures. Once we run Kuhn-Munkres, we have
+      a pairing between the annotations in the two comparison sets,
+      along with a similarity measure for each best pair.<br>
+    </p>
+    <h3><a name="Segmenting_Kuhn-Munkres"></a>Segmenting Kuhn-Munkres</h3>
+    <p>When we run Kuhn-Munkres, we don't need to compare all the
+      annotations in one document with all the annotations in the other.
+      For instance, for spanned annotations, we stipulate that if two
+      annotations don't overlap at all, they can't form a pair. So we
+      can subdivide the spanned annotations into candidate overlap sets,
+      and run Kuhn-Munkres over many small sets instead of one big one.
+      In addition, if a region of text has annotations in one document
+      but none in the other, none of those annotations can be paired,
+      and we don't need to run Kuhn-Munkres at all for that subset of
+      annotations.<br>
+    </p>
+    <p>If we're trying to compare spanless annotations, we have two
+      choices. We first attempt to compute an "implied span", which
+      reaches from the start index of the earliest annotation that this
+      annotation "points to" (i.e., has as a value of an
+      annotation-valued attribute), to the end index of the latest
+      annotation that this annotation "points to". This computation is
+      performed recursively. We subdivide all spanless annotations for
+      which we can compute an implied span in the same way we subdivide
+      spanned annotations; for all other annotations, we subdivide by
+      label.<br>
+    </p>
+    <h3><a name="Stratifying_Kuhn-Munkres"></a>Stratifying Kuhn-Munkres<br>
+    </h3>
+    <p>The presence of annotations which have annotation-valued
+      attributes (e.g., relations and events) poses a problem for the
+      general case. Such annotations imply that what we should be doing
+      is finding a best <b>graph</b> alignment, rather than a best <b>set</b>
+      alignment. We've chosen not to deal with this most complex case.
+      Instead, we've chosen to require that the similarity algorithm be
+      <b>stratified</b>: all annotations which are "pointed to" must be
+      paired before the annotations that "point to" them are paired. The
+      output of the earlier stratum is used as input to the later
+      stratum; by default, annotation-valued attributes cannot match if
+      their values were not paired on a previous stratum.<br>
+    </p>
+    <p>This stratification is enforced on a label-by-label basis, not an
+      annotation-by-annotation basis. The analysis is static: if an
+      annotation label is listed in the label restriction of an
+      annotation-valued attribute in your task, it has to be paired
+      before the annotation that bears the annotation-valued attribute.
+      E.g. in:<br>
+    </p>
+    <pre>&lt;annotation label="PERSON"&gt;<br>&lt;annotation label="EVENT"&gt;<br>&lt;attribute of_annotation="EVENT" type="annotation" name="arg1"&gt;<br>  &lt;label_restriction label="PERSON"/&gt;<br>&lt;/attribute&gt;<br></pre>
+    <p>the PERSON annotations must be guaranteed to be paired before the
+      EVENT annotations. <br>
+    </p>
+    <p>This guarantee can be imposed in one of two ways. Each stratum is
+      internally processed so that spanned annotations are paired first,
+      and by default, all annotations are in a single stratum. So if
+      your task contains some spanned and some spanless annotations, and
+      you say nothing about the stratification, the spanned annotations
+      will be paired before the spanless annotations. If that default
+      isn't enough (e.g., in the example above), you can define strata
+      explicitly:<br>
+    </p>
+    <pre>&lt;similarity_profile&gt;<br>  &lt;stratum true_labels="PERSON"/&gt;<br>  &lt;stratum true_labels="EVENT"/&gt;<br>  ...<br>&lt;/similarity_profile&gt;<br></pre>
+    <p>The order of the &lt;stratum&gt; elements determines the stratum
+      order.<br>
+    </p>
+    <p>The stratification requirement allows us to continue to use a set
+      alignment algorithm, rather than a graph alignment algorithm, but
+      also leads to a couple of restrictions. First, the overall
+      annotation pairing isn't a true global best pair, because we can't
+      use the annotations that "point to" a given annotation as a
+      candidate comparison dimension. Second, annotation descriptions
+      which have cycles can't be compared:<br>
+    </p>
+    <pre>&lt;annotation label="PERSON"&gt;<br>&lt;annotation label="EVENT"&gt;<br>&lt;attribute of_annotation="EVENT" type="annotation" name="arg1"&gt;<br>  &lt;label_restriction label="PERSON"/&gt;<br>  &lt;label_restriction label="EVENT"/&gt;<br>&lt;/attribute&gt;<br></pre>
+    <p>There's nothing incoherent about such an annotation schema; it
+      just can't be compared or scored using the algorithm in MAT.<br>
+    </p>
+    <h2><a name="Defining_similarity_profiles"></a>Defining similarity
+      profiles</h2>
+    <p>Each similarity profile consists of zero or more &lt;stratum&gt;
+      declarations, and zero or more &lt;tag_profile&gt; declarations.
+      The labels referenced in the similarity profiles are true, not
+      effective, labels. <br>
+    </p>
+    <h3><a name="Strata"></a>Strata<br>
+    </h3>
+    <p>The &lt;stratum&gt; declarations are present to enforce the
+      stratification requirements of the comparison algorithm. If your
+      profile contains no &lt;stratum&gt; declarations, the comparison
+      algorithm will assume that all the labels are in the same stratum,
+      and will try to process the spanned labels first, and then the
+      spanless labels. If this processing order ends up violating the <a
+        href="#Stratifying_Kuhn-Munkres">stratification requirements</a>,
+      the comparison algorithm will raise an error. If you declare at
+      least one &lt;stratum&gt;, and your strata do not mention all your
+      content labels, the comparison algorithm may also raise an error.
+      So if you have to declare strata, be sure to mention all your
+      content labels. You define a stratum like this:<br>
+    </p>
+    <pre>&lt;similarity_profile&gt;<br>  &lt;stratum true_labels="label1,label2,..."/&gt;<br>  ...<br>&lt;/similarity_profile&gt;<br></pre>
+    <h3><a name="Tag_profiles"></a>Tag profiles</h3>
+    <p>Each &lt;tag_profile&gt; element defines the way a set of true
+      labels are compared to each other. All the labels listed must have
+      the dimensions specified; if the dimensions are annotation
+      attributes, the attribute must have the same type and aggregation
+      in each annotation. Here's our example again:<br>
+    </p>
+    <pre>&lt;similarity_profile&gt;<br>  &lt;tag_profile true_labels="PERSON,ORGANIZATION"&gt;<br>    &lt;dimension name="_label" weight="2"/&gt;<br>    &lt;dimension name="_span" method="overlap" weight="8" overlap_match_lower_bound=".8"/&gt;<br>    &lt;dimension name="nomtype" weight="1"/&gt;<br>  &lt;/tag_profile&gt;<br>&lt;/similarity_profile&gt;<br></pre>
+    <p>Here, both PERSON and ORGANIZATION must be spanned annotations
+      (since the _span dimension is present) and both must have a
+      "nomtype" attribute, and the type and aggregation of that
+      attribute must be the same in each (e.g., it can't be a string for
+      PERSON and a set of integers for ORGANIZATION).<br>
+    </p>
+    <p>If the annotations have attributes you want to compare, but the
+      attributes have different names, you can use the
+      &lt;attr_equivalences&gt; element to address that:<br>
+    </p>
+    <pre>&lt;similarity_profile&gt;<br>  &lt;tag_profile true_labels="PERSON,ORGANIZATION"&gt;<br>    &lt;attr_equivalences name="nomtype" equivalences="p_nomtype,o_nomtype"/&gt;<br>    &lt;dimension name="_label" weight="2"/&gt;<br>    &lt;dimension name="_span" method="overlap" weight="8" overlap_match_lower_bound=".8"/&gt;<br>    &lt;dimension name="nomtype" weight="1"/&gt;<br>  &lt;/tag_profile&gt;<br>&lt;/similarity_profile&gt;<br></pre>
+    <p>So in this example, if PERSON has the p_nomtype attribute, and
+      ORGANIZATION has the o_nomtype attribute, you can treat them as
+      the same attribute for the purposes of comparison. Note that if
+      you use an attribute equivalence, the dimensions must refer to the
+      name of the equivalence.<br>
+    </p>
+    <p>If the algorithm has to compare two annotations which are not in
+      the same &lt;tag_profile&gt;, it will use only the non-attribute
+      equivalences for comparison, and use the weight of the attribute
+      dimensions as "dead weight" (i.e., as if the comparison score for
+      those dimensions is 0). It will compare annotation A to annotation
+      B using annotation A's profile, and then compare them using
+      annotation B's profile, and take the smaller of the two. In other
+      words, the comparison scores of annotations which are not in the
+      same &lt;tag_profile&gt; is strongly penalized.<br>
+    </p>
+    <h3><a name="Dimensions"></a>Dimensions</h3>
+    <p>Each dimension must have a name and a weight. You can also
+      specify a method; every dimension has a default method, and a
+      default means of applying the specified method to aggregate types
+      (lists and sets). At the moment, only set aggregates have an
+      implemented default comparison method (we haven't had much use for
+      the list types yet). If you don't specify a method, the default
+      method will be used. Some methods have optional parameters which
+      can also be specified in the &lt;dimension&gt; element, as show in
+      the example above for _span. Each method returns a value between 0
+      and 1, and this value is multiplied by the weight to determine the
+      total contribution to the similarity that this dimension makes.<br>
+    </p>
+    <p>It's possible to define your own dimension methods, but
+      describing this process is beyond the scope of this documentation.<br>
+    </p>
+    <p>The available dimensions are:<br>
+    </p>
+    <h4>"_label"<br>
+    </h4>
+    <p>This method compares the two annotation labels. If the annotation
+      has an effective label, that label will be used; if the annotation
+      label is mentioned in an equivalence class when the scorer is
+      invoked (see the --equivalence_class option of <a
+        href="MATScore.html">MATScore</a>), the equivalence class name
+      will be used. The default _label method is "label_equality". This
+      method accepts an optional "true_residue" option, which is a float
+      between 0 and 1; if there are effective label values that don't
+      match, but the underlying true labels do, this value will be
+      returned as the similarity. Examples:<br>
+    </p>
+    <pre>&lt;dimension name="_label" weight="2"/&gt;<br>&lt;dimension name="_label" method="label_equality" weight="2"/&gt;<br>&lt;dimension name="_label" weight="2" true_residue=".5"/&gt;
+</pre>
+    <h4>"_span"</h4>
+    <p>This method compares the two spans. It can only be used with
+      spanned annotations; it cannot be used to compare the "implied
+      span" used when segmenting the Kuhn-Munkres algorithm. The default
+      _span method is "overlap". This method returns the fraction of the
+      combined span of the two annotations in which they overlap; so if
+      one annotation covers characters 10 - 15, and another annotation
+      covers characters 12 - 20, the combined span is 10 - 20, and the
+      overlap is 12 - 15, so the method returns .3. This method accepts
+      two optional options: "overlap_match_lower_bound", which specifies
+      an overlap value above which 1.0 will be returned, and
+      "overlap_mismatch_upper_bound", which specifies an overlap value
+      below which 0 will be returned. Examples:<br>
+    </p>
+    <pre>&lt;dimension name="_span" method="overlap" weight="4"/&gt;
+&lt;dimension name="_span" weight="8" overlap_match_lower_bound=".8"/&gt;<br></pre>
+    <h4>attributes and attribute equivalences<br>
+    </h4>
+    <p>Every annotation attribute is a dimension. If a dimension name
+      isn't one of the special cases listed here, it's interpreted as an
+      attribute (or as an attribute equivalence, if such an equivalence
+      is declared). If one of your attributes has the same name as one
+      of the special cases documented here, you won't be able to refer
+      to it in your similarity description.<br>
+    </p>
+    <p>For attributes of type other than "annotation", the default
+      comparison method is called "equality", and simply returns 1 if
+      the two values are equal, 0 otherwise. If the attribute is a set
+      aggregation, the value is the ratio of the size of the
+      intersection of the set values over the size of the union of the
+      set values.<br>
+    </p>
+    <p>For attributes of type "annotation", the default comparison
+      method is called "similarity", and it returns 0 if the annotation
+      values were not paired in a previous stratum, and the computed
+      similarity value otherwise. If the attribute is a set aggregation,
+      the Kuhn-Munkres algorithm is invoked to compare the sets, using
+      the "similarity" comparison method to provide the similarity
+      weights, and the overall similarity is the sum of the similarities
+      found by the Kuhn-Munkres algorithm, divided by the maximum
+      possible similarity.<br>
+    </p>
+    <p>Example:<br>
+    </p>
+    <pre>&lt;dimension name="nomtype" weight="1"/&gt;
+</pre>
+    <h4>multiple attributes</h4>
+    <p>If a dimension name contains a comma, it's treated as a set of
+      attributes to be considered together. Such a dimension <b>must</b>
+      have a method specified (and there will be no aggregate handler
+      for that method). At the moment, the only known method for this
+      case is "_annotation_set_similarity". This method is intended to
+      be used in the case where there are two or more annotation-valued
+      attributes which are interchangeable, as in the case of a
+      symmetric relation like "related-to". The implementation of this
+      method is essentially identical to the method for comparing
+      annotation-valued attributes which are set aggregations. Example:<br>
+    </p>
+    <pre>&lt;dimension name="arg1,arg2" weight="2" method="_annotation_set_similarity"/&gt;<br></pre>
+    <h4>"_nonannotation_attribute_remainder"</h4>
+    <p>This special method is used primarily in the default profiles
+      specified below. It looks at all the attributes that <br>
+    </p>
+    <ul>
+      <li>either of the annotations bear, and</li>
+      <li>are not of type "annotation", and <br>
+      </li>
+      <li>are not otherwise declared in a single-attribute or
+        multiple-attribute dimension</li>
+    </ul>
+    <p>and compares them. If there are no such attributes, this
+      dimension is <b>ignored</b>; i.e., its weight will be treated as
+      zero. Otherwise, the similarity is the sum of the similarities of
+      these otherwise-undeclared attributes divided by the number of
+      attributes.<br>
+    </p>
+    <h4>"_annotation_attribute_remainder"</h4>
+    <p>This special method is used primarily in the default profiles
+      specified below. It looks at all the attributes that<br>
+    </p>
+    <ul>
+      <li>either of the annotations bear, and</li>
+      <li>are of type "annotation", and</li>
+      <li>are not otherwise declared in a single-attribute or
+        multiple-attribute dimension</li>
+    </ul>
+    <p>and collapses all the values for these attributes into a single
+      set for each annotation (including the members of any set
+      aggregations), and compares those sets using Kuhn-Munkres. The
+      idea here is that when comparing relations in a default manner,
+      the actual names of the arguments aren't nearly as important as
+      they are in the nonannotation case, and should be ignored. <br>
+    </p>
+    <p>As in the _nonannotation_attribute_remainder case above, if there
+      are no attributes which meet the requirements, this dimension's
+      weight will be treated as zero.<br>
+    </p>
+    <h3><a name="Default_profiles"></a>Default profiles</h3>
+    <p>If an annotation label is not mentioned in a &lt;tag_profile&gt;
+      element, and it's a spanned label, it will be assigned the profile<br>
+    </p>
+    <pre>&lt;dimension name="_label" weight=".1" true_residue=".5"/&gt;<br>&lt;dimension name="_span" weight=".9"/&gt;<br>&lt;dimension name="_nonannotation_attribute_remainder" weight=".1"/&gt;<br>&lt;dimension name="_annotation_attribute_remainder" weight=".1"/&gt;<br></pre>
+    <p>If the label is not spanned, it will be assigned the profile<br>
+    </p>
+    <pre>&lt;dimension name="_label" weight=".2" true_residue=".5"/&gt;<br>&lt;dimension name="_nonannotation_attribute_remainder" weight=".2"/&gt;<br>&lt;dimension name="_annotation_attribute_remainder" weight=".6"/&gt;</pre>
+    <p>on the assumption that spanless annotations are typically used as
+      relations.<br>
+    </p>
+    <h3><a name="Multiple_profiles"></a>Multiple profiles<br>
+    </h3>
+    <p>You can define as many similarity profiles as you like, naming
+      them via the name attribute:<br>
+    </p>
+    <pre>&lt;similarity_profile name="..."&gt;<br>  ...<br>&lt;/similarity_profile&gt;<br></pre>
+    <p>If you leave one of the profiles unnamed, it will be the default
+      profile for the task.<br>
+    </p>
+    <h2><a name="Scoring_profiles_and_the_scorer"></a>Scoring profiles
+      and the scorer</h2>
+    <p>The similarities among the annotations are used to feed the MAT
+      scorer. At the moment, annotation pairs which have similarity
+      scores of 1.0 are treated as matching; pairs with scores less than
+      1.0 are treated as clashing; and annotations which are not paired
+      are treated as spurious or missing, as appropriate. There is
+      currently no facility in the MAT scorer for treating a similarity
+      score less than 1.0 as a partial match.<br>
+    </p>
+    <p>By default, the scorer reports numbers for each true or effective
+      label, and for all labels aggregated together, for each document
+      and for all documents aggregated together. You can modify this
+      behavior using the &lt;score_profile&gt; element, and its child
+      elements. <br>
+    </p>
+    <p>The &lt;score_profile&gt; element is an immediate child of the
+      toplevel &lt;<a href="task_xml.html#task">task</a>&gt; element.
+      Here's an example:<br>
+    </p>
+    <pre>&lt;score_profile&gt;<br>  &lt;aggregation name="loc elements" true_labels="LOCATION,GEOPOLITICAL_ENTITY,FACILITY"/&gt;<br>  &lt;attr_decomposition attrs="nomtype" true_labels="PERSON"/&gt;<br>  &lt;label_limitation true_labels="LOCATION,GEOPOLITICAL_ENTITY,FACILITY,PERSON"/&gt;<br>&lt;/score_profile&gt;<br></pre>
+    <h3><a name="Aggregations"></a>Aggregations</h3>
+    <p>&nbsp;The &lt;aggregation&gt; element can be used to specify a
+      label under which the scores for a list of true labels will be
+      aggregated. This aggregation is in addition to the defaults. This
+      level is specified by a list of true labels, and is "in between"
+      the individual labels and the aggregation of all labels. <br>
+    </p>
+    <h3><a name="Decompositions"></a>Decompositions</h3>
+    <p>In addition to aggregations, you can specify decompositions of
+      various labels. You can specify a decomposition by attribute (as
+      shown here), or by use of a method (using the
+      &lt;partition_decomposition&gt; element, not exemplified here).
+      The scorer will report a separate score for each set of attribute
+      values for the attributes specified, for the specified labels. So
+      in the example we've been using on this page, if the nomtype
+      attribute has three values NAM, NOM and PRO, the scorer will give
+      you a separate subscore for PERSON annotations where nomtype=NAM,
+      etc.<br>
+    </p>
+    <h3><a name="Label_limitations"></a>Label limitations</h3>
+    <p>The <a href="MATScore.html">scorer</a> gives you the option of
+      ignoring labels, using the --ignore parameter. But this parameter
+      doesn't simply cause the score output to ignore the annotations;
+      it removes them from consideration entirely, as if they aren't
+      present at all. This can lead to problems if, e.g., you're scoring
+      relations, and you only want to see the relation scores, but you
+      can't ignore the entity annotations, since they're a crucial
+      ingredient to the relation comparison. You can use the
+      &lt;label_limitation&gt; element to list just those labels you
+      want to see in the score output.<br>
+    </p>
+    <h3><a name="Multiple_profiles_"></a>Multiple profiles</h3>
+    <p>Like &lt;similarity_profile&gt;, you can define as many score
+      profiles as you like, naming them via the name attribute:<br>
+    </p>
+    <pre>&lt;score_profile name="..."&gt;<br>  ...<br>&lt;/score_profile&gt;<br></pre>
+    <p>If you leave one of the profiles unnamed, it will be the default
+      profile for the task.<br>
+    </p>
+    <p> </p>
+    <h2><a name="Acknowledgements"></a>Acknowledgements</h2>
+    <p>The inspiration for configurable comparison is due to the scorer
+      used for the ACE 2005 evaluation. The inspiration for using
+      Kuhn-Munkres as a basis for a general-purpose comparison algorithm
+      is due to<br>
+    </p>
+    <p>Xiaoqiang Luo, "On Coreference Resolution Performance Metrics", <i>Proceedings
+
+
+        of Human Language Technology Conference and Conference on
+        Empirical Methods in Natural Language Processing (HLT/EMNLP)</i>,
+      pages 25&#8211;32, Vancouver, October 2005. <br>
+    </p>
+  </body>
+</html>

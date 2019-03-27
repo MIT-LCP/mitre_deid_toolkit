@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>redistribute.py Utility</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Redistribution utility</h1>
+    <h2>Description</h2>
+    <p>This utility allows a user to create a new MAT distribution with
+      a new or updated task in it, based on an existing MAT
+      distribution.<br>
+    </p>
+    <h2>Usage</h2>
+    <p>This utility can only be run on Unix, due to its internal use of
+      Unix command-line operations. It will not work in Cygwin, since
+      MAT is no longer supported on Cygwin.<br>
+    </p>
+    <pre>% <span style="font-weight: bold;">python $MAT_PKG_HOME/build/redistribute.py</span><br>Usage: redistribute.py [ --remove_task &lt;task_dir&gt; ]+ [ --task_dir &lt;dir&gt;[:&lt;cvs_version&gt;[:&lt;dist_settings&gt;]] ]+ orig_dist_zip outdir bundle_name<br></pre>
+    <h2>Options</h2>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <td style="vertical-align: top;">--task_dir
+            &lt;dir&gt;[:&lt;cvs_version&gt;[:&lt;dist_settings&gt;]]<br>
+          </td>
+          <td style="vertical-align: top;">The directory containing a
+            well-structured MAT task, plus other possible control
+            options (see below). May be repeated. If there is already a
+            task directory in the existing distribution named
+            &lt;dir&gt;, it will be removed and replaced with this one.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--remove_task
+            &lt;task_dir&gt;<br>
+          </td>
+          <td style="vertical-align: top;">The &lt;task_dir&gt; is a
+            directory within src/tasks in the zip file. May be repeated.
+            If you provide this argument, this directory, and the task
+            it corresponds to, will be removed from the output
+            distribution.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">orig_dist_zip<br>
+          </td>
+          <td style="vertical-align: top;">A path to the original MAT
+            zip file which you received<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">outdir<br>
+          </td>
+          <td style="vertical-align: top;">The directory in which to
+            deposit the new distribution<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">bundle_name<br>
+          </td>
+          <td style="vertical-align: top;">The name of the new
+            distribution (the actual zip file will be
+            &lt;bundle_name&gt;.zip, and the name of the toplevel
+            directory in the zip file will be bundle_name.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>The additional decorations to the --task_dir option are as
+      follows:<br>
+    </p>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <td style="vertical-align: top;">&lt;cvs_version&gt;<br>
+          </td>
+          <td style="vertical-align: top;">If you maintain the task you
+            want to add or update under CVS version control, this is the
+            CVS tag you want. This facility is not available for any
+            other version control system. If you provide this option,
+            the tool will check out this version from the CVS repository
+            using the CVS information in the task directory, rather than
+            using the code in the directory.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;dist_settings&gt;<br>
+          </td>
+          <td style="vertical-align: top;">A comma-separated sequence of
+            &lt;key&gt;=&lt;val&gt; settings, which are passed to the
+            distribute function in the dist.py file in your task, if
+            such a file and function exist. We provide this information
+            for completeness; we do not provide any further details as
+            of right now about how to customize your distribution using
+            this facility. See the source code for redistribute.py.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2>Example 1<br>
+    </h2>
+    <p>Let's say you received the distribution
+      /my/downloads/MAT_2_0.zip, and you want to add the /path/to/myTask
+      directory, creating the distribution
+      /my/dist/MAT_2_0_plus_myTask.zip:<br>
+    </p>
+    <pre>% <span style="font-weight: bold;">python $MAT_PKG_HOME/build/redistribute.py --task_dir /path/to/myTask \</span><br style="font-weight: bold;"><span style="font-weight: bold;">/my/downloads/MAT_2_0.zip /my/dist MAT_2_0_plus_myTask</span><br></pre>
+    <h2>Example 2</h2>
+    <p>Let's say you received /my/downloads/MAT_2_0_plus_myTask.zip, and
+      you want to remove myTask from the package you create:<br>
+    </p>
+    <pre>% <span style="font-weight: bold;">python $MAT_PKG_HOME/build/redistribute.py --remove_task myTask \</span><br style="font-weight: bold;"><span style="font-weight: bold;">/my/downloads/MAT_2_0_plus_myTask.zip /my/dist MAT_2_0_without_myTask</span></pre>
+  </body>
+</html>

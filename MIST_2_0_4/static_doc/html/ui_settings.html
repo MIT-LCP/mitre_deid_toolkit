@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>UI Settings</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>UI settings</h1>
+    <p>The MAT UI has a number of available settings which you can use.<br>
+    </p>
+    <ul>
+      <li><a href="#The_tabs_menu">The Tabs menu</a></li>
+      <li><a href="#The_View_menu">The View menu</a></li>
+      <li><a href="#The_Help_menu">The Help menu</a></li>
+      <li><a href="#The_logging_button">The logging button</a><br>
+      </li>
+      <ul>
+      </ul>
+    </ul>
+    <h2><a name="The_tabs_menu"></a>The Tabs menu</h2>
+    <p>The Tabs menu looks like this:<br>
+    </p>
+    <p><img alt="" src="../img/ui_tabsmenu.jpg" height="165" width="640"><br>
+    </p>
+    <p>This menu is initially blank. It lists all tabs which have been
+      opened and not closed. If you select a tab in this menu, the UI
+      will display the tab (if it's hidden), and make it the active tab
+      (if it isn't). You can hide tabs by pressing the "-" button at the
+      right end of the tab, and make them visible again using this menu.<br>
+    </p>
+    <h2><a name="The_View_menu"></a>The View menu</h2>
+    <p>The View menu looks like this:<br>
+    </p>
+    <img alt="[view menu]" src="../img/ui_viewmenu.jpg" height="450"
+      width="720">
+    <p>The View menu is active whenever there's an active tab. The
+      options in this menu are as follows:<br>
+    </p>
+    <ul>
+      <li>Show character offsets: this setting makes character offsets
+        visible in the tag status line when you hover your mouse over
+        the document. See below.</li>
+      <li>Show segment boundaries: this setting makes segment boundaries
+        available. You don't need to know about this yet.</li>
+      <li>Edit/view annotations in tabs: this setting applies to <a
+          href="ui_annotation_edit.html">editing annotations</a>.</li>
+      <li>Edit/view annotations in popups: this setting applies to <a
+href="file:///afs/rcf/project/anonymize/proj/users/sam/devel/MAT/web/htdocs/doc/html/ui_annotation_edit.html">editing
+
+          annotations</a>.</li>
+      <li>Show annotation tables: this setting creates a detail tab in
+        the lower UI region which displays detailed tables of the
+        annotations in the document. See below.</li>
+      <li>Autotag is case-sensitive: this setting controls whether <a
+          href="use_ui.html#Autotagging">autotagging</a> is
+        case-sensitive or not.<br>
+      </li>
+    </ul>
+    <h3>Show character offsets</h3>
+    <p>If you enable this setting, you'll get the following behavior:<br>
+    </p>
+    <img alt="[hover with indices]"
+      src="../img/ui_annotationaddedhoverindices.jpg" height="446"
+      width="679">
+    <p>You can see that in the tagging info line, the start and end
+      offsets of the annotation are now displayed.<br>
+    </p>
+    <h3>Show annotation tables</h3>
+    <p>If you enable this setting, your UI will now look like this:<br>
+    </p>
+    <img alt="[annotation tables]" src="../img/ui_annotationtables.jpg"
+      height="646" width="981">
+    <p>The lower pane gives you access to a table for each annotation
+      label. For more complex tasks, this table will be very useful. It
+      can be sorted by most of the columns. The menu immediately above
+      the table allows you to select which label you wish to display in
+      the table.<br>
+    </p>
+    <h2><a name="The_Help_menu"></a>The Help menu</h2>
+    <p>The Help menu looks like this:<br>
+    </p>
+    <img alt="[help menu]" src="../img/ui_helpmenu.jpg" height="189"
+      width="584">
+    <p>The "Documentation" item will open a new tab or window containing
+      this documentation; the "About MAT" item will show a small popup
+      window which shows the MAT version number.<br>
+    </p>
+    <h2><a name="The_logging_button"></a>The logging button</h2>
+    <p>As you can see from the images above, the menubar contains an
+      item labeled "Logging is off (press to start)". If you press that
+      button, your UI will look like this:<br>
+    </p>
+    <p><img alt="" src="../img/ui_loggingmenu.jpg" height="183"
+        width="584"><br>
+    </p>
+    <p>At this point, the logger is enabled. This log captures a wide
+      range of timestamped UI gestures. If you press the button again,
+      the browser stops logging, and downloads a CSV log of your
+      interaction, whose format is described <a href="logger.html">here</a>.<br>
+    </p>
+    <p></p>
+    <p></p>
+    <p></p>
+  </body>
+</html>

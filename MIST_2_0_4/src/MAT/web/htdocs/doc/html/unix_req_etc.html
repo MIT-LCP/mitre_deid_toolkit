@@ -1,0 +1,134 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=windows-1252"
+      http-equiv="Content-Type">
+    <title>Unix System Requirements, Conventions, and Installation</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Unix System Requirements, Conventions, and Installation</h1>
+    <ul>
+      <li><a href="#System_requirements">System requirements</a></li>
+      <li><a href="#Conventions">Conventions</a></li>
+      <li><a href="#Installation">Installation</a></li>
+      <li><a href="#Upgrading_dependencies_or_moving_the_">Upgrading
+          dependencies or moving the installation</a><br>
+      </li>
+    </ul>
+    <h2><a name="System_requirements"></a>System requirements</h2>
+    <p>This toolkit is designed to run on generic Unix. However, due to
+      the difficulties in supporting the possible range of
+      configurations, we are testing it, and providing detailed
+      installation instructions, only for Linux Ubuntu 9.10. <span
+        style="font-weight: bold;">Note</span>: as of 2.0, Cygwin is no
+      longer supported, because Python in Cygwin does not include sqlite
+      bindings, which are now required for MAT workspaces.<br>
+    </p>
+    <p>This toolkit depends on a number of external tools which must be
+      installed before you install MAT. For the Unix version, they are:<br>
+    </p>
+    <ul>
+      <li>Python, version 2.6 or later. Most of our development is
+        currently on 2.7. 3.x is known not to work.</li>
+      <li>Java, version 1.6.0_04 or later.<br>
+      </li>
+      <li>GNU gcc, make, buildutils (optional).</li>
+    </ul>
+    <p></p>
+    <h2><a name="Conventions"></a>Conventions</h2>
+    <p>MAT is primarily a Unix-based tool, so many of the conventions
+      used here will come from Unix.<br>
+    </p>
+    <p>We'll show command lines in fixed-width type, in boldface; the
+      system output in response will be in normal face:<br>
+    </p>
+    <pre>% <span style="font-weight: bold;">pwd</span><br>/home/user/Desktop<br></pre>
+    <p></p>
+    <p>Throughout the documentation, we'll refer to the location of the
+      MAT source tree as the variable MAT_PKG_HOME, as in the following
+      command:<br>
+    </p>
+    <pre>% <span style="font-weight: bold;">cd $MAT_PKG_HOME</span><br></pre>
+    <p>If you received this distribution as a tar or a zip file,
+      MAT_PKG_HOME is the directory src/MAT inside the unpacked zip
+      file. If you checked this distribution out of CVS, it will be the
+      root directory you checked out via "cvs checkout MAT".<br>
+    </p>
+    <p>All command lines in this documentation are Unix command lines,
+      unless otherwise indicated. The Unix shell assumed is bash. To set
+      the MAT_PKG_HOME variable, do this:<br>
+    </p>
+    <pre>% <span style="font-weight: bold;">export MAT_PKG_HOME=&lt;dir&gt;</span><br></pre>
+    <p>where &lt;dir&gt; is the appropriate value for MAT_PKG_HOME.<br>
+    </p>
+    <p>In some cases, you'll see a backslash followed immediately by a
+      line break in command-line examples:<br>
+    </p>
+    <pre>% <span style="font-weight: bold;">bin/MATEngine --task 'Named Entity' --workflow Demo --steps 'zone,tokenize' \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file $PWD/sample/ne/resources/data/raw/voa2.txt --input_file_type raw \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--output_file ./voa2_txt.json --output_file_type mat-json</span></pre>
+    <p></p>
+    <p></p>
+    <p>These backslashes and line breaks are not required parts of the
+      command line; they're present simply to enable us to present the
+      command line in a reasonable width. If you type them in the bash
+      shell, they'll work just fine; you'll get a continuation prompt
+      ("&gt;") and you can keep typing. But you can omit them.<br>
+    </p>
+    <p><span style="font-weight: bold;">MAT may be installed in
+        directories whose paths contain spaces</span>. If you do this,
+      you'll likely have to wrap double-quotes around any references to
+      MAT_PKG_HOME or subdirectories thereof:<br>
+    </p>
+    <pre>% <span style="font-weight: bold;">cd "$MAT_PKG_HOME"</span><br>% <span style="font-weight: bold;">ls "$PWD"</span><br></pre>
+    <p>If you don't do this, you'll likely encounter bizarre behavior
+      due to the path being expanded and split into command-line tokens
+      according to the whitespace in the path.<br>
+    </p>
+    <p></p>
+    <h2><a name="Installation"></a>Installation</h2>
+    A clean Ubuntu 9.10 installation is missing a number of packages,
+    which someone suitably knowledgeable should install using the
+    Synaptic package manager. Those packages are:<br>
+    <ul>
+      <li>python-dev</li>
+      <li>libx11-dev</li>
+      <li>sun-java6-bin<br>
+      </li>
+    </ul>
+    <p>Once these packages are installed, you may proceed with the
+      installation, as follows:<br>
+    </p>
+    <ul>
+      <li>Untar/unzip the distribution (you must have already done that
+        to read this).</li>
+      <li>In a terminal window, where &lt;toolkit_dir&gt; is the root
+        directory of the distribution:<br>
+        <pre>% <span style="font-weight: bold;">cd &lt;toolkit_dir&gt;</span><br>% <span style="font-weight: bold;">./install.sh</span><br></pre>
+      </li>
+    </ul>
+    <p>During the installation, you might be prompted for various paths
+      and locations which the toolkit requires.<br>
+    </p>
+    <p>When the installation is complete, your <a
+        href="runtime_env.html">runtime environment</a> will be
+      configured for you. The installed directory is <b>not relocatable</b>;
+      you must rerun the installer if you move the installation.<br>
+    </p>
+    <h2><a name="Upgrading_dependencies_or_moving_the_"></a>Upgrading
+      dependencies or moving the installation</h2>
+    <p>If you want MAT to use a new version of Java or Python because
+      the Java or Python on your machine has been upgraded and the old
+      version is no longer present, just rerun the installer. The
+      installer will find the updated versions and reconfigure your
+      tools.<br>
+    </p>
+    <p>If you want to move the MAT installation from one location to
+      another on the same machine, just move the toplevel MAT directory
+      - it's completely self-contained. If you want to move the MAT
+      installation to another machine, the safest thing to do is
+      reinstall on that new machine.<br>
+    </p>
+  </body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Runtime Environment</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Runtime environment</h1>
+    <p>When you install MAT (or configure it in a CVS checkout), the
+      configuration tool creates a MAT settings file in several
+      locations (for historical reasons). The definitive version resides
+      in MAT_PKG_HOME/lib/mat/python/MAT/MAT_settings.config. This
+      settings file is a Python config file, which is very much like a
+      Windows INI file. The template that MAT uses resides in
+      MAT_PKG_HOME/etc/MAT_settings.config.in. The variables defined
+      there are:<br>
+    </p>
+    <table border="1" cellpadding="2" cellspacing="2" width="100%">
+      <tbody>
+        <tr>
+          <td valign="top">PYTHONBIN<br>
+          </td>
+          <td valign="top">The path to the Python executable which MAT
+            uses, 2.6.x or 2.7.x.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">TABBED_TERMINAL_BIN<br>
+          </td>
+          <td valign="top">The executable used by the
+            --spawn_tabbed_terminal option in <a href="MATWeb.html">MATWeb</a><br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">JAVA_BIN<br>
+          </td>
+          <td valign="top">The path to a Java executable, 1.6_04 or
+            later.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">JCARAFE_JAR<br>
+          </td>
+          <td valign="top">The JAR file which contains the <a
+              href="carafe_engine.html">Carafe engine</a><br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">YUI_JS_LIB<br>
+          </td>
+          <td valign="top">Pathname of the Yahoo! UI Toolkit library
+            used by the MAT UI<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">CHERRYPY_PYTHONLIB<br>
+          </td>
+          <td valign="top">Location of the CherryPy Web application
+            framework<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">MUNKRES_PYTHONLIB<br>
+          </td>
+          <td valign="top">Pathname to the Python implementation of the
+            Kuhn-Munkres alignment algorithm, version 1.0.5.4 or later.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">HTTP_PORT<br>
+          </td>
+          <td valign="top">The default port of <a href="MATWeb.html">MATWeb</a>.
+            Default value is 7801.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">JCARAFE_SERVER_PORT<br>
+          </td>
+          <td valign="top">The lowest port on which to start the Carafe
+            tagger server.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">SUBPROCESS_DEBUG<br>
+          </td>
+          <td valign="top">Set this setting to "yes" if you want to see
+            the actual command line invocations of the subprocesses that
+            MAT invokes.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">SUBPROCESS_STATISTICS<br>
+          </td>
+          <td valign="top">Set this setting to "yes" if you want to see
+            the memory usage and time for every synchronous subprocess
+            call. Only available on Linux, and only if the psutil
+            package is provided.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">PSUTIL_PYTHONLIB<br>
+          </td>
+          <td valign="top">See SUBPROCESS_STATISTICS above.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>By default, the values for these variables are read out of the
+      definitive MAT_settings.config at runtime. However, there are two
+      ways you can override these values:<br>
+    </p>
+    <ul>
+      <li>You can provide a config file as the value of the
+        MAT_SETTINGS_FILE environment variable, which contains values
+        you want to override the default values.</li>
+      <li>You can specify any of these variables as environment
+        variables.</li>
+    </ul>
+    <p>You shouldn't need either of these options, but they're available
+      for emergencies and special cases.<br>
+    </p>
+    <p>If you're getting weird behavior, and you want to see where your
+      config variables are coming from, the --config_verbose <a
+        href="common_cmdline_options.html">common option</a> available
+      with most command-line tools will help you.<br>
+    </p>
+  </body>
+</html>

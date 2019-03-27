@@ -1,0 +1,227 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>The Sample Tasks</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>The sample tasks<br>
+    </h1>
+    <p>The sample tasks can be found in MAT_PKG_HOME/sample/ne. This
+      directory, like all task directories, has a file named task.xml at
+      its root. The format of this file is described in the <a
+        href="task_xml.html">task XML</a> documentation. It has no
+      Python or Javascript customizations, so it has none of the
+      corresponding subdirectories. See <a href="create_task.html">"Creating
+
+
+        a task"</a> for a description of the subdirectory structure of
+      the task.<br>
+    </p>
+    <p>This task.xml file contains two tasks: "Named Entity" and
+      "Enhanced Named Entity". The first task is a simple span task; it
+      contains spanned annotations&nbsp; without any complex attribute
+      structure. This task is used for Tutorials 1 - 7, and for a
+      variety of other examples throughout this documentation. The
+      second task is a complex task, containing both spanned and
+      spanless annotations and multiple attributes, some of which take
+      other annotations as their values. This second task is used for <a
+        href="tutorial_8.html">Tutorial 8</a>, as well as the UI
+      documentation on <a href="ui_annotation_edit.html">editing
+        annotations</a> and <a href="ui_spanless.html">spanless
+        annotations</a>.<br>
+    </p>
+    <p>In addition to the task.xml file, the sample task contains a
+      demo.xml file which describes a demo of the automated capability
+      for the "Enhanced Named Entity" task. We describe both of those
+      files in detail here.<br>
+    </p>
+    <h2>The task.xml file<br>
+    </h2>
+    <p>Here, we describe in detail the makeup of the task.xml file for
+      the sample task. We've numbered the lines to indicate our progress
+      through the file.<br>
+    </p>
+    <h3>The "Named Entity" task<br>
+    </h3>
+    <p> </p>
+    <pre>     1	&lt;tasks&gt;<br>     2	  &lt;task name='Named Entity'&gt;<br></pre>
+    <p>The file typically contains a single task declaration, with
+      &lt;task&gt; as the toplevel element. However, if you wish to
+      declare multiple tasks in the same task.xml file, it can also
+      contain multiple &lt;task&gt; elements, within a &lt;tasks&gt;
+      element. Here, we will define two tasks. Each task must be named.</p>
+    <pre>     3	    &lt;annotation_set_descriptors all_annotations_known='no'<br>     4	                                inherit='category:zone,category:token'&gt;<br>     5	      &lt;annotation_set_descriptor category='content' name='content'&gt;<br>     6	        &lt;annotation label='PERSON'/&gt;<br>     7	        &lt;annotation label='LOCATION'/&gt;<br>     8	        &lt;annotation label='ORGANIZATION'/&gt;<br>     9	      &lt;/annotation_set_descriptor&gt;<br>    10	    &lt;/annotation_set_descriptors&gt;<br>    11	    &lt;annotation_display&gt;<br>    12	      &lt;label name='PERSON' accelerator='P' css='background-color: #CCFF66'/&gt;<br>    13	      &lt;label name='LOCATION' accelerator='L' css='background-color: #FF99CC'/&gt;<br>    14	      &lt;label name='ORGANIZATION' accelerator='O' css='background-color: #99CCFF'/&gt;<br>    15	    &lt;/annotation_display&gt;<br></pre>
+    <p>Each task contains a block of annotation declarations. Here, we
+      have inherited the zone and token category tags from the root
+      task, and defined our own content tags, PERSON, LOCATION and
+      ORGANIZATION. In a separate &lt;annotation_display&gt; block, we
+      define the display properties of these tags. For instance, the
+      PERSON tag will display as light green (defined here in
+      hexadecimal), and the tagging menu will support the "P" keyboard
+      accelerator for annotating a selected span with the PERSON tag.<br>
+    </p>
+    Both the &lt;annotation_set_descriptors&gt; and
+    &lt;annotation_display&gt; elements are optional.<br>
+    <pre>    16	    &lt;workflows&gt;<br>    17	      &lt;workflow name='Hand annotation'&gt;<br>    18	        &lt;step name='zone'/&gt;<br>    19	        &lt;step name='tokenize'/&gt;<br>    20	        &lt;step pretty_name='hand tag' name='tag' by_hand='yes'/&gt;<br>    21	      &lt;/workflow&gt;<br>    22	      &lt;workflow name='Tokenless hand annotation'&gt;<br>    23	        &lt;step name='zone'/&gt;<br>    24	        &lt;step pretty_name='hand tag' name='tag' by_hand='yes'/&gt;<br>    25	      &lt;/workflow&gt;<br>    26	      &lt;workflow hand_annotation_available_at_end='yes' name='Review/repair'/&gt;<br>    27	      &lt;workflow hand_annotation_available_at_end='yes' name='Demo'&gt;<br>    28	        &lt;step name='zone'/&gt;<br>    29	        &lt;step name='tokenize'/&gt;<br>    30	        &lt;step name='tag'/&gt;<br>    31	      &lt;/workflow&gt;<br>    32	      &lt;workflow name='Align'&gt;<br>    33	        &lt;step name='zone'/&gt;<br>    34	        &lt;step name='tokenize'/&gt;<br>    35	        &lt;step name='align'/&gt;<br>    36	      &lt;/workflow&gt;<br>    37	    &lt;/workflows&gt;<br></pre>
+    <p>The task contains five workflow definitions. <br>
+    </p>
+    <ul>
+      <li>The first workflow has three steps: zone, tokenize, and tag;
+        the last of these steps is marked as a hand task (i.e., it's not
+        done by an automated process). This workflow allows you to
+        prepare a document for hand tagging, and leaves a step for hand
+        tagging itself.</li>
+      <li>The second workflow is the same as the first, except it omits
+        tokenization. This is typically not a good idea, due to the
+        desirability of ensuring that the Carafe engine is given
+        explicit tokenization. However, if you're using the annotation
+        capabilities of MAT without the Carafe engine (say, you're just
+        hand-annotating a corpus), this should be fine.<br>
+      </li>
+      <li>The third workflow has no steps, but hand annotation is
+        available as a final option. This workflow allows you to correct
+        already-annotated documents.<br>
+      </li>
+      <li>The fourth workflow has three steps, like the first, but the
+        final step is an automated step, and is intended for automated
+        processing of documents; it uses a specified model, rather than
+        hand annotation, to tag the document.</li>
+      <li>The fifth workflow has three steps, but in this case, the
+        workflow is intended for documents which have content tags but
+        nothing else. These documents were most likely prepared by other
+        tools. The third step, instead of doing hand or automated
+        tagging, aligns the content annotations with the token
+        boundaries.<br>
+      </li>
+    </ul>
+    <p>The implementation of these steps is found immediately below.</p>
+    The &lt;workflows&gt; element is obligatory.
+    <pre>    38	    &lt;step_implementations&gt;<br>    39	      &lt;step name='tokenize' class='MAT.JavaCarafe.CarafeTokenizationStep'/&gt;<br>    40	      &lt;step name='zone' class='MAT.PluginMgr.WholeZoneStep'/&gt;<br>    41	      &lt;step name='align' class='MAT.PluginMgr.AlignStep'/&gt;<br>    42	      &lt;step workflows='Demo' name='tag' class='MAT.JavaCarafe.CarafeTagStep'/&gt;<br>    43	      &lt;step name='tag' class='MAT.PluginMgr.TagStep'/&gt;<br>    44	    &lt;/step_implementations&gt;<br></pre>
+    <p>The task defines implementations for the steps in the workflow.
+      The implementations are essentially mappings from simple names to
+      Python classes which implement the steps. The classes referenced
+      here are described in the documentation on <a
+        href="tasks_and_workflows.html">tasks</a>. Step implementations
+      can be limited to workflows, as the first implementation of the
+      tag step is here. If a step is designated as by_hand step in a
+      workflow, it will be assigned the PluginMgr.TagStep implementation
+      automatically. <br>
+    </p>
+    <p>Every step must have an implementation, which is why there are
+      two tagging step implementations. So the second step
+      implementation for "tag" here is to support the default. Remember,
+      the step names are global to the task, as described in the
+      documentation on <a href="tasks_and_workflows.html">tasks</a>. So
+      it's not a good idea for the effect of step implementations to
+      differ among workflows; so here, the two tag steps differ in the
+      means they achieve the effect (one is automated and one is by
+      hand), but otherwise, their effect is identical.</p>
+    The &lt;step_implementations&gt; element is optional.
+    <pre>    45	    &lt;model_config class='MAT.JavaCarafe.CarafeModelBuilder'&gt;<br>    46	      &lt;build_settings training_method='psa' max_iterations='6'/&gt;<br>    47	    &lt;/model_config&gt;<br>    48	    &lt;model_config config_name='alt_model_build'<br>    49	                  class='MAT.JavaCarafe.CarafeModelBuilder'/&gt;<br>    50	    &lt;default_model&gt;default_model&lt;/default_model&gt;<br></pre>
+    <p>The settings for building a model are defined here. We use the <a
+        href="carafe_engine.html">Carafe engine</a>, which uses its
+      default feature spec in the absence of a specified feature spec
+      file.&nbsp; We use periodic stepsize adjustment, and we assign a
+      location (a file named "default model") for the default location
+      of models build for this task with <a href="MATModelBuilder.html">MATModelBuilder</a>
+      (see the --save_as_default_model flag). We also have a second,
+      non-default block of settings, named "alt_model_build", which
+      doesn't use periodic stepsize adjustment.<br>
+    </p>
+    The &lt;model_config&gt; element is optional, as is
+    &lt;default_model&gt;.
+    <pre>    51	    &lt;workspace&gt;<br>    52	      &lt;operation name='autotag'&gt;<br>    53	        &lt;settings steps='tag' workflow='Demo'/&gt;<br>    54	      &lt;/operation&gt;<br>    55	      &lt;operation name='modelbuild'&gt;<br>    56	        &lt;settings/&gt;<br>    57	      &lt;/operation&gt;<br>    58	      &lt;operation name='import'&gt;<br>    59	        &lt;settings steps='zone,tokenize' workflow='Hand annotation'/&gt;<br>    60	      &lt;/operation&gt;<br>    61	    &lt;/workspace&gt;<br></pre>
+    <p>We define the behavior of the operations in the workspaces for
+      this task here. For a list of predefined folders, see the <a
+        href="files_and_workspaces.html">workspace</a> documentation.
+      Each folder has a set of operations and expected possible
+      settings. In this case, the autotag step takes settings which are
+      equivalent to the flags to <a href="MATEngine.html">MATEngine</a>;
+      the import step does the same. So we see that the autotag
+      operation is equivalent to invoking MATEngine on a document using
+      the Demo workflow defined above, performing one step, and import
+      uses a different workflow, and applies two steps. The modelbuild
+      operation, on the other hand, specifies no settings at all;
+      everything it needs is inherited from the model build settings
+      block immediately above. </p>
+    The &lt;workspace&gt; element is optional.<br>
+    <h3>The "Enhanced Named Entity" task<br>
+    </h3>
+    <pre>    62	  &lt;/task&gt;<br>    63	  &lt;task name='Enhanced Named Entity'&gt;<br></pre>
+    <p>At this point, we end the first task and begin the second one.<br>
+    </p>
+    <pre>    64	    &lt;annotation_set_descriptors all_annotations_known='no'<br>    65	                                inherit='category:zone,category:token'&gt;<br>    66	      &lt;annotation_set_descriptor category='content' name='content'&gt;<br>    67	        &lt;annotation label='PERSON'/&gt;<br>    68	        &lt;annotation label='LOCATION'/&gt;<br>    69	        &lt;annotation label='ORGANIZATION'/&gt;<br>    70	        &lt;attribute of_annotation="PERSON,LOCATION,ORGANIZATION" name="nomtype"&gt;<br>    71	          &lt;choice&gt;Proper name&lt;/choice&gt;<br>    72	          &lt;choice&gt;Noun&lt;/choice&gt;<br>    73	          &lt;choice&gt;Pronoun&lt;/choice&gt;<br>    74	        &lt;/attribute&gt;<br>    75	        &lt;attribute of_annotation="LOCATION" name="is_political_entity" type="boolean"/&gt;<br>    76	        &lt;annotation label="LOCATED_EVENT"/&gt;<br>    77	        &lt;attribute of_annotation="LOCATED_EVENT" type="annotation" name="actor"&gt;<br>    78	          &lt;label_restriction label="PERSON"/&gt;<br>    79	        &lt;/attribute&gt;<br>    80	        &lt;attribute of_annotation="LOCATED_EVENT" type="annotation" name="location"&gt;<br>    81	          &lt;label_restriction label="LOCATION"/&gt;<br>    82	          &lt;label_restriction label="ORGANIZATION"/&gt;<br>    83	        &lt;/attribute&gt;<br>    84	        &lt;annotation label="PERSON_COREF" span="no"/&gt;<br>    85	        &lt;attribute of_annotation="PERSON_COREF" type="annotation" aggregation="set" name="mentions"&gt;<br>    86	          &lt;label_restriction label="PERSON"/&gt;<br>    87	        &lt;/attribute&gt;<br>    88	        &lt;annotation label="LOCATION_RELATION" span="no"/&gt;<br>    89	        &lt;attribute of_annotation="LOCATION_RELATION" type="annotation" name="located"&gt;<br>    90	          &lt;label_restriction label="ORGANIZATION"/&gt;<br>    91	          &lt;label_restriction label="PERSON"/&gt;<br>    92	        &lt;/attribute&gt;<br>    93	        &lt;attribute of_annotation="LOCATION_RELATION" type="annotation" name="location"&gt;<br>    94	          &lt;label_restriction label="LOCATION"/&gt;<br>    95	        &lt;/attribute&gt;<br>    96	      &lt;/annotation_set_descriptor&gt;<br>    97	    &lt;/annotation_set_descriptors&gt;<br></pre>
+    <p>This annotation definition block is much more complex than the
+      one in the "Named Entity" task. In addition to the three labels we
+      saw previously, we also have three other labels: "LOCATED_EVENT"
+      (spanned) and "PERSON_COREF" and "LOCATION_RELATION" (spanless).
+      We also have several attributes, of different types. Most notable
+      is the "mentions" attribute of the "PERSON_COREF" annotation,
+      which takes sets of annotations as its value. <br>
+    </p>
+    <pre>    98	    &lt;annotation_display&gt;<br>    99	      &lt;label name='PERSON' accelerator='P' css='background-color: #CCFF66' edit_immediately="yes"/&gt;<br>   100	      &lt;label name='LOCATION' accelerator='L' css='background-color: #FF99CC' edit_immediately="yes"/&gt;<br>   101	      &lt;label name='ORGANIZATION' accelerator='O' css='background-color: #99CCFF' edit_immediately="yes"/&gt;<br>   102	      &lt;label name='PERSON_COREF' accelerator='C' css='background-color: lightgreen' edit_immediately="yes"/&gt;<br>   103	      &lt;label name='LOCATED_EVENT' accelerator='E' css='background-color: pink' edit_immediately="yes"/&gt;<br>   104	      &lt;label name='LOCATION_RELATION' accelerator='R' css='background-color: orange' edit_immediately="yes"/&gt;<br>   105	    &lt;/annotation_display&gt;<br></pre>
+    <p>The annotation display block is also somewhat more complex; we
+      see here that all of the annotations are marked to be edited
+      immediately upon creation. <br>
+    </p>
+    <pre>   106	    &lt;workflows&gt;<br>   107	      &lt;workflow name='Hand annotation'&gt;<br>   108	        &lt;step name='zone'/&gt;<br>   109	        &lt;step name='tokenize'/&gt;<br>   110	        &lt;step pretty_name='hand tag' name='tag' by_hand='yes'/&gt;<br>   111	      &lt;/workflow&gt;<br>   112	      &lt;workflow name='Tokenless hand annotation'&gt;<br>   113	        &lt;step name='zone'/&gt;<br>   114	        &lt;step pretty_name='hand tag' name='tag' by_hand='yes'/&gt;<br>   115	      &lt;/workflow&gt;<br>   116	      &lt;workflow hand_annotation_available_at_end='yes' name='Review/repair'/&gt;<br>   117	      &lt;workflow hand_annotation_available_at_end='yes' name='Demo'&gt;<br>   118	        &lt;step name='zone'/&gt;<br>   119	        &lt;step name='tokenize'/&gt;<br>   120	        &lt;step name='tag'/&gt;<br>   121	      &lt;/workflow&gt;<br>   122	      &lt;workflow name='Align'&gt;<br>   123	        &lt;step name='zone'/&gt;<br>   124	        &lt;step name='tokenize'/&gt;<br>   125	        &lt;step name='align'/&gt;<br>   126	      &lt;/workflow&gt;<br>   127	    &lt;/workflows&gt;<br></pre>
+    <p>The workflows in this task are identical to those in the "Named
+      Entity" task. Because the Carafe tagger only operates on the
+      simple span subset of this (or any) task, the "Demo" workflow will
+      only apply the spanned labels, not the attributes associated with
+      them, and won't apply the spanless labels at all.<br>
+    </p>
+    <pre>   128	    &lt;step_implementations&gt;<br>   129	      &lt;step name='tokenize' class='MAT.JavaCarafe.CarafeTokenizationStep'/&gt;<br>   130	      &lt;step name='zone' class='MAT.PluginMgr.WholeZoneStep'/&gt;<br>   131	      &lt;step name='align' class='MAT.PluginMgr.AlignStep'/&gt;<br>   132	      &lt;step workflows='Demo' name='tag' class='MAT.JavaCarafe.CarafeTagStep'/&gt;<br>   133	      &lt;step name='tag' class='MAT.PluginMgr.TagStep'/&gt;<br>   134	    &lt;/step_implementations&gt;<br>   135	    &lt;model_config class='MAT.JavaCarafe.CarafeModelBuilder'&gt;<br>   136	      &lt;build_settings training_method='psa' max_iterations='6'/&gt;<br>   137	    &lt;/model_config&gt;<br>   138	    &lt;model_config config_name='alt_model_build'<br>   139	                  class='MAT.JavaCarafe.CarafeModelBuilder'/&gt;<br>   140	    &lt;default_model&gt;default_enhanced_model&lt;/default_model&gt;<br></pre>
+    <p>The step implementation and model configuration are the same as
+      those in the "Named Entity" task. Because the Carafe tagger only
+      operates on the simple span subset of this (or any) task, the
+      model builder will only train models for the spanned labels, not
+      the attributes associated with them, and won't build a model for
+      the spanless labels at all.<br>
+    </p>
+    <pre>   141	    &lt;workspace&gt;<br>   142	      &lt;operation name='autotag'&gt;<br>   143	        &lt;settings steps='tag' workflow='Demo'/&gt;<br>   144	      &lt;/operation&gt;<br>   145	      &lt;operation name='modelbuild'&gt;<br>   146	        &lt;settings/&gt;<br>   147	      &lt;/operation&gt;<br>   148	      &lt;operation name='import'&gt;<br>   149	        &lt;settings steps='zone,tokenize' workflow='Hand annotation'/&gt;<br>   150	      &lt;/operation&gt;<br>   151	    &lt;/workspace&gt;<br>   152	  &lt;/task&gt;<br>   153	&lt;/tasks&gt;<br></pre>
+    The workspace configuration is identical to that of the "Named
+    Entity" task (and, of course, the caveats about Carafe for model
+    building and automated tagging apply here as well).<br>
+    <h2>The demo.xml file</h2>
+    <p>Here, we describe in detail the makeup of the demo.xml file for
+      the sample task. We've numbered the lines to indicate our progress
+      through the file.</p>
+    <pre>     1	&lt;demo name="Named Entity Identification"&gt;<br></pre>
+    <p>Each demo has a name, which will be the title of the demo page.<br>
+    </p>
+    <pre>     2	  &lt;description&gt;<br>     3	&lt;![CDATA[<br>     4	&lt;p&gt;This demo shows the simple named entity identification capability<br>     5	  provided in the MAT sample task.<br>     6	]]&gt;<br>     7	  &lt;/description&gt;<br></pre>
+    <p>Each demo has an HTML description. This description can be
+      arbitrary HTML. In order to force the XML parser to ignore the tag
+      structure, and treat the content as an unanalyzed string, we use
+      the XML &lt;![CDATA[...]]&gt; directive.<br>
+    </p>
+    <pre>     8	  &lt;activity name="Tag" enable_blank_document="yes"&gt;<br>     9	    &lt;description&gt;Automatically locate named entities in the document.&lt;/description&gt;<br>    10	    &lt;engine_settings task = "Named Entity" workflow="Demo" steps="zone,tokenize,tag"/&gt;<br></pre>
+    <p>Each demo can have a number of activities the user can perform.
+      In most cases, there will be only one (i.e., tag the document),
+      but if the task has been extensively customized, there may be
+      more. The enable_blank_document attribute makes it possible for
+      the user to type in arbitrary text.<br>
+    </p>
+    <p>Each activity has a description, which the user will see, and
+      settings for <a href="MATEngine.html">MATEngine</a> which dictate
+      how to process the document.<br>
+    </p>
+    <pre>    11	    &lt;sample_document description="Sample news article #1"<br>    12	                     file_type = "raw"<br>    13	                     relative_location="resources/data/raw/voa1.txt"/&gt;<br>    14	    &lt;sample_document description="Sample news article #2"<br>    15	                     file_type = "raw"<br>    16	                     relative_location="resources/data/raw/voa2.txt"/&gt;<br></pre>
+    <p>Each activity can have a number of sample documents. Each sample
+      document has a description, which the user sees in a drop-down
+      menu, a location for the document (which should be a relative
+      pathname within the task directory), and whether the document is a
+      raw or mat-json document. If enable_blank_document is provided,
+      the user will see an additional entry for a blank document she can
+      type into. </p>
+    <pre>    17	  &lt;/activity&gt;<br>    18	&lt;/demo&gt;<br></pre>
+    <p>And now, we're done.<br>
+    </p>
+  </body>
+</html>

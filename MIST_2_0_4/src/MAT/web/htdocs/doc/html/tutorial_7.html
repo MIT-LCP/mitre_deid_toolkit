@@ -1,0 +1,194 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Tutorial 7: The Experiment Engine</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Tutorial 7: The experiment engine</h1>
+    <p>At any point, you might have a number of questions about the
+      state of your corpus.<br>
+    </p>
+    <ul>
+    </ul>
+    <ol>
+      <li>You may want to know simply how well your training and tagging
+        strategies are doing.</li>
+      <li>You may want to know how the tagging improves as you increase
+        the number of training documents.</li>
+      <li>You may want to know how models trained on one corpus of
+        documents perform against a different document corpus.</li>
+      <li>You may want to know how differently constructed models
+        perform against the same corpus.</li>
+      <li>You may want to know how different tagging strategies affect
+        the output.<br>
+      </li>
+    </ol>
+    <ul>
+    </ul>
+    <p>These and other questions can be answered easily by the
+      experiment engine, <a href="MATExperimentEngine.html">MATExperimentEngine</a>.
+      The power of the experiment engine lies largely in its <a
+        href="experiment_xml.html">rich XML configuration</a>. In this
+      tutorial, we'll learn how to use the experiment engine to answer
+      one of the questions above, and you can examine the other
+      documentation to see how you might answer other questions, as
+      illustrated in the <a href="experiment_xml_use_cases.html">use
+        cases</a>.<br>
+    </p>
+    <p>We're going to use the same simple 'Named Entity' task, and we're
+      going to assume that your task is installed. This tutorial
+      involves both the UI and the command line. Because this tutorial
+      involves the command line, make sure you're familiar with the
+      "Conventions" section in your platform-specific instructions in
+      the "Getting Started" section of the documentation. </p>
+    <h2>Step 1: Review your XML file for question 1<br>
+    </h2>
+    <p>This step is fairly easy, because the XML file to answer the
+      first question is included as part of the distribution. The XML
+      file is found in MAT_PKG_HOME/sample/ne/test/exp/exp.xml, and it
+      looks like this:<br>
+    </p>
+    <pre>&lt;experiment task='Named Entity'&gt;<br>  &lt;corpora dir="corpora"&gt;<br>    &lt;partition name="train" fraction=".8"/&gt;<br>    &lt;partition name="test" fraction=".2"/&gt;<br>    &lt;corpus name="ne"&gt;<br>      &lt;pattern&gt;*.json&lt;/pattern&gt;<br>    &lt;/corpus&gt;<br>  &lt;/corpora&gt;<br>  &lt;model_sets dir="model_sets"&gt;<br>    &lt;model_set name="ne_model"&gt;<br>      &lt;training_corpus corpus="ne" partition="train"/&gt;<br>    &lt;/model_set&gt;<br>  &lt;/model_sets&gt;<br>  &lt;runs dir="runs"&gt;<br>    &lt;run_settings&gt;<br>      &lt;args steps="zone,tokenize,tag" workflow="Demo"/&gt;<br>    &lt;/run_settings&gt;<br>    &lt;run name="test_run" model="ne_model"&gt;<br>      &lt;test_corpus corpus="ne" partition="test"/&gt;<br>    &lt;/run&gt;<br>  &lt;/runs&gt;<br>&lt;/experiment&gt;<br></pre>
+    <p>This is one of the simplest complete experiment XML files you can
+      create. As with all experiment XML files, it describes three types
+      of entities.<br>
+    </p>
+    <ul>
+      <li><span style="font-weight: bold;">Corpora</span> are
+        collections of files. Corpora are named, and they are described
+        by the &lt;corpus&gt; element. These elements appear as children
+        of &lt;corpora&gt; elements which allow you to group together
+        processing instructions for multiple corpora. Corpora can be
+        partitioned, as we see here for the "ne" corpus. Each "fraction"
+        is a share of the corpus which is allocated to that partition;
+        the fractions are normalized before the corpus is split, and the
+        overall split is randomly applied. You can have as many
+        partitions in a corpus as you want. The partitions are
+        non-overlapping. We see that these documents should all match
+        the pattern "*.json"; the directory to look for these documents
+        in will be specified at runtime. You can have multiple
+        &lt;corpora&gt; elements.<br>
+      </li>
+      <li><span style="font-weight: bold;">Model sets</span> are sets of
+        incrementally built models. They, too, are named, and they are
+        described by the &lt;model_set&gt; element. You can specify a
+        number of training documents to build a model at (e.g., every
+        100 documents, every 200 documents); if the increment is
+        missing, as it is here, the model set will consist of a single
+        model built from all the training documents in the named corpus.
+        You can group these model sets together for the purposes of
+        sharing processing information under the &lt;model_sets&gt;
+        element (although no processing information needs to be
+        specified in this example). You can have multiple
+        &lt;model_sets&gt; elements.<br>
+      </li>
+      <li><span style="font-weight: bold;">Runs</span> are comparisons
+        of corpora with model sets. They, too, are named, and they are
+        described by the &lt;run&gt; element. The &lt;run&gt; elements
+        are grouped together under &lt;runs&gt; elements to share
+        processing information. For each run, the test documents in the
+        named corpora or partitions are stripped of their annotations,
+        and the processing information is used to generate a hypothesis
+        for each stripped document for each model in the named model
+        set. The results are then compared with the gold standard
+        document using the <a href="MATScore.html">scorer</a>, broken
+        down by run and model.</li>
+    </ul>
+    <p>In most cases, your corpora should consist exclusively of
+      annotated documents which have been marked gold. <br>
+    </p>
+    <p>So this experiment takes a single set of documents, and
+      designates 80% of the set for training and the remaining 20% for
+      test. It then generates a single model from the training
+      documents, and executes a single run using this model against the
+      test documents.<br>
+    </p>
+    <h2>Step 2: Run the experiment</h2>
+    <p>This operation is a command-line operation. Try it:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">cd $MAT_PKG_HOME</span><br>% <span style="font-weight: bold;">bin/MATExperimentEngine --exp_dir /tmp/exp \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--pattern_dir $PWD/sample/ne/resources/data/json sample/ne/test/exp/exp.xml</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">cd %MAT_PKG_HOME%</span><br>&gt; <span style="font-weight: bold;">bin\MATExperimentEngine.cmd --exp_dir %TMP%\exp \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--pattern_dir %CD%\sample\ne\resources\data\json sample\ne\test\exp\exp.xml</span><br></pre>
+    <p>The --exp_dir is the directory where the corpora, models and runs
+      will be computed (and stored, if necessary), and where the results
+      will be found. The --pattern_dir is the directory in which to look
+      for the files referred to in the &lt;pattern&gt; elements in the
+      experiment XML file; the patterns are so-called Unix "glob"
+      patterns, which are standard file patterns which should be
+      familiar to any user of the Unix shell. The final argument is the
+      experiment XML file itself.<br>
+    </p>
+    <p>The engine will create the directory, copy the experiment XML
+      file into it for archive purposes, and then run the experiment as
+      described in step 1.<br>
+    </p>
+    <h2>Step 3: Review the results</h2>
+    <p>Look in the experiment directory.<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">ls /tmp/exp</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">dir %TMP%/exp<br><br></span>allbytag_excel.csv	corpora			model_sets<br>allbytoken_excel.csv	exp.xml			runs<br></pre>
+    <p>The corpora, model_sets and runs subdirectories are as specified
+      in the experiment XML file above (that's what the "dir" attribute
+      does). What you'll be most interested in are the files
+      allbytag_excel.csv and allbytoken_excel.csv. These files contain
+      the tag-level and token-level scoring results (including
+      Excel-style formulas) for all the runs. The format and
+      interpretation of these results is found in the documentation for
+      the <a href="score_output.html">scoring output</a>, except that
+      the initial columns are different; you can find a description of
+      the differences in the documentation for <a
+        href="MATExperimentEngine.html">MATExperimentEngine</a>.<br>
+    </p>
+    <p>Under /tmp/exp/runs, you'll see a directory for each named run
+      (in this case, only "test_run"), and below that, a directory for
+      the name of the model configuration ("ne_model" in this case):<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">ls /tmp/exp/runs/test_run/ne_model</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">dir %TMP%\exp\runs\test_run\ne_model<br><br></span>_done			bytoken_excel.csv	hyp<br>bytag_excel.csv		details.csv		run_input<br></pre>
+    <p>The important elements here are the individual scoring files
+      bytag_excel.csv and bytoken_excel.csv, which are (approximately)
+      the subset of the corresponding overall scoring files which is
+      relevant to this run. Of greater interest is details.csv, which is
+      the detail spreadsheet for this run. These detail spreadsheets are
+      not aggregated at the top level because they contain an entry for
+      each tag, and the volume of data would likely be too great.<br>
+    </p>
+    <p>For more details about the structure of the experiment output
+      directory, see <a href="experiment_output.html">here</a>. For
+      detailed examples for the other questions posed above, see the <a
+        href="experiment_xml.html">experiment XML documentation</a>.<br>
+    </p>
+    <h2>Step 4: Run an experiment against a workspace</h2>
+    <p>Workspaces are just folders of files. If you've done <a
+        href="tutorial_6.html">Tutorial 6</a>, and you kept your
+      workspace around, you can run a simple experiment against that
+      workspace using <a href="MATWorkspaceEngine.html">MATWorkspaceEngine</a>:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">cd $MAT_PKG_HOME</span><br>% <span style="font-weight: bold;">bin/MATWorkspaceEngine /tmp/ne_workspace run_experiment \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--test_basename_patterns 'voa3,voa4' --workflow Demo --tag_step tag</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">cd %MAT_PKG_HOME%</span><br>&gt; <span style="font-weight: bold;">bin\MATWorkspaceEngine.cmd %TMP%\ne_workspace run_experiment \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--test_basename_patterns "voa3,voa4" --workflow Demo --tag_step tag</span></pre>
+    <p>You can specify an experiment XML file to use, but in this simple
+      example, we're not using one; we're treating all the gold
+      documents as the training corpus, except those which match the
+      --test_basename_patterns (which will be used as the test corpus).<br>
+    </p>
+    <p>The experiment results will be in the workspace directory in
+      experiments/&lt;date&gt;.<br>
+    </p>
+    <h2>Step 5: Clean up (optional)</h2>
+    Remove your experiment directories:<br>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">rm -rf /tmp/exp</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">rd /s /q %TMP%\exp</span><br></pre>
+    If you're not planning on doing any other tutorials, remove the
+    workspace:<br>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">rm -rf /tmp/ne_workspace</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">rd /s /q %TMP%\ne_workspace</span><br></pre>
+    <p>If you don't want the "Named Entity" task hanging around, remove
+      it as shown in the final step of <a href="tutorial_1.html">Tutorial
+
+
+
+
+        1</a>.<br>
+    </p>
+    This concludes Tutorial 7.
+    <p></p>
+  </body>
+</html>

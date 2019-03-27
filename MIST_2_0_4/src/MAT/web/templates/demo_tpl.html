@@ -1,0 +1,112 @@
+<!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+<html>
+<head>
+  <META http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>PAT_DEMO_TITLE</title>
+  <script type="text/javascript" src="/MAT/resources/PAT_YUI_DIRECTORY/build/yuiloader/yuiloader.js" ></script>
+  <script type="text/javascript" src="/MAT/js/mat_utils.js"></script>
+  <script type="text/javascript" src="/MAT/js/mat_core.js"></script>
+  <script type="text/javascript" src="/MAT/js/core_ui.js"></script>
+  <script type="text/javascript" src="/MAT/js/demo_ui.js"></script>
+  <script type="text/javascript" src="/MAT/js/mat_doc_display.js"></script>
+  <script type="text/javascript" src="/MAT/js/mat_yui_connector.js"></script>
+  <script type="text/javascript" src="/MAT/js/workbench_ui_popup_mgr.js"></script>
+  <link href="/MAT/css/mat_core.css" rel="stylesheet" type="text/css">
+  <link href="/MAT/css/demo_ui.css" rel="stylesheet" type="text/css">
+<style title="tag_styles">
+</style>
+<!-- First, set up the core initializations. Then, load the task specializations.
+     Finally, set up the YAHOO! loader. -->
+
+<script type="text/javascript">
+
+var UI = null;
+
+var MATContext = null;
+
+MAT.Initializations.push(MAT.DemoUI.loadYUIExtensions);
+
+var DemoConfig = PAT_DEMO_CONFIGURATION;
+
+MAT.Initializations.push(function () {
+  if (window.JSON === undefined) {
+    window.JSON = YAHOO.lang.JSON;
+  }
+  UI = new MAT.DemoUI(DemoConfig, "PAT_DEMO_NAME");
+  MATContext = new MAT.Context(UI, "/MAT/cgi/MATCGI.cgi", "/MAT", PAT_TASKS_OF_INTEREST);
+  MATContext.backend.setConnector(MAT.YUIBackendConnector);
+  MATContext.backend.loadTasks();
+});
+
+</script>
+
+PAT_TASK_JAVASCRIPT
+PAT_TASK_CSS
+<script type="text/javascript">
+
+// Set up YUI. 
+
+MAT.setYUILoaderBase("/MAT/resources/PAT_YUI_DIRECTORY/build/");
+
+// Instantiate and configure Loader:
+MAT.withYUILoaded(["datatable", "event", "logger", "selector", "menu", "container",
+                   "button", "resize", "yahoo", "dom", "element", "tabview", "json"], function () {
+  //this is your callback function; you can use 
+  //this space to call all of your instantiation 
+  //logic for the components you just loaded.
+  // Note the forward reference to ui_init.
+  YAHOO.util.Event.onDOMReady(MAT.initialize);
+});
+
+</script>
+</head>
+<!-- <body> -->
+<body class="yui-skin-sam">
+
+<div class="yui-panel borrowed-css">
+<div class="hd">PAT_DEMO_TITLE</div>
+<div class="bd">
+<h1>PAT_DEMO_TITLE</h1>
+
+<!-- AAARRGH. CSS positioning rots, rots, rots. -->
+<table border=0 width="100%">
+<tr valign="top">
+  <td width="70%">
+    <div id="topMatter">
+      <div id="demoDescription">
+PAT_DEMO_DESCRIPTION
+      </div>
+
+      <!-- and now, the widgets. -->
+      <div id="configDiv"></div>
+    </div> <!-- topmatter -->
+  </td>
+  <td>
+    <div class="yui-panel borrowed-css">
+      <div class="hd">Legend</div>
+      <div class="bd">
+        <div id="legendDiv"></div>
+      </div>
+    </div>
+  </td>
+</tr>
+</table>  
+
+<div id="docPresentationDiv" class="yui-navset borrowed-css">
+  <ul class="yui-nav">
+    <li class="selected"><a href="#tab1"><em>Input  <img id="busyimg" src="/MAT/img/busy.gif" style="display: none"></em></a></li>
+    <li><a href="#tab2"><em>Output</em></a></li>
+  </ul>
+  <div class="yui-content">
+    <div id="tab1">
+      <textarea id="inputText" rows="20" class="docPortal"></textarea>
+      <!-- and, have a hidden doc input div for when we display an uneditable document. -->
+      <div id="unEditableDocInputDiv" style="display: none"></div>
+    </div>    
+    <div id="tab2"><div id = "docOutputDiv"></div></div>
+  </div>
+</div>
+</div> <!-- bd -->
+</body>
+</html>

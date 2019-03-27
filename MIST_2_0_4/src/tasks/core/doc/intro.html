@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="Content-Type">
+  <title>The MITRE Identification Scrubber Toolkit</title>
+<!-- this will appear as tasks/<taskdir>/doc/<file>, and the doc CSS
+       is in css, so... -->
+  <link href="../../../../css/doc.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<h1>MIST: The MITRE Identification Scrubber Toolkit</h1>
+<p>The MITRE Identification Scrubber Toolkit (MIST) is a suite of tools
+for deidentifying
+free-text documents containing personally identifiable information
+(PII). MIST helps you replace these PII either
+with obscuring fillers, such as [NAME], or with artificial,
+synthesized, but realistic English fillers. The transformed documents
+you create with this toolkit are more likely to meet the requirements
+of your organization for protecting privacy in documents you distribute.<br>
+</p>
+<p>For example, assume you're given the following document:<br>
+</p>
+<pre>Patient ID: P89474<br><br>Mary Phillips is a 45-year-old woman with a history of diabetes.<br>She arrived at New Hope Medical Center on August 5 complaining<br>of abdominal pain. Dr. Gertrude Philippoussis diagnosed her<br>with appendicitis and admitted her at 10 PM.<br></pre>
+<p>MIST provides facilities for converting this document to something
+like this:<br>
+</p>
+<pre>Patient ID: [ID]<br><br>[NAME] is a [AGE]-year-old woman with a history of diabetes.<br>She arrived at [HOSPITAL] on [DATE] complaining<br>of abdominal pain. Dr. [PHYSICIAN] diagnosed her<br>with appendicitis and admitted her at 10 PM.</pre>
+<p>or even to resynthesize an English document replacement like this:<br>
+</p>
+<pre>Patient ID: ID586<br><br>Sandy Parkinson is a 34-year-old woman with a history of diabetes.<br>She arrived at Mercy Hospital on July 10 complaining<br>of abdominal pain. Dr. Myron Prendergast diagnosed her<br>with appendicitis and admitted her at 10 PM.</pre>
+<h2>How it works</h2>
+<p>MIST decomposes the deidentification task into two subtasks:<br>
+</p>
+<ul>
+  <li>an <span style="font-weight: bold;">annotation</span> subtask,
+where the tools of trainable, corpus-based language processing are
+brought to bear to identify the PII phrases, and</li>
+  <li>a <span style="font-weight: bold;">replacement</span> subtask,
+where information in the PII phrases is used to generate suitable
+replacements, given a chosen replacement strategy.</li>
+</ul>
+<p>The first subtask is addressed by the MITRE Annotation Toolkit
+(MAT),
+which is a highly customizable suite of tools for natural language
+processing upon which MIST is built. The customizations for MIST itself
+address the second subtask. The documentation that follows uses the
+terms <span style="font-weight: bold;">annotation</span> and <span
+ style="font-weight: bold;">tagging</span> interchangeably for the task
+of identifying, either by hand or automatically, the PII
+phrases in your documents. The labels for your PII types (e.g., NAME,
+PHYSICIAN, AGE, DATE) will be the tags that you'll be applying to your
+documents.<br>
+</p>
+<h2>License</h2>
+<p>All of MITRE's contributions to MIST are licensed under the BSD
+license, as described in the file LICENSE at the root of your
+distribution.
+There are many third-party packages and utilities which are distributed
+with MIST; they and their licenses are all described in the license
+file.<br>
+</p>
+<h2>What you should do next</h2>
+<p>The documentation that follows is approximately in the order you
+should review it.<br>
+</p>
+<ul>
+  <li>Because MIST is a customization of MAT, you'll be using it via
+the MAT tools. The pages in the section "Getting started" will give you
+a deeper
+understanding how MAT works, as well as the general task it's intended
+to support; it will also tell you how to install the software and how
+to read the remainder of the documentation.</li>
+  <li>The pages in the section "Deidentification customizations" will
+tell you how the general principles of MAT are applied to the
+deidentification problem, and how MIST extends MAT to address the
+replacement problem as well. This section will refer backward to the
+general strategies in MAT, as well as forward to the tutorial that
+follows. If at any point you aren't sure how something in the
+documentation applies to MIST specifically, refer back to the pages in
+this section.</li>
+  <li>The pages in the section "Tutorial" give you further details
+about how to use MAT.<br>
+  </li>
+</ul>
+<p>Have fun!<br>
+</p>
+<p></p>
+</body>
+</html>

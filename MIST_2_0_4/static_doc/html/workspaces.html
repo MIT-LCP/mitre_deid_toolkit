@@ -1,0 +1,199 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Using Workspaces</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Using workspaces</h1>
+    <p>Workspaces provide a guided, structured way of managing and
+      processing your documents. Workspace mode offers a number of
+      advantages over working with documents manually in file mode, but
+      it is difficult to change modes once you've begun, so <a
+        href="files_and_workspaces.html">make sure</a> that this is what
+      you want. Workspace mode is provided by MATWorkspaceEngine on the
+      command line, and via "File -&gt; Open workspace..." in the Web
+      UI. <br>
+    </p>
+    <p>To process documents in a workspace, you must import those
+      documents into the workspace. The workspace maintains a physical
+      copy of that document, and also keeps track of information about
+      the document (e.g., how far it's been processed) in a separate
+      database inside the workspace. While workspaces are simply
+      directories, it's important that you, as the user, not modify
+      these directories by hand (i.e., no adding, removing, or editing
+      files) - you should only interact with the workspace via the <a
+        href="ui_workspaces.html">MAT UI</a> or the <a
+        href="MATWorkspaceEngine.html">workspace engine</a>. You should
+      also never use <a href="MATEngine.html">MATEngine</a> or <a
+        href="MATModelBuilder.html">MATModelBuilder</a> to save files or
+      models into workspaces.<br>
+    </p>
+    <p>Each workspace has at least one workspace user. This is not a
+      security feature, and no security (e.g., a password) is associated
+      with it. The users are there merely to partition and track the
+      hand annotation that's performed on the document. If you set up
+      your own workspace, you can use whatever name you choose; if your
+      <a href="how_to_use.html">task maintainer</a> set up your
+      workspace as a server on a separate machine, she'll tell you what
+      username to use.<br>
+    </p>
+    <h2><a name="Using_the_workspace"></a>Using the workspace<br>
+    </h2>
+    <p>Let's see how you can use workspaces. <a href="tutorial_6.html">Tutorial
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        6</a> presents examples of most of the steps below, and more
+      examples can be found in the documentation for <a
+        href="MATWorkspaceEngine.html">MATWorkspaceEngine</a>.<br>
+    </p>
+    <h3>Step 1: create the workspace<br>
+    </h3>
+    <p>First, you create the workspace. The workspace must have an
+      assigned task, which you specify when you create it. Creating the
+      workspace creates the directory, the folder subdirectories, a
+      place to store the models, and some administrative information.<br>
+    </p>
+    <p>You must also specify an initial user when you create the
+      workspace. Unlike file mode, all annotation in workspaces is
+      attributed to one or more named annotators.<br>
+    </p>
+    <p>Workspace creation is currently only available on the command
+      line.<br>
+    </p>
+    <h3>Step 2: import documents</h3>
+    <p>Next, you import documents into the workspace. At the moment, the
+      workspace has three predefined folders, "core", "export" and
+      "reconciliation". Only "core" is currently used. Your task may
+      also define additional folders, which you might import documents
+      into, but typically, you'll import documents into the "core"
+      folder.<br>
+    </p>
+    <p> When a document is imported, it is assigned a unique basename,
+      which is usually the basename of the path of the imported file
+      (i.e., the final path component). All versions of this file in the
+      various workspace folders have the identical basename. If you
+      assign a document to a particular annotator, its basename will be
+      suffixed with the name of the assigned annotator; if you assign
+      the document to multiple annotators, each annotator will have his
+      or her own copy.<br>
+    </p>
+    <p>You can import documents as many times as you like, and at any
+      point while you work with your workspace. For instance, you can
+      import some documents, hand annotate them, and then build a model,
+      and then import more raw documents to autotag. <br>
+    </p>
+    <p>File import is currently only available on the command line.<br>
+    </p>
+    <h3>Step 3: perform operations on documents</h3>
+    <p>The vast majority of your time in the workspace will be spent
+      interacting with your documents. Each folder has predefined
+      operations which you can perform on documents in the folder. The
+      operations you can perform on folders, as well as the operations
+      you can perform on the workspace itself, are described <a
+        href="workspace_ref.html#Workspace_operations">here</a>. (As we
+      said earlier, at the moment, only the "core" folder is being
+      used.)<br>
+    </p>
+    <p>On the command line, these operations are applied by default to
+      all the files in the folder, and optional to a specified subset.
+      In the UI, on the other hand, these operations are only available
+      on a file-by-file basis. We haven't yet tackled managing the more
+      time-consuming folder-level operations in the UI.<br>
+    </p>
+    <h3>A typical interaction</h3>
+    <p>Because interacting with the workspace means switching between
+      longer-duration batch operations (e.g., model building) and
+      quicker file-level operations, (e.g., hand tagging), the user will
+      end up moving back and forth between the UI and the terminal. This
+      is currently unavoidable. Here's what a typical interaction might
+      look like.<br>
+    </p>
+    <ol>
+      <li>Command line: Create a workspace<br>
+      </li>
+      <li>Command line: Import a batch of documents<br>
+      </li>
+      <li>UI: Hand annotate some documents<br>
+      </li>
+      <li>Command line: Build a model and autotag the raw documents you
+        haven't hand annotated<br>
+      </li>
+    </ol>
+    <p>Step 4 can be repeated with newly imported documents, so you can
+      iteratively expand the model and your supply of hand-corrected
+      documents.<br>
+    </p>
+    <h2><a name="Workspace_logging"></a>Workspace logging</h2>
+    <p>You can enable logging in your workspace. The logger will capture
+      all the workspace operations, and also collect all the
+      interactions that users have with workspaces in the <a
+        href="ui_workspaces.html">workspace UI</a>. This UI logging is
+      completely separate from the <a
+        href="ui_settings.html#The_logging_button">global UI logger</a>.
+      The user has no control over whether workspace logging happens;
+      it's controlled entirely from the command line. See <a
+        href="workspace_ref.html#Logging">here</a> for more details.<br>
+    </p>
+    <h2><a name="Workspace_security"></a>Workspace security<br>
+    </h2>
+    <p>Unlike file mode, workspace mode is <span style="font-weight:
+        bold;">stateful</span> from the point of view of the UI. It is
+      the server, rather than the client, which loads and saves the
+      files. However, we don't want just anybody to be able to cause the
+      server to perform these stateful operations, so the <a
+        href="MATWeb.html">MAT web server</a> implements <a
+        href="workspace_security.html">some security mechanisms</a>.<br>
+    </p>
+    <p>Note, however, that the MAT workspace functionality is <span
+        style="font-weight: bold;">not an enterprise-secure
+        implementation, and will never be one</span>. It does not use
+      SSL; it does not perform any sort of user authentication beyond
+      the workspace key; it does not provide any security logging or
+      traceability; and it does not currently implement transactions.
+      You should assume that anyone who has access to your network can
+      see your workspace traffic, and overwrite your data. </p>
+    <p>Note that workspace users play no role in workspace security.<br>
+    </p>
+    <h2><a name="Troubleshooting"></a> Troubleshooting</h2>
+    <h3>Failed import</h3>
+    <p>You may realize, once you've completed an import operation, that
+      you didn't import the basenames the way you'd wanted; perhaps
+      you'd intended to strip a suffix, or you assigned them to the
+      wrong workspace user. If you need to undo your import, see <a
+        href="workspace_ref.html#Failed_import">here</a>.<br>
+    </p>
+    <h3>Locked files</h3>
+    <p>Documents in workspaces can only be edited by one user at a time.
+      When you're editing a document, and you close the window, the
+      workspace makes that document available to other annotators if
+      appropriate. Sometimes, the "lock" the workspace applies while
+      you're editing doesn't get freed. If the UI tells you that a
+      document is locked by someone other than you, and you're supposed
+      to be editing it, see <a href="workspace_ref.html#Locked_files">here</a>.</p>
+    <h3>Error "workspace is currently unavailable (processing another
+      request)"</h3>
+    <p>If you get this error message, and you're absolutely certain that
+      no one else is working on the workspace, something horrible has
+      happened, and a previous operation has failed in such a way that
+      the entire workspace is locked. More on how to deal with this <a
+        href="workspace_ref.html#Workspace_locking">here</a>.<br>
+    </p>
+  </body>
+</html>

@@ -1,0 +1,49 @@
+core/resources/python-dateutil-1.3 is available from
+http://labix.org/python-dateutil; the license for this package is
+found in the LICENSE file in that directory. MITRE has modified the
+file dateutil/parser.py to expose the parsed date patterns.
+
+core/resources/area_codes.txt contains data extracted
+from http://www.bennetyee.org/ucsd-pages/area.html, edited to
+remove special codes and area codes outside the US.
+
+core/resources/dist.all.last,
+core/resources/dist.female.first, and
+core/resources/dist.male.first are provided by the US
+Census at http://www.census.gov/genealogy/names/names_files.html.
+
+core/resources/dist.common.first is a curated list of the intersection
+of the female and male name lists, so we can try to assign an actual
+gender to the name.
+
+core/resources/capitalization_guide.txt is a list of mixed-case names
+drawn from the name lists at
+ftp://ftp.ox.ac.uk/pub/wordlists/names. This list is used to assign
+proper case to the Census names.
+
+core/resources/google_urls.txt is harvested from 500 hits of a
+health-related Google search.
+
+core/resources/hospitals.txt is extracted from a
+national list of landmarks provided by the USGS, at
+http://geonames.usgs.gov/domestic/download_data.htm. 
+
+core/resources/mass_roads.txt is extracted from GIS
+data from the state of Massachusetts, found at
+http://www.mass.gov/mgis/eotroads.htm. 
+
+core/resources/nicknames.txt is extracted from the
+file http://www.usgenweb.org/researchers/nicknames.html, which is no
+longer available. Located via the Wayback machine at
+http://web.archive.org. 
+
+core/resources/states.txt is extracted from
+http://www.stateabbreviations.us. 
+
+core/resources/street_suffs.txt is extracted from data
+provided by the USPS at
+http://www.usps.com/ncsc/lookups/abbr_suffix.txt. 
+
+core/resources/zipcodes is taken from the distribution
+of the dbgen system, available at
+http://www.cs.utexas.edu/users/ml/riddle/data.html. 

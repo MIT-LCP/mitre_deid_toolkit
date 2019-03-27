@@ -1,0 +1,107 @@
+<!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+     file LICENSE for license terms. -->
+<tasks>
+  <task name='HIPAA Deidentification' parent='Deidentification'
+        class='HIPAADeidentification.HIPAADeidTaskDescriptor'>
+    <doc_enhancement_class>HIPAADeidentification.DocEnhancer</doc_enhancement_class>
+    <annotation_set_descriptors all_annotations_known='no'
+                                inherit='category:zone,category:token'>
+      <annotation_set_descriptor category='content' name='content'>
+        <annotation label='NAME'/>
+        <annotation label='INITIALS'/>
+        <annotation label='LOCATION'/>
+        <annotation label='DATE'/>
+        <annotation label='AGE'/>
+        <annotation label='PHONE'/>
+        <annotation label='EMAIL'/>
+        <annotation label='SSN'/>
+        <annotation label='IDNUM'/>
+        <annotation label='URL'/>
+        <annotation label='IPADDRESS'/>
+        <annotation label='HOSPITAL'/>
+        <annotation label='OTHER'/>
+      </annotation_set_descriptor>
+    </annotation_set_descriptors>
+    <annotation_display>
+      <label name='NAME' accelerator='N' css='background-color: CCFF66'/>
+      <label name='INITIALS' accelerator='C' css='background-color: FF99CC'/>
+      <label name='LOCATION' accelerator='L' css='background-color: FFFF33'/>
+      <label name='DATE' accelerator='D' css='background-color: 99CCFF'/>
+      <label name='AGE' accelerator='A' css='background-color: 99CC66'/>
+      <label name='PHONE' accelerator='P' css='background-color: 66FFCC'/>
+      <label name='EMAIL' accelerator='E'
+             css='background-color: 336633; color: white'/>
+      <label name='SSN' accelerator='S'
+             css='background-color: 006600; color: white'/>
+      <label name='IDNUM' accelerator='J'
+             css='background-color: CC00FF; color: white'/>
+      <label name='URL' accelerator='U' css='background-color: FFCC00'/>
+      <label name='IPADDRESS' accelerator='I'
+             css='background-color: 996633; color: white'/>
+      <label name='HOSPITAL' accelerator='H' css='background-color: FFCC66'/>
+      <label name='OTHER' accelerator='O' css='background-color: 66CCFF'/>
+    </annotation_display>
+    <!-- override parents to include clean step. This is defined on
+         the visible task, because the workspace stuff doesn't look
+         for task implementations -->
+    <workspace>
+      <operation name='autotag'>
+        <settings steps='tag' workflow='Demo'/>
+      </operation>
+      <operation name='import'>
+        <settings steps='clean,zone' workflow='Hand annotation'/>
+      </operation>
+      <operation name='redact'>
+        <settings replacer='clear -&gt; DE-ID' steps='nominate,transform'
+                  workflow='Demo'/>
+      </operation>
+    </workspace>
+    <workflows>
+      <workflow name='Hand annotation'>
+        <step name='clean'/>
+        <step proxy_for_steps='truezone,tokenize' name='zone'/>
+        <step pretty_name='hand tag' name='tag' by_hand='yes'/>
+        <step name='nominate'/>
+        <step name='transform'/>
+      </workflow>
+      <workflow name='Review/repair'>
+        <step hand_annotation_available='yes' name='nominate'/>
+        <step name='transform'/>
+      </workflow>
+      <workflow name='Demo'>
+        <step name='clean'/>
+        <step proxy_for_steps='truezone,tokenize' name='zone'/>
+        <step name='tag'/>
+        <step name='nominate'/>
+        <step name='transform'/>
+      </workflow>
+      <workflow name='Resynthesize'>
+        <step name='clean'/>
+        <step name='tag'/>
+        <step name='nominate'/>
+        <step name='transform'/>
+      </workflow>
+    </workflows>
+    <step_implementations>
+      <step name='clean' class='HIPAADeidentification.HIPAACleanStep'/>
+    </step_implementations>
+    <settings>
+      <setting>
+        <name>redaction_replacers</name>
+        <value>BracketReplacementEngine.BracketReplacementEngine,CharacterReplacementEngine.CharacterReplacementEngine,HIPAAResynthesis.HIPAADEIDStyleReplacementEngine,HIPAAResynthesis.HIPAAClearReplacementEngine</value>
+      </setting>
+      <setting>
+        <name>redaction_replacers_workflows</name>
+        <value>Demo,Hand annotation,Review/repair</value>
+      </setting>
+      <setting>
+        <name>resynth_replacers</name>
+        <value>HIPAAResynthesis.HIPAABracketResynthesisEngine,HIPAAResynthesis.HIPAADEIDStyleResynthesisEngine</value>
+      </setting>
+      <setting>
+        <name>resynth_replacers_workflows</name>
+        <value>Resynthesize</value>
+      </setting>
+    </settings>
+  </task>
+</tasks>

@@ -1,0 +1,933 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>The UI Logger</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>The UI logger</h1>
+    <p>The UI logger is enabled via the "Logging is off (press to
+      start)" button in the UI menubar. This logger captures timestamped
+      UI events performed by the user, as well as noting the system
+      response. The logger does <span style="font-weight: bold;">not</span>
+      capture the actual text affected, so that the logs can be shared
+      with other developers without revealing any PII; however, the
+      logger <b>does</b> capture the annotation labels themselves, so
+      if these are sensitive, you won't be able to recirculate the logs.<br>
+    </p>
+    <p>You can stop the logger and save the log file by pressing
+      "Logging is on (press to stop)". Your browser will download a CSV
+      file containing the log.<br>
+    </p>
+    <p>The logger logs the UI activity in the form of <span
+        style="font-weight: bold;">gestures</span>. Each gesture is a
+      single UI action, but might correspond to multiple entries in the
+      log. E.g., selecting "File -&gt; Open file..." logs both the
+      open_file_request action and the system's response, which is
+      open_file. Similarly, a menu selection in an annotated document
+      may remove an annotation and add another annotation.<br>
+    </p>
+    <p>The first eight columns of the log are:<br>
+    </p>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Column name<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">timestamp<br>
+          </td>
+          <td style="vertical-align: top;">A millisecond-granularity
+            timestamp for the entry, of the form
+            YYYY-MM-DD"T"HH:MM:SS.SSS, e.g. 2009-07-14T20:58:33.967<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">rel_seconds<br>
+          </td>
+          <td style="vertical-align: top;">A millisecond-granularity
+            delta between this timestamp and the first timestamp in the
+            log<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">gesture<br>
+          </td>
+          <td style="vertical-align: top;">The number of the gesture.
+            There may be multiple contiguous entries in the log for the
+            same gesture number, if the gesture is associated with
+            multiple actions.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">file<br>
+          </td>
+          <td style="vertical-align: top;">An anonymized name of the
+            file affected by this gesture, if any<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">folder<br>
+          </td>
+          <td style="vertical-align: top;">The name of the workspace
+            folder affected by this gesture, if any<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">workspace<br>
+          </td>
+          <td style="vertical-align: top;">An anonymized name of the
+            workspace affected by this gesture,&nbsp; if any<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">userid<br>
+          </td>
+          <td valign="top">An anonymized name of the user performing the
+            workspace operation corresponding to this gesture, if any<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">window<br>
+          </td>
+          <td style="vertical-align: top;">An anonymized name of the
+            window in which this gesture was performed,&nbsp; if any<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">action<br>
+          </td>
+          <td style="vertical-align: top;">The action corresponding to
+            this entry.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>The remainder of the columns are parameters of the individual
+      action. These columns will be, of necessity, sparsely populated,
+      since they will only contain a value if that entry contains the
+      corresponding action. There are two general categories of actions
+      which have additional common columns. First, if the log entry is
+      an error response (noted in the table below), it will typically
+      have the following two columns:<br>
+    </p>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Column name<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">error_text<br>
+          </td>
+          <td style="vertical-align: top;">The text of the error<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">reason<br>
+          </td>
+          <td style="vertical-align: top;">"application" (the operation
+            failed in the backend), "implementation" (the operation
+            failed during transport), "json_decode" (the operation
+            failed because the backend response couldn't be decoded) </td>
+        </tr>
+      </tbody>
+    </table>
+    <p> </p>
+    <p>Second,&nbsp; if an action is an annotation gesture which arises
+      from the annotation menu, it will typically have these columns:<br>
+    </p>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Column name<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">gesture_source<br>
+          </td>
+          <td style="vertical-align: top;">"menu"<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">gesture_type<br>
+          </td>
+          <td style="vertical-align: top;">"kbd" (via keyboard
+            accelerator), "mouse_click" (via menu selection), "auto"
+            (for add_annotation, via autotagging)</td>
+        </tr>
+        <tr>
+          <td valign="top">label<br>
+          </td>
+          <td valign="top">the effective label of the annotation<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Here are the actions, how they're triggered, their other columns,
+      and the meaning of their column values:<br>
+    </p>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Action<br>
+          </th>
+          <th style="vertical-align: top;">Trigger<br>
+          </th>
+          <th style="vertical-align: top;">Column<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td rowspan="1" style="vertical-align: top;">add_annotation</td>
+          <td rowspan="1" style="vertical-align: top;">annotation added
+            as a result of annotation menu selection (annotation
+            gesture)<br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">attach_child<br>
+          </td>
+          <td valign="top">add an annotation to an annotation-valued
+            attribute slot in the annotation editor (annotation gesture)
+            (paired with attach_to_parent)<br>
+          </td>
+          <td valign="top">attr_name<br>
+          </td>
+          <td valign="top">the attribute modified</td>
+        </tr>
+        <tr>
+          <td valign="top">attach_to_parent<br>
+          </td>
+          <td valign="top">add an annotation to an annotation-valued
+            attribute slot in the annotation editor (annotation gesture)
+            (paired with attach_child)<br>
+          </td>
+          <td valign="top">attr_name<br>
+          </td>
+          <td valign="top">the attribute modified</td>
+        </tr>
+        <tr>
+          <td valign="top">autotag<br>
+          </td>
+          <td valign="top">"Autotag matches" in annotation menu
+            (annotation gesture)<br>
+          </td>
+          <td valign="top"><br>
+          </td>
+          <td valign="top"><br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">cancel_annotation_change</td>
+          <td style="vertical-align: top;">"Cancel" in annotation menu</td>
+          <td style="vertical-align: top;">gesture_type</td>
+          <td style="vertical-align: top;">"kbd" (via keyboard
+            accelerator), "mouse_click" (via menu selection)</td>
+        </tr>
+        <tr>
+          <td valign="top">cancel_boundary_change<br>
+          </td>
+          <td valign="top">in reconciliation, cancel the boundary change
+            popup menu<br>
+          </td>
+          <td valign="top"><br>
+          </td>
+          <td valign="top"><br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">close_file</td>
+          <td style="vertical-align: top;">success response to&nbsp;
+            close_file_request</td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">close_file_aborted</td>
+          <td style="vertical-align: top;">response to
+            close_file_request when user aborts due to unsaved changes</td>
+          <td style="vertical-align: top;">reason</td>
+          <td style="vertical-align: top;">"dirty"</td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">close_file_request</td>
+          <td style="vertical-align: top;">"x" in document window title
+            bar</td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">close_workspace</td>
+          <td style="vertical-align: top;">success response to
+            close_workspace_request</td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">close_workspace_request</td>
+          <td style="vertical-align: top;">"x" in workspace window title
+            bar</td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">detach_child<br>
+          </td>
+          <td valign="top">remove an annotation from an
+            annotation-valued attribute slot in the annotation editor
+            (annotation gesture) (paired with detach_from_parent)</td>
+          <td valign="top">attr_name<br>
+          </td>
+          <td valign="top">the attribute modified</td>
+        </tr>
+        <tr>
+          <td valign="top">detach_from_parent<br>
+          </td>
+          <td valign="top">remove an annotation from an
+            annotation-valued attribute slot in the annotation editor
+            (annotation gesture) (paired with attach_child)</td>
+          <td valign="top">attr_name<br>
+          </td>
+          <td valign="top">the attribute modified</td>
+        </tr>
+        <tr>
+          <td valign="top">dismiss_annotation_editor<br>
+          </td>
+          <td valign="top">close the annotation editor popup or tab<br>
+          </td>
+          <td valign="top"><br>
+          </td>
+          <td valign="top"><br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">dismiss_annotation_popup</td>
+          <td style="vertical-align: top;">annotation menu disappears</td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">dismiss_boundary_change_popup<br>
+          </td>
+          <td valign="top">in reconciliation, dismiss the boundary
+            change popup menu<br>
+          </td>
+          <td valign="top"><br>
+          </td>
+          <td valign="top"><br>
+          </td>
+        </tr>
+        <tr>
+          <td rowspan="2" style="vertical-align: top;">do_operation</td>
+          <td rowspan="2" style="vertical-align: top;">success response
+            to do_operation_request</td>
+          <td style="vertical-align: top;">advance_to</td>
+          <td style="vertical-align: top;">folder the document has moved
+            to</td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">operation</td>
+          <td style="vertical-align: top;">name of operation as the
+            backend knows it<br>
+          </td>
+        </tr>
+        <tr>
+          <td rowspan="1" style="vertical-align: top;">do_operation_failure</td>
+          <td rowspan="1" style="vertical-align: top;">error response to
+            do_operation_request</td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">do_operation_request</td>
+          <td style="vertical-align: top;">"Go!" in workspace mode
+            document window</td>
+          <td style="vertical-align: top;">operation<br>
+          </td>
+          <td style="vertical-align: top;">the name of the operation as
+            it appears in the UI<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">do_step</td>
+          <td style="vertical-align: top;">success response to
+            step_forward_request</td>
+          <td style="vertical-align: top;">step</td>
+          <td style="vertical-align: top;">name of step performed</td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">do_step_failure</td>
+          <td style="vertical-align: top;">error response to
+            step_forward_request<br>
+          </td>
+          <td style="vertical-align: top;">step</td>
+          <td style="vertical-align: top;">name of step where the error
+            occurred</td>
+        </tr>
+        <tr>
+          <td valign="top">export_reconciliation_doc<br>
+          </td>
+          <td valign="top">success response to
+            export_reconciliation_doc_request<br>
+          </td>
+          <td valign="top"><br>
+          </td>
+          <td valign="top"><br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">export_reconciliation_doc_failure<br>
+          </td>
+          <td valign="top">error response to
+            export_reconciliation_doc_request<br>
+          </td>
+          <td valign="top"><br>
+          </td>
+          <td valign="top"><br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">export_reconciliation_doc_request<br>
+          </td>
+          <td valign="top">"Reconciliation" -&gt; "Export"<br>
+          </td>
+          <td valign="top"><br>
+          </td>
+          <td valign="top"><br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">hide_window</td>
+          <td style="vertical-align: top;">"-" in window title bar,
+            "Show/hide" -&gt; "Hide..."</td>
+          <td style="vertical-align: top;">gesture_source</td>
+          <td style="vertical-align: top;">"menu", "window_button"</td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">list_workspace_folder</td>
+          <td style="vertical-align: top;">success response to
+            list_workspace_folder_request, or side effect of successful
+            do_operation_request</td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+        </tr>
+        <tr>
+          <td rowspan="1" style="vertical-align: top;">list_workspace_folder_failure</td>
+          <td rowspan="1" style="vertical-align: top;">error response to
+            list_workspace_folder_request</td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">list_workspace_folder_request</td>
+          <td style="vertical-align: top;">"Folder" menu selection or
+            "Refresh" button in workspace window</td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">load_file</td>
+          <td style="vertical-align: top;">success response to
+            open_file_request or reload_request</td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+        </tr>
+        <tr>
+          <td rowspan="1" style="vertical-align: top;">load_file_failure</td>
+          <td rowspan="1" style="vertical-align: top;">error response to
+            open_file_request or reload_request</td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">log_start</td>
+          <td style="vertical-align: top;">"Logger -&gt; Start" from the
+            menu bar</td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">log_stop</td>
+          <td style="vertical-align: top;">"Logger -&gt; Stop" from the
+            menu bar</td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">log_stop_failure</td>
+          <td style="vertical-align: top;">error response to log_stop
+            when remote server is not available</td>
+          <td style="vertical-align: top;">reason</td>
+          <td style="vertical-align: top;">"implementation" (the
+            operation failed during transport)</td>
+        </tr>
+        <tr>
+          <td valign="top">modify_annotation<br>
+          </td>
+          <td valign="top">change the (non-annotation-valued) attribute
+            of an annotation from the annotation editor, or change the
+            effective label of an annotation to another effective label
+            of the same true label (annotation gesture)<br>
+          </td>
+          <td valign="top">attr_name<br>
+          </td>
+          <td valign="top">the attribute modified<br>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="1" rowspan="4" valign="top">modify_extent<br>
+          </td>
+          <td colspan="1" rowspan="4" valign="top">"Modify extent" in
+            the annotation menu (annotation gesture)<br>
+          </td>
+          <td valign="top">start<br>
+          </td>
+          <td valign="top">the start index of the new span<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">end<br>
+          </td>
+          <td valign="top">the end index of the new span<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">old_start<br>
+          </td>
+          <td valign="top">the start index of the old span<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">old_end<br>
+          </td>
+          <td valign="top">the end index of the old span<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">open_file</td>
+          <td style="vertical-align: top;">confirmation of
+            open_file_request</td>
+          <td style="vertical-align: top;">file_type</td>
+          <td style="vertical-align: top;">the name of a <a
+              href="readers_and_writers.html">reader</a></td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">open_file_request</td>
+          <td style="vertical-align: top;">"Open" in the "Load document"
+            dialog, or selecting an element in the workspace folder view</td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">open_file_comparison</td>
+          <td style="vertical-align: top;">success response to
+            open_file_comparison_request<br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+        </tr>
+        <tr>
+          <td rowspan="1" style="vertical-align: top;">open_file_comparison_failure</td>
+          <td rowspan="1" style="vertical-align: top;">error response to
+            open_file_comparison_request</td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">open_file_comparison_request</td>
+          <td style="vertical-align: top;">"File" -&gt; "Compare files"<br>
+          </td>
+          <td style="vertical-align: top;">documents<br>
+          </td>
+          <td style="vertical-align: top;">a sequence of label names<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">open_file_reconciliation</td>
+          <td style="vertical-align: top;">success response to
+            open_file_reconciliation_request<br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+        </tr>
+        <tr>
+          <td rowspan="1" style="vertical-align: top;">open_file_reconciliation_failure</td>
+          <td rowspan="1" style="vertical-align: top;">error response to
+            open_file_reconciliation_request</td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">open_file_reconciliation_request</td>
+          <td style="vertical-align: top;">"File" -&gt; "Reconcile" or
+            "File" -&gt; "Reconcile these documents"<br>
+          </td>
+          <td style="vertical-align: top;">documents<br>
+          </td>
+          <td style="vertical-align: top;">a sequence of label names<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">open_workspace</td>
+          <td style="vertical-align: top;">success response to
+            open_workspace_request</td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+        </tr>
+        <tr>
+          <td rowspan="1" style="vertical-align: top;">open_workspace_failure</td>
+          <td rowspan="1" style="vertical-align: top;">error response to
+            open_workspace_request</td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">open_workspace_request</td>
+          <td style="vertical-align: top;">"File" -&gt; "Open
+            workspace..."</td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="1" rowspan="2" valign="top">reconciliation_cast_vote<br>
+          </td>
+          <td colspan="1" rowspan="2" valign="top">selecting a vote when
+            reviewing a segment in a reconciliation document<br>
+          </td>
+          <td valign="top">segment<br>
+          </td>
+          <td valign="top">the ID of the segment<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">vote<br>
+          </td>
+          <td valign="top">"no annotations", "new annotation pattern",
+            or "vote&lt;n&gt;", where &lt;n&gt; is one of the available
+            preexisting votes<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">reconciliation_review_segment<br>
+          </td>
+          <td valign="top">selecting a segment in a reconciliation
+            document<br>
+          </td>
+          <td valign="top">segment<br>
+          </td>
+          <td valign="top">the ID of the segment annotation<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">reconciliation_review_segment_cancelled<br>
+          </td>
+          <td valign="top">clearing a vote when reviewing a segment in a
+            reconciliation document<br>
+          </td>
+          <td valign="top">segment<br>
+          </td>
+          <td valign="top">the ID of the segment annotation<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">reconciliation_review_segment_done<br>
+          </td>
+          <td valign="top">saving a vote when reviewing a segment in a
+            reconciliation document<br>
+          </td>
+          <td valign="top">segment<br>
+          </td>
+          <td valign="top">the ID of the segment annotation<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">reload_aborted</td>
+          <td style="vertical-align: top;">response to reload_request
+            when user aborts due to unsaved changes</td>
+          <td style="vertical-align: top;">reason</td>
+          <td style="vertical-align: top;">"dirty"</td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">reload_request</td>
+          <td style="vertical-align: top;">"Reload" button in file mode
+            document window</td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+        </tr>
+        <tr>
+          <td rowspan="1" style="vertical-align: top;">remove_annotation</td>
+          <td rowspan="1" style="vertical-align: top;">annotation
+            removed as a result of annotation menu selection (annotation
+            gesture)<br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="1" rowspan="2" style="vertical-align: top;">save_file</td>
+          <td colspan="1" rowspan="2" style="vertical-align: top;">success
+
+
+
+
+
+
+
+
+
+
+            response to save_file_request</td>
+          <td style="vertical-align: top;">file_type</td>
+          <td style="vertical-align: top;">the name of a <a
+              href="readers_and_writers.html">writer</a></td>
+        </tr>
+        <tr>
+          <td valign="top">save_type<br>
+          </td>
+          <td valign="top">either "save", if this is a normal save, or
+            the operation that was performed before it was saved (e.g.,
+            "export_reconciliation_doc")<br>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="1" rowspan="2" style="vertical-align: top;">save_file_failure</td>
+          <td colspan="1" rowspan="2" style="vertical-align: top;">error
+            response to save_file_request</td>
+          <td style="vertical-align: top;">reason</td>
+          <td style="vertical-align: top;">"implementation" (the
+            operation failed during transport)</td>
+        </tr>
+        <tr>
+          <td valign="top">save_type<br>
+          </td>
+          <td valign="top">either "save", if this is a normal save, or
+            the operation that was performed before it was saved (e.g.,
+            "export_reconciliation_doc")</td>
+        </tr>
+        <tr>
+          <td colspan="1" rowspan="2" style="vertical-align: top;">save_file_request</td>
+          <td colspan="1" rowspan="2" style="vertical-align: top;">"Save..."
+
+
+
+
+
+
+
+
+
+
+            in file mode document window</td>
+          <td style="vertical-align: top;">file_type</td>
+          <td style="vertical-align: top;">the name of a <a
+              href="readers_and_writers.html">writer</a></td>
+        </tr>
+        <tr>
+          <td valign="top">save_type<br>
+          </td>
+          <td valign="top">either "save", if this is a normal save, or
+            the operation that was performed before it was saved (e.g.,
+            "export_reconciliation_doc")</td>
+        </tr>
+        <tr>
+          <td colspan="1" rowspan="2" style="vertical-align: top;">save_file_request_aborted</td>
+          <td colspan="1" rowspan="2" style="vertical-align: top;">"Cancel"
+
+
+
+
+
+
+
+
+
+            in save dialog</td>
+          <td style="vertical-align: top;">file_type</td>
+          <td style="vertical-align: top;">the name of a <a
+              href="readers_and_writers.html">writer</a></td>
+        </tr>
+        <tr>
+          <td valign="top">save_type</td>
+          <td valign="top">either "save", if this is a normal save, or
+            the operation that was performed before it was saved (e.g.,
+            "export_reconciliation_doc")</td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">step_backward_request</td>
+          <td style="vertical-align: top;">backward button in file mode
+            document window</td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">step_forward_request</td>
+          <td style="vertical-align: top;">forward button in file mode
+            document window</td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">summon_annotation_editor<br>
+          </td>
+          <td valign="top">"Edit annotation", "Edit annotation in
+            popup", or "Edit annotation in tab" in the annotation menu<br>
+          </td>
+          <td valign="top"><br>
+          </td>
+          <td valign="top"><br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">summon_annotation_popup</td>
+          <td style="vertical-align: top;">swipe or left-click in
+            document pane</td>
+          <td style="vertical-align: top;">gesture_type</td>
+          <td style="vertical-align: top;">"mouse_swipe", "mouse_click"</td>
+        </tr>
+        <tr>
+          <td valign="top">summon_boundary_change_popup<br>
+          </td>
+          <td valign="top">in reconciliation, present the boundary
+            change popup menu<br>
+          </td>
+          <td valign="top"><br>
+          </td>
+          <td valign="top"><br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">undo_step</td>
+          <td style="vertical-align: top;">success response to
+            step_backward_request</td>
+          <td style="vertical-align: top;">step</td>
+          <td style="vertical-align: top;">name of step performed</td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">undo_step_aborted</td>
+          <td style="vertical-align: top;">response to
+            step_backward_request when user aborts due to unsaved
+            changes</td>
+          <td style="vertical-align: top;">reason</td>
+          <td style="vertical-align: top;">"dirty"</td>
+        </tr>
+        <tr>
+          <td rowspan="1" style="vertical-align: top;">undo_step_failure</td>
+          <td rowspan="1" style="vertical-align: top;">error response to
+            step_backward_request</td>
+          <td style="vertical-align: top;">step<br>
+          </td>
+          <td style="vertical-align: top;">step on which error occurred<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">update_reconciliation_doc<br>
+          </td>
+          <td valign="top">success response to
+            update_reconciliation_doc_request<br>
+          </td>
+          <td valign="top"><br>
+          </td>
+          <td valign="top"><br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">update_reconciliation_doc_failure<br>
+          </td>
+          <td valign="top">error response to
+            update_reconciliation_doc_request<br>
+          </td>
+          <td valign="top"><br>
+          </td>
+          <td valign="top"><br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">update_reconciliation_doc_request<br>
+          </td>
+          <td valign="top">"Reconciliation" -&gt; "Export" (documents
+            must be updated before being exported), "Reconciliation"
+            -&gt; "Process votes"<br>
+          </td>
+          <td valign="top"><br>
+          </td>
+          <td valign="top"><br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>The extra columns that appear in the spreadsheet for these
+      actions appear in alphabetical order.<br>
+    </p>
+  </body>
+</html>

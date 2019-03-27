@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Document Alignment</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Document alignment</h1>
+    <p>In addition to providing a facility for <a
+        href="ui_comparison.html">comparing documents</a> using the <a
+        href="score_algorithm.html">same algorithm</a> the scorer uses,
+      MAT also provides a weaker capability, which we call <b>document
+        alignment</b>. In this method, the annotations for the documents
+      being aligned are simply viewed on the same document view; the
+      comparison between the annotations is left to the interpretation
+      of the user. This strategy only works with span annotations; while
+      you can align documents containing relation annotations, you won't
+      see the annotations. This function was introduced before MAT was
+      able to deal with spanless annotations, and while the comparison
+      view is more informative, there's no reason to remove this
+      function.<br>
+    </p>
+    <p>As in document comparison, documents may be aligned if they have
+      the identical underlying signal.<br>
+    </p>
+    <ul>
+      <li><a href="#Selecting_documents_for_alignment">Selecting
+          documents for alignment</a></li>
+      <li><a href="#Customizing_the_presentation_">Customizing the
+          presentation</a></li>
+      <li><a href="#Viewing_the_result">Viewing the result</a><br>
+      </li>
+    </ul>
+    <h2><a name="Selecting_documents_for_alignment"></a>Selecting
+      documents for alignment<br>
+    </h2>
+    <p>From the file menu, select "Align files...". You'll be presented
+      with a modal dialog that looks like this:<br>
+    </p>
+    <p><img alt="[dialog start]" src="../img/ui_align_dialog_start.jpg"
+        height="146" width="357"><br>
+    </p>
+    <p>From this dialog, you must first select a task. Once you do,
+      you'll be able to make a selection from the "Align:" menu. This
+      menu contains a list of all the available documents which have
+      been loaded with the selected task (including workspace
+      documents), plus an option to "Load document...". Select an
+      element and press the "Go!" button, and the document will be
+      listed:<br>
+    </p>
+    <p><img alt="[docmenu]" src="../img/ui_align_dialog_docmenu.jpg"
+        height="146" width="429"><br>
+    </p>
+    <p><img alt="[first doclist]"
+        src="../img/ui_align_dialog_first_doclist.jpg" height="212"
+        width="472"><br>
+    </p>
+    <p>Once the first document is selected, only documents with a
+      matching underlying signal which haven't been selected previously
+      will be available for selection:<br>
+    </p>
+    <p><img alt="[next docmenu]"
+        src="../img/ui_align_dialog_next_docmenu.jpg" height="209"
+        width="472"><br>
+    </p>
+    <p>The "Load document..." option will place another modal dialog at
+      the front which allows you to select a document in the usual way.
+      Once you open this document, it too will be listed in the "Align
+      documents" dialog:<br>
+    </p>
+    <p><img style=" width: 485px; height: 207px;" alt="[docload]"
+        src="../img/ui_compare_dialog_docload.jpg"><br>
+    </p>
+    <p>The elements in the "Align documents" document list can be <a
+        href="#Customizing_the_presentation_">reordered</a>. You can
+      select as many documents as you like. Once at least two documents
+      have been selected, the "Align" button will be enabled.<br>
+    </p>
+    <p><img alt="[full doclist]"
+        src="../img/ui_align_dialog_alldocs.jpg" height="296"
+        width="527"><br>
+    </p>
+    <p>Before you press the "Align" button, you might want to customize
+      the alignment presentation.<br>
+    </p>
+    <h2><a name="Customizing_the_presentation_"></a>Customizing the
+      presentation</h2>
+    <p>You have a number of options available to you for your alignment
+      presentation. You can choose where the annotations for a given
+      document will be shown (above, behind, or below the text) and
+      whether to associate a mnemonic initial with a given document.<br>
+    </p>
+    <p>To the left of each entry in the "Align documents" dialog you'll
+      see either "[Reference]", or a menu with the values "above" and
+      "below". The reference can be selected by clicking the radio
+      button, as instructed; the reference document is always placed
+      behind the text. The menus can be used to place the remaining
+      documents either above or below the text; the document annotations
+      for those documents will be stacked in the order in which the
+      documents are listed.<br>
+    </p>
+    <p>Below each entry is a place to enter an mnemonic initial, in the
+      "Initial:" field. This initial will appear in the list of
+      documents at the head of the alignment display, and also in the
+      annotation description at the bottom of the alignment display when
+      you hover your mouse over the annotation. If no initial is
+      provided, a number will be assigned.<br>
+    </p>
+    <p>Here's the alignment dialogue above with the documents placed in
+      their intended positions, and initials provided:<br>
+    </p>
+    <p><img alt="[modified doclist]"
+        src="../img/ui_align_dialog_alldocs_modified.jpg" height="295"
+        width="527"><br>
+    </p>
+    <h2><a name="Viewing_the_result"></a>Viewing the result</h2>
+    <p>Now, press the "Align" button. Your window will look like this:<br>
+    </p>
+    <p><img alt="[comparison pane]" src="../img/ui_align_window.jpg"
+        height="662" width="1018"><br>
+    </p>
+    <p>Note that the documents are listed in the panel on the right,
+      with their initials and positions, and that the mouse in this
+      example is hovering over one of the annotations from the document
+      corresponding to annotator A. <br>
+    </p>
+    <p>At this point, if you like, you can <a
+        href="ui_reconciliation.html">reconcile the documents</a> in
+      this alignment via "File -&gt; Reconcile these documents".<br>
+    </p>
+  </body>
+</html>

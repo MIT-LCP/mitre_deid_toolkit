@@ -1,0 +1,256 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Tutorial 6: Workspaces</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Tutorial 6: Workspaces</h1>
+    <p>Now that we've covered <span style="font-weight: bold;">file
+        mode</span> in the first five tutorials, we're going to address
+      <span style="font-weight: bold;">workspace mode</span>. In
+      workspace mode, you don't have nearly as much control over<br>
+    </p>
+    <ul>
+      <li>what your documents are named</li>
+      <li>how their annotation status is managed</li>
+      <li>where they live in the file system</li>
+      <li>where models are stored</li>
+    </ul>
+    <p>On the other hand, you don't need to worry about any of those
+      things, either.<br>
+    </p>
+    <p>We're going to use the same simple 'Named Entity' task, and we're
+      going to assume that your task is installed. This tutorial
+      involves both the UI and the command line. Because this tutorial
+      involves the command line, make sure you're familiar with the
+      "Conventions" section in your platform-specific instructions in
+      the "Getting Started" section of the documentation. </p>
+    <h2>Step 1: Create your workspace</h2>
+    <p>The only way to create a workspace is on the command line. We use
+      <a href="MATWorkspaceEngine.html">MATWorkspaceEngine</a>. The
+      first argument of MATWorkspaceEngine is the path of the affected
+      workspace, and the second argument is the operation. Options and
+      arguments for the chosen operation follow.<br>
+    </p>
+    <p>Creating a workspace requires a task, so we provide the --task
+      directive. Workspaces also track annotation progress by user, so
+      we need at least one user name to create the workspace:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATWorkspaceEngine /tmp/ne_workspace create \<br>--task 'Named Entity' --initial_users user1</span><br style="font-weight: bold;"><br style="font-weight: bold;">Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATWorkspaceEngine.cmd %TMP%\ne_workspace create \<br>--task "Named Entity"</span><span style="font-weight: bold;"> --initial_users user1</span><br><br>Created workspace for task 'Named Entity' in directory ...<br></pre>
+    <p>You now have a workspace in the specified directory. If you're
+      interested in the structure of a workspace, look <a
+        href="workspaces.html">here</a>.<br>
+    </p>
+    <h2>Step 2: Import files into your workspace</h2>
+    <p>Workspaces organize files by <a
+        href="workspace_ref.html#The_structure_of_the_workspace_directory">folders</a>,
+      and they track the status of the files as they're processed. The
+      "core" folder supports all the normal annotation functions. We'll
+      begin by importing a single raw file into the core folder. </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">cd $MAT_PKG_HOME</span><br>% <span style="font-weight: bold;">bin/MATWorkspaceEngine /tmp/ne_workspace import --strip_suffix ".txt" \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--file_type raw "core" sample/ne/resources/data/raw/voa2.txt </span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">cd %MAT_PKG_HOME%</span><br>&gt; <span style="font-weight: bold;">bin\MATWorkspaceEngine.cmd %TMP%\ne_workspace import --strip_suffix ".txt" \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--file_type raw "core" %CD%\sample\ne\resources\data\raw\voa2.txt </span><br></pre>
+    <p>So here we use the "import" operation, which takes two arguments:
+      the folder name ("core") and the file to import. We've also used
+      the --strip_suffix directive to modify the name by which the
+      workspace knows the file. Finally, we've told the workspace
+      engine, via the --file_type option, that the file we're importing
+      is a raw file (rather than a rich <a href="mat_json_format.html">MAT
+
+
+
+
+
+
+        JSON</a> file). For more details on importing documents, see <a
+        href="MATWorkspaceEngine.html#import">here</a>.<br>
+    </p>
+    <p>We can see the contents of the workspace (and of each folder),
+      with the "list" operation:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATWorkspaceEngine /tmp/ne_workspace list "core"</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATWorkspaceEngine.cmd %TMP%\ne_workspace</span><span style="font-weight: bold;"> list "core"<br><br></span>core:<br>  voa2 (unannotated)<br></pre>
+    <p>Note that the listing tells you the <a
+        href="annotations_and_segments.html#Admin_annotations_SEGMENTs_and">status</a>
+      of the document.<br>
+    </p>
+    <p>You can only import a file name once. If you try to import the
+      file again, you'll get an error:<br>
+    </p>
+    <pre>Unix: <br><br>% <span style="font-weight: bold;">cd $MAT_PKG_HOME</span><br>% <span style="font-weight: bold;">bin/MATWorkspaceEngine /tmp/ne_workspace import --strip_suffix ".txt" \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--file_type raw "core" sample/ne/resources/data/raw/voa2.txt </span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">cd %MAT_PKG_HOME%</span><br>&gt; <span style="font-weight: bold;">bin\MATWorkspaceEngine.cmd %TMP%\ne_workspace</span><span style="font-weight: bold;"> import --strip_suffix ".txt" \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--file_type raw "core" sample\ne\resources\data\raw\voa2.txt <br><br></span>Basename for sample/ne/resources/data/raw/voa2.txt already exists in workspace; not importing<br></pre>
+    <p>In other words, once you create a particular basename in the
+      workspace using the "import" operation, you can't do it again.<br>
+    </p>
+    <h2>Step 3: Open the workspace in the UI<br>
+    </h2>
+    <p>In this step, we're going to learn about the UI aspects of the
+      workspace.<br>
+    </p>
+    <p>First, start up the UI as we <a
+        href="tutorial_1.html#Start_the_UI">described</a> in tutorial 1.<br>
+    </p>
+    <p><span style="font-weight: bold;">Note</span>: when you start up
+      the Web server in its default mode, workspaces will only be
+      accessible from a browser client running on the same host. There
+      are many options available to the Web server at startup which
+      affect the workspaces, so if you want to use workspaces in the UI,
+      we recommend that you familiarize yourself with the <a
+        href="MATWeb.html">MATWeb</a> documentation.</p>
+    <p>In the terminal in which you're running the Web server, you'll
+      see this when it starts up:<br>
+    </p>
+    <pre>Web server started on port 7801.<br><br>Web server command loop. Commands are:<br><br>exit       - exit the command loop and stop the Web server<br>loopexit   - exit the command loop, but leave the Web server running<br>taggerexit - shut down the tagger service, if it's running<br>restart    - restart the Web server<br>ws_key     - show the workspace key<br>help, ?    - this message<br><br>Workspace key is XJ9dGBaCNveYHk9CZzw6wTM5WH8x05y1<br>Command: <br></pre>
+    <p>Note the workspace key. This key is randomly generated, and known
+      only to the user who starts the Web server. This key must be
+      provided to the UI when the user opens the workspace. This simple
+      security feature ensures that even though the Web server will be
+      modifying the workspace, it does so if the UI user has proved that
+      s/he has the appropriate access. For more about workspace security
+      and the UI, see <a href="workspace_security.html">here</a>. <br>
+    </p>
+    <p>Next:<br>
+    </p>
+    <ul>
+      <li>In the UI, select File -&gt; Open workspace... . You'll see a
+        popup window.</li>
+      <li>In the "User ID" field, specify "user1" (without the quotes;
+        this is the user name we provided when we created the
+        workspace), and press &lt;tab&gt; to advance and activate the
+        next input field.<br>
+      </li>
+      <li>Copy the workspace key from the Web server output. If you
+        can't see it due to the output from the Web server, type
+        "ws_key" in the Web server terminal, and then press
+        &lt;return&gt;. Paste the key into the "Workspace key" field in
+        the UI. Press &lt;tab&gt; to advance to the next input field.<br>
+      </li>
+      <li>In the "Directory:" field, type "/tmp/ne_workspace". Press
+        &lt;tab&gt;.<br>
+      </li>
+      <li>Press the "Open" button.</li>
+    </ul>
+    <p>You should see a window that looks like this:<br>
+    </p>
+    <p><img alt="[core folder]" src="../img/workspace_raw.jpg"
+        height="663" width="1021"><br>
+    </p>
+    <h2>Step 4: Open a document<br>
+    </h2>
+    <p>A single left click on the file name in the workspace tab should
+      open the file. You'll see that this document has been prepared for
+      annotation (it has been zoned and tokenized, in particular).
+      You'll see in the controls on the right that its status, as shown
+      in the listing above, is "unannotated", which means that no human
+      annotator has touched it yet:<br>
+    </p>
+    <p><img alt="[core view]" src="../img/ws_file_raw.jpg" height="662"
+        width="1020"><br>
+    </p>
+    <p>Note how the controls area here differs from the one in file
+      mode:<br>
+    </p>
+    <ul>
+      <li>The workspace is listed, instead of the task.</li>
+      <li>The workflow menu is missing, and the folder is listed
+        instead.</li>
+      <li>The status fields and forward and backward buttons are
+        missing, and there's an operation menu instead.</li>
+      <li>There's no reload or save button.</li>
+    </ul>
+    <p>If you select the folder tab now, you'll see that the document is
+      now listed as "unannotated, locked by user1". Workspaces maintain
+      document locks to ensure that no one else trounces your changes.
+      This lock will be freed when you close the document.<br>
+    </p>
+    <h2>Step 5: Hand annotate</h2>
+    <p>At this point, you can annotate your document as you did in <a
+        href="tutorial_1.html">Tutorial 1</a>. If you want to leave the
+      workspace without finishing your annotation, just select the Save
+      operation in the operations menu and press Go; you can always
+      return to the document. Once you're satisfied with your
+      annotations, select "Mark gold" in the operations menu and press
+      Go; your document will be saved and the document status updated.<br>
+    </p>
+    <p>Finally, close the document. In a minute, we're going to do some
+      automated tagging in the workspace, and currently this is not
+      possible while documents are locked.<br>
+    </p>
+    <h2>Step 6: Import more documents<br>
+    </h2>
+    <p>You'd typically annotate several documents in the first round
+      before building a model, but we want to move directly to that
+      step. Since we only have one hand-annotated document at the
+      moment, what we're going to do is import some other documents into
+      the workspace. We're going to import some of the annotated
+      documents that come with the Named Entity task into the core
+      folder; these documents are already marked internally as
+      gold-standard reconciled documents (i.e., in addition to being
+      marked gold, their correctness has been validated by further
+      review). We're also going to import one of them as a raw document.<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">cd $MAT_PKG_HOME</span><br>% <span style="font-weight: bold;">bin/MATWorkspaceEngine /tmp/ne_workspace import --strip_suffix ".txt" \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--file_type raw "core" sample/ne/resources/data/raw/voa1.txt</span><br>% <span style="font-weight: bold;">bin/MATWorkspaceEngine /tmp/ne_workspace import --strip_suffix ".txt.json" \</span><br style="font-weight: bold;"><span style="font-weight: bold;">"core" sample/ne/resources/data/json/voa[3-9].txt.json</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">cd %MAT_PKG_HOME%</span><br>&gt; <span style="font-weight: bold;">bin\MATWorkspaceEngine.cmd %TMP%\ne_workspace import --strip_suffix ".txt" \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--file_type raw  "core" sample\ne\resources\data\raw\voa1.txt</span><br>&gt; <span style="font-weight: bold;">bin\MATWorkspaceEngine.cmd %TMP%\ne_workspace import --strip_suffix ".txt.json" \</span><br style="font-weight: bold;"><span style="font-weight: bold;">"core" sample\ne\resources\data\json\voa3.txt.json</span> \<br><span style="font-weight: bold;">sample\ne\resources\data\json\voa4.txt.json \<br></span><span style="font-weight: bold;">sample\ne\resources\data\json\voa5.txt.json \<br></span><span style="font-weight: bold;">sample\ne\resources\data\json\voa6.txt.json \<br></span><span style="font-weight: bold;">sample\ne\resources\data\json\voa7.txt.json \<br></span><span style="font-weight: bold;">sample\ne\resources\data\json\voa8.txt.json \<br></span><span style="font-weight: bold;">sample\ne\resources\data\json\voa9.txt.json</span><br></pre>
+    <p>Now, let's list the workspace to see what we have:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATWorkspaceEngine /tmp/ne_workspace list</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATWorkspaceEngine.cmd %TMP%\ne_workspace</span><span style="font-weight: bold;"></span><span style="font-weight: bold;"> list<br><br></span>core:<br>  voa1 (unannotated)<br>  voa2 (gold)<br>  voa3 (reconciled)<br>  voa4 (reconciled)<br>  voa5 (reconciled)<br>  voa6 (reconciled)<br>  voa7 (reconciled)<br>  voa8 (reconciled)<br>  voa9 (reconciled)<br><br>export:<br><br></pre>
+    <p>You can see that the document you tagged is marked gold, and the
+      documents you just imported are marked reconciled. And finally,
+      you can see that there is one document - the raw document you just
+      imported - which is marked annotated.<br>
+    </p>
+    <h2>Step 7: Build a model</h2>
+    <p>Now, we build a model. Workspace models are <span
+        style="font-weight: bold;">completely</span> distinct from from
+      default task models, like the one we built in <a
+        href="tutorial_2.html">Tutorial 2</a>. They're built exclusively
+      from the documents in the workspace.<br>
+    </p>
+    <p>This is a command line operation only. We're going to ask the
+      workspace to autotag afterwards, which should mark&nbsp; "voa1" as
+      uncorrected (since now it's been automatically annotated). Each
+      time we build a model and autotag, any documents that are either
+      unannotated or uncorrected are autotagged.<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATWorkspaceEngine /tmp/ne_workspace </span><span style="font-weight: bold;">modelbuild</span><span style="font-weight: bold;"> \<br>--do_autotag </span><span style="font-weight: bold;">"core"</span><br><br>Windows native:<br><br>% <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATWorkspaceEngine.cmd %TMP%\ne_workspace</span><span style="font-weight: bold;"></span><span style="font-weight: bold;"></span><span style="font-weight: bold;"> </span><span style="font-weight: bold;">modelbuild</span><span style="font-weight: bold;"> \<br>--do_autotag </span><span style="font-weight: bold;">"core"</span><br></pre>
+    <p>Once this is done, we can look at the contents of the workspace
+      again:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATWorkspaceEngine /tmp/ne_workspace list</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATWorkspaceEngine.cmd %TMP%\ne_workspace</span><span style="font-weight: bold;"></span><span style="font-weight: bold;"> list<br></span><br>core:<br>  voa1 (uncorrected)<br>  voa2 (gold)<br>  voa3 (reconciled)<br>  voa4 (reconciled)<br>  voa5 (reconciled)<br>  voa6 (reconciled)<br>  voa7 (reconciled)<br>  voa8 (reconciled)<br>  voa9 (reconciled)<br><br>export:<br><br></pre>
+    <p>Note that voa1, which was previously unannotated, is now
+      uncorrected - i.e., it's been autotagged but not hand-corrected.
+      The other documents, because they're gold or reconciled, were used
+      to create the model which the workspace applied to voa1.<br>
+    </p>
+    <h2>Step 8: Hand correct</h2>
+    <p>Now, you'll want to hand-correct the autotagged document.<br>
+    </p>
+    <p>If your UI has been open while you've performed the last two
+      steps on the command line, the UI won't know that the state of the
+      workspace has changed. You can select the workspace tab and press
+      the "Refresh" button in the controls area. Now, the state of the
+      UI and the state of the workspace will be synchronized.<br>
+    </p>
+    <p>Select the core folder from the folder menu. You should see
+      "voa1", among other documents. Open it. Review the annotations and
+      correct whatever is needed. When the document is correct, choose
+      "Mark gold" and press Go, and the document will be marked gold.<br>
+    </p>
+    <h2>Step 9: Clean up (optional)</h2>
+    <p>In the next tutorial, we'll learn about the experiment engine. If
+      you want to learn how to use the experiment engine with
+      workspaces, don't remove your workspace.<br>
+    </p>
+    <p>If you're not planning on doing any other tutorials, remove the
+      workspace:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">rm -rf /tmp/ne_workspace</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">rd /s /q %TMP%\ne_workspace list</span></pre>
+    <p>If you don't want the "Named Entity" task hanging around, remove
+      it as shown in the final step of <a href="tutorial_6.html">Tutorial
+
+
+        1</a>.<br>
+    </p>
+    This concludes Tutorial 6.<br>
+  </body>
+</html>

@@ -1,0 +1,70 @@
+body {
+  font-family: sans-serif;
+}
+
+/* Make pre pretty just like in MediaWiki. */
+
+pre {
+  background-color:#F9F9F9;
+  border:1px dashed #2F6FAB;
+  color:black;
+  line-height:1.1em;
+  padding:1em;
+}
+
+.sidebar {
+  position: absolute;
+  width: 20%;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  overflow: auto;
+}
+
+.sidebar ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.sidebar > ul {
+  margin-left: 1em;
+}
+
+.sidebar > div.tasksection > ul,
+.sidebar > div.tasksection > div.tasksection > ul {
+  margin-left: 1em;
+}
+
+.sidebar li {
+  padding-left: 1em;
+  text-indent: -1em;
+}
+
+.sidebar li ui {
+  padding-left: 0;
+}
+
+.mainbody {
+  position: absolute;
+  width: 80%;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
+.mainbody iframe {
+  width: 100%;
+  height: 100%;
+}
+
+.sidebar ul.secthead {
+  font-weight: bold;
+  /* For some reason, this makes the font start farther to
+     the right. Fix later. */
+  /* font-size: 125% */
+}
+
+.sidebar ul.invisible, li.invisible {
+  display: none;
+}

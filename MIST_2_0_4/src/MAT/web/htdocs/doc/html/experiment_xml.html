@@ -1,0 +1,2499 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Experiment XML Reference</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Experiment XML Reference<br>
+    </h1>
+    <p>The XML format for the experiment files (see <a
+        href="MATExperimentEngine.html">MATExperimentEngine</a>) is
+      described in this document. Use cases are described <a
+        href="experiment_xml_use_cases.html">here</a>. Click <a
+        href="experiment_xml_iframe.html">here</a> for a split-screen
+      view.<br>
+    </p>
+    <h2>Element hierarchy</h2>
+    <p>&nbsp;&nbsp;&nbsp; <a href="#experiment">&lt;experiment&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a href="#binding_of_experiment">&lt;binding&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+        href="#corpora_of_experiment_">&lt;corpora&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#partition_of_corpora">&lt;partition&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+        href="#fixed_partition_of_corpora">&lt;fixed_partition&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+        href="#size_of_corpora">&lt;size&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#corpus_of_corpora">&lt;corpus&gt;<br>
+      </a>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
+      &lt;pattern&gt;<br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#prep_of_corpora">&lt;prep&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+        href="#workspace_corpora_of_experiment">&lt;workspace_corpora&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+        href="#workspace_corpus_of_workspace_corpora">&lt;workspace_corpus&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+      <a href="#partition_of_workspace_corpus">&lt;partition&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+      <a href="#fixed_partition_of_workspace_corpus">
+        &lt;fixed_partition&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+      <a href="#size_of_workspace_corpus">&lt;size&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#model_sets_of_experiment">&lt;model_sets&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#build_settings_of_model_sets">&lt;build_settings&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; <a
+        href="#iterator_of_build_settings">&lt;iterator&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; <a
+        href="#corpus_settings_of_model_sets">&lt;corpus_settings&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; <a
+        href="#iterator_of_corpus_settings">&lt;iterator&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#model_set_of_model_sets">&lt;model_set&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; <a
+        href="#training_corpus_of_model_set">&lt;training_corpus&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a href="#runs_of_experiment">&lt;runs&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#run_settings_of_runs">&lt;run_settings&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+      <a href="#prep_args_of_run_settings">&lt;prep_args&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+      <a href="#score_args_of_run_settings">&lt;score_args&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="experiment_xml.html#args_of_run_settings">&lt;args&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; <a
+        href="#iterator_of_run_settings">&lt;iterator&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#run_of_runs">&lt;run&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; <a
+        href="#test_corpus_of_run">&lt;test_corpus&gt;</a><br>
+      <br>
+    </p>
+    <h2><a name="experiment"></a>&lt;experiment&gt;</h2>
+    <p>The toplevel element in the file. Note that none of the five
+      child elements are obligatory; the experiment XML can be used
+      simply to build corpora, or to build models, without performing
+      any experimental runs, if, for instance, you want to build a model
+      or corpus to be used in multiple experiments.<br>
+    </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">dir<br>
+          </td>
+          <td style="vertical-align: top;">a pathname<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">The directory in which the
+            experiment wil be conducted. If the directory does not
+            exist, it will be created. If not specified, the directory
+            must be provided when the experiment is run.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">task<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">The name of a task, as would
+            be passed to the --task argument of <a
+              href="MATEngine.html">MATEngine</a>. This setting is used
+            to establish the task for the corpus preparation and for the
+            experiment runs, and also to establish the set of available
+            tags for the training.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <br>
+    <h3>Children</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Element<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Repeatable?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;binding&gt;<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">Bindings to be made globally
+            available in the other elements.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;corpora&gt;<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">The corpora to be used in the
+            experiment. <br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;workspace_corpora&gt;<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">The corpora to be used in the
+            experiment that will be drawn from workspaces.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;model_sets&gt;<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">The model sets to be used in
+            the experiment.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;runs&gt;<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">The experimental runs to be
+            used in the experiment.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="binding_of_experiment"></a>&lt;binding&gt; (of
+      &lt;experiment&gt;)</h2>
+    <p>This element allows the user to define global bindings which can
+      be referred to in any other element of the experiment XML file
+      (except the attributes of the &lt;experiment&gt; element itself,
+      and the &lt;binding&gt; elements). These bindings can be referred
+      to either in XML attributes or in text within XML elements. The
+      pattern for each binding is $(...). The experiment directory,
+      whether provided via the dir attribute of the &lt;experiment&gt;
+      element or on the command line, is provided as EXP_DIR; the
+      pattern directory, if provided by the --pattern_dir command line
+      argument to <a href="MATExperimentEngine.html">MATExperimentEngine</a>,
+      is provided as PATTERN_DIR.<br>
+    </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">name<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">The binding to be replaced.
+            The engine will look for $(&lt;name&gt;) anywhere in the
+            attribute values or text in the experiment XML file.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">value<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">The value to replace
+            $(&lt;name&gt;) with. This replacement is not recursive;
+            that is, you should not include any $(&lt;name&gt;)
+            substrings in your value, unless you want them to be
+            included literally, because they will not be expanded.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="corpora_of_experiment_"></a>&lt;corpora&gt; (of
+      &lt;experiment&gt;)<br>
+    </h2>
+    <p>Describes corpora to be used in the experiment. This element may
+      be repeated; the intention is that a single &lt;corpora&gt;
+      element will correspond to a shared set of preprocessing
+      instructions.<br>
+    </p>
+    <p>The corpora may be local, in which case a set of patterns should
+      be provided, or remote, in which case the source_corpus_dir
+      attribute should be provided. Remote corpora are used directly
+      unless one or more of the processing tags are specified
+      (&lt;partition&gt;, &lt;prep&gt;). In this case, the specified
+      processing steps are added or redone locally, on a separate copy
+      of the corpus. For instance, if the remote corpus is split into
+      test and train, but not preprocessed, and the &lt;prep&gt; tag is
+      specified here, the corpus documents will be postprocessed here,
+      and the remote split will be preserved. If the remote corpus is
+      preprocessed and split, but the local &lt;partition&gt; tag
+      specifies that the corpus type is "train", the remote corpus
+      preprocessing will be preserved, but locally the split will be
+      ignored. If the remote corpus contains enough patterns for 300
+      documents, but max_size remotely is 100 and max_size locally is
+      200, the local max_size will be used; this is possible because all
+      the documents are preprocessed by default when a corpus is
+      prepared, regardless of max_size, and the order of documents
+      (after an initial randomization) is preserved from remote corpus
+      to local copy.<br>
+    </p>
+    <p>Note that inside the experiment engine. MAT uses the MAT JSON
+      document format exclusively. Therefore, if you want to provide
+      documents which are in a different format which MAT also
+      understand (e.g., XML inline), you must use the &lt;prep&gt; tag
+      to convert the documents to MAT JSON format.<br>
+    </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">dir<br>
+          </td>
+          <td style="vertical-align: top;">a pathname<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">The directory where the
+            corpora are found, or should be built. If the directory does
+            not exist, it will be created. The default value for this
+            attribute is a subdirectory named "corpora" in the
+            experiment directory.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3>Children</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Element<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Repeatable?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;partition&gt;<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">The proportional partition
+            settings for this group of corpora. If neither this nor
+            &lt;fixed_partition&gt; is present, the corpus will not have
+            any partitions. You cannot mix fixed and proportional
+            partitions within a given &lt;corpora&gt; element.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;fixed_partition&gt;<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">The fixed partition settings
+            for this group of corpora. If neither this nor
+            &lt;partition&gt; is present, the corpus will not have any
+            partitions. You cannot mix fixed and proportional partitions
+            within a given &lt;corpora&gt; element.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;size&gt;<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">The size settings for this
+            group of corpora.<br>
+            <br>
+            If the source_corpus_dir attribute of any of the sister
+            &lt;corpus&gt; nodes is set, the values for &lt;size&gt;
+            override those in the source corpus (i.e., a new max_size
+            for the corpus might be established).<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;corpus&gt;<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">The individual corpora in
+            this group.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;prep&gt;<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">The arguments to the <a
+              href="MATEngine.html">MATEngine</a> command to use to
+            preprocess the corpora. For instance, this command might
+            take documents which have been deidentified and resynthesize
+            fillers for the deidentified regions.<br>
+            <br>
+            The input_file_type attribute is not provided automatically
+            and must be provided as one of the attributes for this
+            element. The workflow attribute must also be specified. The
+            following attributes are provided by the experiment engine
+            and should not be specified in &lt;prep&gt;:
+            output_file_type input_dir output_dir task . The attributes
+            should also not provide any other arguments which would
+            further specify the input or output files.<br>
+            <br>
+            If your documents are not in MAT JSON format, but another
+            format that MAT understands (e.g., XML inline), insert a
+            &lt;prep&gt; specification which specifies the
+            input_file_type attribute and omits any attribute values for
+            steps or undo_through.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <br>
+    <h2><a name="partition_of_corpora"></a>&lt;partition&gt; (of
+      &lt;corpora&gt;)</h2>
+    <p>Specifies a proportional partition of the sister corpora
+      specified with the &lt;corpus&gt; tag. May be repeated. If there
+      are no instances of this element or &lt;fixed_partition&gt;, the
+      corpus has no partitions. The proportional partitions segment the
+      entire corpus, so the fraction values are normalized to shares of
+      the corpus. If you want just a 10th of the corpus, for instance,
+      you must divide the corpus into two partitions at a ratio of 9:1
+      and ignore the larger slice.<br>
+    </p>
+    <p>Each &lt;corpora&gt; element may have either proportional or
+      fixed partitions, but not both.<br>
+    </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">name<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">The name of the partition.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">fraction<br>
+          </td>
+          <td style="vertical-align: top;">a float<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">The share of each corpus that
+            should be allotted to this partition (a float between 0 and
+            1).<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="fixed_partition_of_corpora"></a>&lt;fixed_partition&gt;
+      (of &lt;corpora&gt;)</h2>
+    <p>Specifies a fixed partition of the sister corpora specified with
+      the &lt;corpus&gt; tag. May be repeated. If there are no instances
+      of this element or &lt;partition&gt;, the corpus has no
+      partitions. These partitions do <span style="font-weight: bold;">not</span>
+      segment the entire corpus. If you want a fixed partition to
+      encompass "everything else", use the special "remainder" value as
+      described below.<br>
+    </p>
+    <p>Each &lt;corpora&gt; element may have either proportional or
+      fixed partitions, but not both.<br>
+    </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">name<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">The name of the partition.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">size<br>
+          </td>
+          <td style="vertical-align: top;">an integer or the string
+            "remainder"<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">The portion of each corpus
+            that should be allotted to this partition (either an integer
+            number of documents or the string "remainder"). The
+            "remainder" value can only be used once in a &lt;corpora&gt;
+            element.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="size_of_corpora"></a>&lt;size&gt; (of &lt;corpora&gt;)</h2>
+    <p>Specifies the size properties of the sister corpora specified
+      with the &lt;corpus&gt; tag. If this tag is present, and the
+      sister corpus has the source_corpus_dir attribute set, the
+      specified values will override those in the source corpus.<br>
+    </p>
+    <h3>Attributes<br>
+    </h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+        </tr>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">max_size<br>
+          </td>
+          <td style="vertical-align: top;">an integer<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">The maximum number of
+            documents in each corpus. If specified, each corpus will not
+            exceed this number. This limit is applied last, so the
+            corpus can be reused with a greater max_size specified if
+            the requisite number of documents are available.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">truncate_document_list<br>
+          </td>
+          <td style="vertical-align: top;">"yes"<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">If present and max_size is
+            also present, the max_size limit will be imposed first,
+            rather than last. The consequence of this is that no more
+            than max_size documents will be available to remote accesses
+            of this corpus.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <br>
+    <h2><a name="corpus_of_corpora"></a>&lt;corpus&gt; (of
+      &lt;corpora&gt;)</h2>
+    <p>A corpus is specified either by a set of patterns, or by a
+      reference to another corpus (via source_corpus_dir). The documents
+      specified by a set of patterns are randomly reordered before any
+      subsequent processing is performed (e.g., split, preprocess). If
+      source_corpus_dir is present, patterns are ignored.<br>
+    </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">name<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">The name of the corpus, for
+            subsequent reference in the remainder of the experiment. It
+            is also used as the name of the subdirectory in which this
+            corpus is built, if the corpus is either local (i.e., it has
+            patterns), or remote with processing overrides.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">source_corpus_dir<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">If present, a pathname of an
+            existing corpus directory. If the path is not an absolute
+            path, the experiment directory will be prepended.<br>
+            <br>
+            The corpus found in this directory will be used as the input
+            to further local processing. If present, the &lt;pattern&gt;
+            children are ignored. Source corpora can themselves have
+            source_corpus_dir attributes; in other words, you can create
+            chains of source corpora. If the current corpus is in a
+            &lt;corpora&gt; tag that has a &lt;prep&gt; tag, the local
+            &lt;prep&gt; tag command line will be applied to the output
+            of the source corpus (so you can chain prep commands if you
+            want). The most local &lt;partition&gt; attributes will be
+            used (that is, the attributes closest to this corpus in the
+            source corpus chain).<br>
+            <br>
+            Since corpora are created and loaded in the order they're
+            listed in an experiment file, you can use source_corpus_dir
+            to point to a corpus in the same experiment file. The path
+            would be [experiment_dir]/corpora/[corpus_name], if the
+            "dir" attribute is not set on the &lt;corpora&gt; tag which
+            dominates the corpus you're referring to; if it is, the path
+            would be [corpora_dir_attribute_value]/[corpus_name].<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <br>
+    <h3>Children</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Element<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Repeatable?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;pattern&gt;<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">A glob-style pattern of files
+            to use to construct this corpus. "Glob" style is the UNIX
+            shell file pattern matching; e.g., "*" matches everything.
+            (This is in contrast to standard regular expressions.) If
+            this path pattern isn't an absolute path, the --pattern_dir
+            option of <a href="MATExperimentEngine.html">MATExperimentEngine</a>
+            must be used to provide the location of the patterns.<br>
+            <br>
+            This element has no attributes or element children; its
+            value is the text it delimits. <br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="prep_of_corpora"></a>&lt;prep&gt; (of &lt;corpora&gt;)</h2>
+    <p>This element houses the arguments to the <a
+        href="MATEngine.html">MATEngine</a> command to use to preprocess
+      the corpora. You might use this command to take documents which
+      have been deidentified and resynthesize fillers for the
+      deidentified regions.<br>
+    </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;attr&gt;<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">An attribute-value pair which
+            corresponds to a command-line option to <a
+              href="MATEngine.html">MATEngine</a>.<br>
+            <br>
+            The input_file_type attribute is not provided automatically
+            and must be provided as one of the attributes for this
+            element. The workflow attribute must also be specified. The
+            following attributes are provided by the experiment engine
+            and should not be specified in &lt;prep&gt;:
+            output_file_type input_dir output_dir task . The attributes
+            should also not provide any other arguments which would
+            further specify the input or output files.<br>
+            <br>
+            If your documents are not in MAT JSON format, but another
+            format that MAT understands (e.g., XML inline), insert a
+            &lt;prep&gt; specification which specifies the
+            input_file_type attribute and omits any attribute values for
+            steps or undo_through.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="workspace_corpora_of_experiment"></a>&lt;workspace_corpora&gt;
+
+
+
+
+
+
+
+
+      (of &lt;experiment&gt;)<br>
+    </h2>
+    <p>In order to run experiments against <a href="workspaces.html">workspaces</a>,
+      we've introduced a new element which allows you to specify a
+      collection of corpora to be drawn from a workspace, restricted by
+      various dimensions of the workspace contents. Each
+      &lt;workspace_corpora&gt; element establishes a context for
+      a&nbsp; workspace, by describing a subset of eligible workspace
+      files, and within that context you can define
+      &lt;workspace_corpus&gt; elements which are ultimately transformed
+      into the same objects which the &lt;corpus&gt; elements correspond
+      to.<br>
+    </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">dir<br>
+          </td>
+          <td style="vertical-align: top;">a pathname<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">If present, the directory
+            where the model sets can be found or built. If the directory
+            does not exist, it will be created. The default value for
+            this attribute is a subdirectory named "model_sets" in the
+            experiment directory.</td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">workspace_dir<br>
+          </td>
+          <td style="vertical-align: top;">a pathname<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">The directory root of the
+            workspace.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">document_statuses<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">If present, a comma-separated
+            list of <a
+              href="annotations_and_segments.html#Admin_annotations_SEGMENTs_and">document
+
+
+
+
+
+
+              statuses</a>. The default is "partially
+            corrected,partially gold,gold,reconciled". Any document
+            which doesn't have one of these statuses in the workspace
+            will be excluded.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">users<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">If present, a comma-separated
+            list of workspace <a href="workspaces.html#Workspace_users">users</a>.
+            Any document which is assigned to a user which isn't one of
+            these users will be excluded.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">include_unassigned<br>
+          </td>
+          <td style="vertical-align: top;">"no"<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">If present, documents which
+            are not assigned to any workspace user will be excluded.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">basename_sets<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">If present, a comma-separated
+            list of workspace <a href="workspaces.html#Experimentation">basename
+
+
+
+
+
+
+              sets</a>. Any document which is not in one of these
+            basename sets in the given workspace will be excluded.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">basename_patterns<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">If present, a comma-separated
+            list of glob-style patterns to match the workspace basenames
+            against. Any document whose basename does not match one of
+            the patterns will be excluded.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3>Children</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Element<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Repeatable?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;workspace_corpus&gt;<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">An actual corpus which will
+            be created in this workspace context.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="workspace_corpus_of_workspace_corpora"></a>&lt;workspace_corpus&gt;
+
+
+
+
+
+
+
+
+      (of &lt;workspace_corpora&gt;)</h2>
+    <p>Each &lt;workspace_corpus&gt; element defines a set of files,
+      similar to a &lt;corpus&gt; element. Because its common context is
+      a workspace, we've chosen to allow the partition and size
+      information to be specified independently for each of these
+      elements, rather than establishing them in the common workspace
+      context (as &lt;corpora&gt; does for &lt;corpus&gt;). Within the
+      workspace context, you can further restrict each corpus in the
+      same way as you restrict the context itself, and also identify a
+      special, unique corpus as containing the remainder of the files in
+      the workspace context.<br>
+    </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">name<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">The name of the corpus, for
+            subsequent reference in the remainder of the experiment. It
+            is also used as the name of the subdirectory in which this
+            corpus is built.</td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">document_statuses<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">If present, a comma-separated
+            list of <a
+              href="annotations_and_segments.html#Admin_annotations_SEGMENTs_and">document
+
+
+
+
+
+              statuses</a>. Any document in the workspace context which
+            doesn't have one of these statuses will be excluded.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">users<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">If present, a comma-separated
+            list of workspace <a href="workspaces.html#Workspace_users">users</a>.
+            Any document in the workspace context which is assigned to a
+            user which isn't one of these users will be excluded.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">include_unassigned<br>
+          </td>
+          <td style="vertical-align: top;">"no"<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">If present, documents in the
+            workspace context which are not assigned to any workspace
+            user will be excluded.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">basename_sets<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">If present, a comma-separated
+            list of workspace <a href="workspaces.html#Experimentation">basename
+
+
+
+
+
+              sets</a>. Any document in the workspace context which is
+            not in one of these basename sets will be excluded.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">basename_patterns<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">If present, a comma-separated
+            list of glob-style patterns to match the workspace basenames
+            against. Any document in the workspace context whose
+            basename does not match one of the patterns will be
+            excluded.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">use_remainder<br>
+          </td>
+          <td style="vertical-align: top;">"yes"<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">If present, the corpus
+            consists of all those documents in the document context
+            which are not included in any sibling
+            &lt;workspace_corpus&gt;. This attribute-value pair must
+            occur without any of the other qualifying attributes.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3>Children</h3>
+    <p>The semantics of these elements are identical to the semantics of
+      these elements in the scope of the &lt;corpora&gt; element.<br>
+    </p>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Element<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Repeatable?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;partition&gt;<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">The proportional partition
+            settings for this workspace corpus. If neither this nor
+            &lt;fixed_partition&gt; is present, the corpus will not have
+            any partitions.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;fixed_partition&gt;<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">The fixed partition settings
+            for this workspace corpus. If neither this nor
+            &lt;partition&gt; is present, the corpus will not have any
+            partitions. You cannot mix fixed and proportional partitions
+            within a given &lt;workspace_corpus&gt; element.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;size&gt;<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">The size settings for this
+            workspace corpus.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="partition_of_workspace_corpus"></a>&lt;partition&gt;
+      (of &lt;workspace_corpus&gt;)</h2>
+    <p> </p>
+    <p>See <a href="#partition_of_corpora">&lt;partition&gt; of
+        &lt;corpora&gt;</a> for details.<br>
+    </p>
+    <h2><a name="fixed_partition_of_workspace_corpus"></a>&lt;fixed_partition&gt;
+
+
+
+
+
+
+
+
+      (of &lt;workspace_corpus&gt;)</h2>
+    <p>See <a href="#fixed_partition_of_corpora">&lt;fixed_partition&gt;
+
+
+
+
+        of &lt;corpora&gt;</a> for details.<br>
+    </p>
+    <h2><a name="size_of_workspace_corpus"></a>&lt;size&gt; (of
+      &lt;workspace_corpus&gt;) </h2>
+    <p>See <a href="#size_of_corpora">&lt;size&gt; of &lt;corpora&gt;</a>
+      for details.<br>
+    </p>
+    <h2><a name="model_sets_of_experiment"></a>&lt;model_sets&gt; (of
+      &lt;experiment&gt;)</h2>
+    <p>Each experiment also can contain a number of model sets. A model
+      set is a sequence of models built out of the same corpus, with
+      successively larger numbers of training inputs. This iterative
+      capability does not have to be used, but is available if the user
+      wants to track the change in performance relative to the number of
+      training documents.<br>
+    </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">dir<br>
+          </td>
+          <td style="vertical-align: top;">a pathname<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">If present, the directory
+            where the model sets can be found or built. If the directory
+            does not exist, it will be created. The default value for
+            this attribute is a subdirectory named "model_sets" in the
+            experiment directory.</td>
+        </tr>
+      </tbody>
+    </table>
+    <h3>Children</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Element<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Repeatable?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;build_settings&gt;<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">The instructions for building
+            the model sets in this bundle.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;model_set&gt;<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">A model set.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="build_settings_of_model_sets"></a>&lt;build_settings&gt;
+(of
+
+
+
+
+
+
+
+
+
+      &lt;model_sets&gt;)</h2>
+    <p>In order to run an experiment, you must either (a) have declared
+      your &lt;model_config&gt; in your task.xml file and specified a
+      value for the "class" attribute there, in which case you can
+      override the &lt;build_settings&gt; values here, or (b) specify a
+      model_class directly here, in which case the only settings will be
+      the ones you specify explicitly here. The training engine you're
+      most likely to use is the <a href="carafe_engine.html">Carafe
+        engine</a>.<br>
+    </p>
+    <h3><span style="font-weight: bold;"></span>Attributes</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">config_name<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">By default, the settings here
+            will override the attribute values for the default model
+            build settings in task.xml. If this attribute is present,
+            the experiment engine will look for the model build settings
+            with the specified config_name. Either this attribute or
+            model_class can be provided, but not both.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">model_class<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">By default, the settings here
+            will override the attribute values for the default model
+            build settings in task.xml. If you have your own model
+            builder object (this is highly unlikely; such an object
+            would be a subclass of MAT.ModelBuilder.ModelBuilder, and
+            you'd have to work out how to customize it, but it is
+            possible), the task will not be consulted at all. Either
+            this attribute or config_name can be provided, but not both.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;attr&gt;<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">An attribute-value pair which
+            overrides the attribute values for your chosen training
+            engine (if config_name is provided) or specifies the
+            attribute values (if model_class is provided).<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3>Children</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Element<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Repeatable?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;iterator&gt;<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">An iterator which can be
+            applied to create a sequence of models for these model sets.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="iterator_of_build_settings"></a>&lt;iterator&gt; (of
+      &lt;build_settings&gt;)</h2>
+    <p>It is possible to iterate through a set of values for the model
+      builder using an <span style="font-weight: bold;">iterator</span>.
+      For instance, the <a href="carafe_engine.html">default Carafe
+        engine</a> allows you to customize the degree of L1
+      regularization (see the Carafe documentation for details). You
+      might want to build a series of models exploring the effects of L1
+      regularization values from 0.0 through 2.0, at increments of .2.
+      Or, you might want to vary the number of training iterations the
+      engine performs from 10 to 150 at increments of 10.<br>
+    </p>
+    <p>You can specify multiple iterators, and you'll get the
+      cross-product of the settings. The iterator mechanism is flexible
+      enough that you can <a
+href="customize_task_advanced.html#Defining_your_own_experiment_engine_iterator">build
+
+
+
+
+
+
+
+
+
+        iterators</a> which depend on the last model built, or iterators
+      which specify their own model builder class (if, for example, they
+      need to do some extensive computation on the training corpus
+      before they train).<br>
+    </p>
+    <p>Corpus setting iterators and build setting iterators are both
+      applied to the model, and the cross-product of the possible values
+      is used. The corpus setting iterators are applied first.<br>
+    </p>
+    <p>The build settings support two built-in iterators, which can be
+      configured using the &lt;iterator&gt; element.<br>
+    </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">type<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">Either one of the two
+            predefined iterator types "value" or "increment", or the
+            name of an iterator class defined in your task's Python
+            library.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;attr&gt;<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">An attribute-value pair which
+            configures the given iterator. The available attributes and
+            values for the two predefined iterator types is listed
+            immediately below.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Here are the attributes and values available for the "value"
+      iterator:<br>
+    </p>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">attribute<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">The name of the training
+            engine attribute you're iterating over. This attribute would
+            be one that could be set in the &lt;build_settings&gt;
+            element above or in the &lt;model_config&gt; element in
+            task.xml.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">values<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">A comma-delimited set of
+            values to iterator over.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">value_type<br>
+          </td>
+          <td style="vertical-align: top;">one of "float", "str", "int"<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">The type of the values,
+            either strings, integers, or floats. Default is "str"
+            (string).<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Here are the attributes and values available for the "increment"
+      iterator:<br>
+    </p>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">attribute<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">The name of the training
+            engine attribute you're iterating over. This attribute would
+            be one that could be set in the &lt;build_settings&gt;
+            element above or in the &lt;model_config&gt; element in
+            task.xml. </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">start_val<br>
+          </td>
+          <td style="vertical-align: top;">an integer or float<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">The initial value for the
+            incrementer.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">end_val<br>
+          </td>
+          <td style="vertical-align: top;">an integer or float<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">The final value for the
+            incrementer.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">increment<br>
+          </td>
+          <td style="vertical-align: top;">an integer or float<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">The increment to add to value
+            on each iteration.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">force_last<br>
+          </td>
+          <td style="vertical-align: top;">"yes"<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">If present, force the last
+            value to be processed, even if it's not exactly an
+            increment. For instance, if you're incrementing model
+            iterations from 20 to 150 by increments of 20, the last
+            value processed will be 140, unless you provide this
+            setting. This setting is also useful with float values, due
+            to the way programming languages like Python deal with
+            floats; asking to increment from .1 to .5 by .1 may or may
+            not give you exactly .5 as the final value, so you might
+            want to use this setting to force whatever value it is
+            (e.g., .500000000001) to be processed.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="corpus_settings_of_model_sets"></a>&lt;corpus_settings&gt;
+(of
+
+
+
+
+
+
+
+
+
+      &lt;model_sets&gt;)</h2>
+    <p>In addition to the model builder itself, you can configure
+      properties of the training corpus as well. At the moment, the only
+      property of the training corpus you can configure is its size, and
+      this is mostly in service of the iterator over corpus size.
+      When&nbsp; you specify the size of a corpus, it will truncate the
+      training corpus to the specified length.<br>
+    </p>
+    <h3>Attributes<br>
+    </h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">size<br>
+          </td>
+          <td style="vertical-align: top;">an integer<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">By default, the corpus size
+            is defined in the &lt;corpora&gt; element. However, you can
+            further specify the size here, if you want the corpus to be
+            even smaller than what's specified in &lt;corpora&gt;, or if
+            your training corpus is a union of a number of different
+            corpora (see the &lt;training_corpus&gt; element below).<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3>Children</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Element<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Repeatable?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;iterator&gt;<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">An iterator which can be
+            applied to create a sequence of corpora for these model
+            sets.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="iterator_of_corpus_settings"></a>&lt;iterator&gt; (of
+      &lt;corpus_settings&gt;)</h2>
+    <p>It is possible to iterate through a set of values for the model
+      corpus using an <span style="font-weight: bold;">iterator</span>.
+      Right now, the only available iterator is the "corpus_size"
+      iterator (although you can also <a
+href="customize_task_advanced#Defining_your_own_experiment_engine_iterator">define
+
+
+
+
+
+
+
+
+
+        your own</a> if you need to).<br>
+    </p>
+    <p>Corpus setting iterators and build setting iterators are both
+      applied to the model, and the cross-product of the possible values
+      is used. The corpus setting iterators are applied first.<br>
+    </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">type<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">Either the predefined
+            iterator type "corpus_size", or the name of an iterator
+            class defined in your task's Python library.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;attr&gt;<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">An attribute-value pair which
+            configures the given iterator. The available attributes and
+            values for the "corpus_size" iterator type is listed
+            immediately below.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Here are the attributes and values available for the
+      "corpus_size" iterator:<br>
+    </p>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">start_val<br>
+          </td>
+          <td style="vertical-align: top;">an integer <br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">The initial value for the
+            corpus size. Defaults to the increment.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">end_val<br>
+          </td>
+          <td style="vertical-align: top;">an integer<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">The final value for the
+            corpus size. Defaults to the size of the corpus.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">increment<br>
+          </td>
+          <td style="vertical-align: top;">an integer<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">The corpus size increment for
+            each iteration.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">force_last<br>
+          </td>
+          <td style="vertical-align: top;">"yes"<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">If present, force the last
+            value to be processed, even if it's not exactly an
+            increment. So if the corpus has 176 documents in it, and
+            you've specified an increment of 20, the last corpus size
+            that will be processed is 160, unless this option is
+            specified.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="model_set_of_model_sets"></a>&lt;model_set&gt; (of
+      &lt;model_sets&gt;)</h2>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">name<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">The name of this model set,
+            for subsequent reference in this experiment. It is also used
+            as the name of the subdirectory in which this model set is
+            built.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3>Children<span style="font-weight: bold;"></span></h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Element<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Repeatable?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;training_corpus&gt;<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">One or more corpora (and
+            possibly partitions of corpora) which should be used to
+            construct this model set.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <br>
+    <h2><a name="training_corpus_of_model_set"></a>&lt;training_corpus&gt;
+
+
+
+
+
+
+
+
+
+      (of &lt;model_set&gt;)</h2>
+    <p>May be repeated. Specifies the training corpora to use in
+      building this model set. Each corpus is referred to by name, and
+      an optional partition name.<br>
+    </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">corpus<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">The name of the training
+            corpus to use. This name must match the "name" attribute of
+            some &lt;corpus&gt; element in the experiment file.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">partition<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">If present, the name of a
+            partition in the specified corpus, which must match the
+            "name" attribute of some &lt;partition&gt; element in the
+            corpus. If not present, the entire corpus will be used.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="runs_of_experiment"></a>&lt;runs&gt; (of
+      &lt;experiment&gt;)</h2>
+    <p>The experiment also can have a set of runs. The runs in each
+      &lt;runs&gt; element share a set of run settings. Whenever the
+      experiment is run, each &lt;run&gt; is scored, whether or not it's
+      been scored before. This is a convenient way of reviewing the
+      scores after an experiment is finished.<br>
+    </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">dir<br>
+          </td>
+          <td style="vertical-align: top;">a pathname<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">If present, the directory
+            where the runs can be found or built. If the directory does
+            not exist, it will be created. The default value for this
+            attribute is a subdirectory named "runs" in the experiment
+            directory.</td>
+        </tr>
+      </tbody>
+    </table>
+    <h3>Children</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Element<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Repeatable?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;run_settings&gt;<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">A container for the arguments
+            to run the processing engine with.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;run&gt;<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">An experimental run.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <br>
+    <h2><a name="run_settings_of_runs"></a>&lt;run_settings&gt; (of
+      &lt;runs&gt;)</h2>
+    <h3>Children</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Element<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Repeatable?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;args&gt;<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">The arguments to the <a
+              href="MATEngine.html">MATEngine</a> to use for these
+            experiment runs.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;prep_args&gt;<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">The arguments to the
+            MATEngine to use to prepare the annotated documents for the
+            experiment runs. By default, the documents are converted to
+            raw documents, but if instead you want to just undo a step
+            and leave them as MAT JSON documents, you can use this
+            element to achieve that.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;score_args&gt;<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">Flags which control the
+            behavior of the scorer.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <br>
+    <h2><a name="args_of_run_settings"></a>&lt;args&gt; (of
+      &lt;run_settings&gt;)</h2>
+    <p>This element houses the arguments to the <a
+        href="MATEngine.html">MATEngine</a> command to perform the
+      experiment runs.<br>
+    </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;attr&gt;<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">An attribute-value pair which
+            corresponds to a command-line option to <a
+              href="MATEngine.html">MATEngine</a>.<br>
+            <br>
+            The workflow attribute must be specified. The following
+            attributes are provided by the experiment engine and should
+            not be specified in &lt;args&gt;: input_file_type
+            output_file_type input_dir output_dir output_fsuff task .
+            The attributes should also not provide any other arguments
+            which would further specify the input or output files.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="prep_args_of_run_settings"></a>&lt;prep_args&gt; (of
+      &lt;run_settings&gt;)</h2>
+    <p>This element houses the arguments to the <a
+        href="MATEngine.html">MATEngine</a> command to to use to prepare
+      the annotated documents for the experiment runs. By default, the
+      documents are converted to raw documents, but if instead you want
+      to just undo a step and leave them as MAT JSON documents, you can
+      use this element to achieve that. </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;attr&gt;<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">An attribute-value pair which
+            corresponds to a command-line option to <a
+              href="MATEngine.html">MATEngine</a>.<br>
+            <br>
+            The output_file_type attribute must be specified (you're
+            restricted to mat-json and raw).<br>
+            <br>
+            The workflow attribute must be specified. The following
+            attributes are provided by the experiment engine and should
+            not be specified in &lt;prep_args&gt;: input_file_type
+            input_dir output_dir output_fsuff task . The attributes
+            should also not provide any other arguments which would
+            further specify the input or output files.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="score_args_of_run_settings"></a>&lt;score_args&gt; (of
+      &lt;run_settings&gt;)</h2>
+    <p>These flags control the behavior of the scorer. They are not yet
+      generally processed the way &lt;prep_args&gt; and &lt;args&gt;
+      are; they're individually defined and handled, for the moment.</p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">gold_only<br>
+          </td>
+          <td style="vertical-align: top;">"yes"<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">Equivalent to the
+            --ref_gold_only option of <a href="MATScore.html">MATScore</a>.
+            If this attribute is provided, only gold or reconciled
+            segments in the reference will be used for scoring
+            comparison. This is particularly useful when defining
+            experiment files to be used with workspaces.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">similarity_profile<br>
+          </td>
+          <td valign="top">a string<br>
+          </td>
+          <td valign="top">no<br>
+          </td>
+          <td valign="top">Equivalent to the --similarity_profile option
+            of <a href="MATScore.html">MATScore</a>.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">score_profile<br>
+          </td>
+          <td valign="top">a string<br>
+          </td>
+          <td valign="top">no<br>
+          </td>
+          <td valign="top">Equivalent to the --score_profile option of <a
+              href="MATScore.html">MATScore</a>.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="iterator_of_run_settings"></a>&lt;iterator&gt; (of
+      &lt;run_settings&gt;)</h2>
+    <p>It is possible to iterate through a set of values for the run
+      using an <span style="font-weight: bold;">iterator</span>. For
+      instance, the <a href="carafe_engine.html">default Carafe engine</a>
+      allows you to customize the recall/precision bias (see the Carafe
+      documentation for details). You might want to build a series of
+      models exploring the effects of recall/precision bias values from
+      -2.0 through 2.0, at increments of .5.<br>
+    </p>
+    <p>You can specify multiple iterators, and you'll get the
+      cross-product of the settings. The iterator mechanism is flexible
+      enough that you can <a
+href="customize_task_advanced#Defining_your_own_experiment_engine_iterator">build
+
+
+
+
+
+
+
+
+
+        your own iterators</a> if you need them.<br>
+    </p>
+    <p>The run settings support two built-in iterators, which can be
+      configured using the &lt;iterator&gt; element.<br>
+    </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">type<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">Either one of the two
+            predefined iterator types "value" or "increment", or the
+            name of an iterator class defined in your task's Python
+            library.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;attr&gt;<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">An attribute-value pair which
+            configures the given iterator. The available attributes and
+            values for the two predefined iterator types is listed
+            immediately below.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Here are the attributes and values available for the "value"
+      iterator:<br>
+    </p>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">attribute<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">The name of the training
+            engine attribute you're iterating over. This attribute would
+            be one that could be set in the &lt;run_settings&gt; element
+            above or in the &lt;run_settings&gt; element in for workflow
+            steps task.xml.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">values<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">A comma-delimited set of
+            values to iterator over.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">value_type<br>
+          </td>
+          <td style="vertical-align: top;">one of "float", "str", "int"<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">The type of the values,
+            either strings, integers, or floats. Default is "str"
+            (string).<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Here are the attributes and values available for the "increment"
+      iterator:<br>
+    </p>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">attribute<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">The name of the training
+            engine attribute you're iterating over. This attribute would
+            be one that could be set in the &lt;run_settings&gt; element
+            above or in the &lt;run_settings&gt; element in for workflow
+            steps task.xml.</td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">start_val<br>
+          </td>
+          <td style="vertical-align: top;">an integer or float<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">The initial value for the
+            incrementer.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">end_val<br>
+          </td>
+          <td style="vertical-align: top;">an integer or float<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">The final value for the
+            incrementer.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">increment<br>
+          </td>
+          <td style="vertical-align: top;">an integer or float<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">The increment to add to value
+            on each iteration.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">force_last<br>
+          </td>
+          <td style="vertical-align: top;">"yes"<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">If present, force the last
+            value to be processed, even if it's not exactly an
+            increment. For instance, if you're incrementing
+            recall/precision bias from -2.0 to 2.2 by increments of .5,
+            the last value processed will be 2.0, unless you provide
+            this setting. This setting is also useful with float values
+            even if it appears that the endpoints match the increment
+            precisely, due to the way programming languages like Python
+            deal with floats; asking to increment from .1 to .5 by .1
+            may or may not give you exactly .5 as the final value, so
+            you might want to use this setting to force whatever value
+            it is (e.g., .500000000001) to be processed.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="run_of_runs"></a>&lt;run&gt; (of &lt;runs&gt;)</h2>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">name<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">The name of this experimental
+            run. This is used as the name of the subdirectory in which
+            this run is conducted.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">model<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">The name of a model to use.
+            This string must match the "name" value of some
+            &lt;model_set&gt; element in the experiment file.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3><span style="font-weight: bold;"></span>Children</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Element<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Repeatable?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;test_corpus&gt;<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">One or more test corpora (and
+            possibly partitions of corpora) to use in this run.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="test_corpus_of_run"></a>&lt;test_corpus&gt; (of
+      &lt;run&gt;)</h2>
+    <p>May be repeated. One or more test corpora (and possibly
+      partitions of corpora) to use in this run.<br>
+    </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">corpus<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes<br>
+          </td>
+          <td style="vertical-align: top;">The name of the test corpus
+            to use. This string must match the "name" value of some
+            &lt;corpus&gt; element in the experiment file.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">partition<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no<br>
+          </td>
+          <td style="vertical-align: top;">If present, the name of a
+            partition in the specified corpus, which must match the
+            "name" attribute of some &lt;partition&gt; element in the
+            corpus. If not present, the entire corpus will be used. </td>
+        </tr>
+      </tbody>
+    </table>
+    <br>
+    <br>
+  </body>
+</html>

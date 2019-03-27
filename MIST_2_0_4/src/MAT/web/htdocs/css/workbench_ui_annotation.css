@@ -1,0 +1,76 @@
+/* Copyright (C) 2007 - 2012 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. */
+
+/*
+
+   ANNOTATE MENU BLOCK
+
+   Not borrowing any CSS here, but this is how I customize the
+   annotation menu.
+
+*/
+
+.yui-button.duringChoose button,
+.docHeader .duringChoose {
+  background-color: coral;
+}
+
+/*
+
+  END ANNOTATE MENU BLOCK
+
+*/
+
+
+/* 
+  
+  MENU AND BUTTON CUSTOMIZATION BLOCK
+
+*/
+
+/* I repeat classes in order to make the CSS rule override
+   the rule it's supposed to override. I can't rely on order,
+   because there's no way to make YUI load before my CSS rules. */
+
+.compact.compact .yui-button button, 
+.compact.compact .yui-button a {
+  line-height: 1.2;
+}
+
+.compact.compact .yuimenu {
+  line-height: 1.2;
+}
+
+/* And now, for the cases where I can't add the class to a parent. */
+
+.yuimenu.compact.compact {
+  line-height: 1.2
+}
+
+/* Try to override the line height. These are held over from the old UI. */
+
+.yui-skin-sam .mat-yui-button-context .yui-menu-button button {
+  min-height: 1em;
+  line-height: normal;
+}
+
+.yui-skin-sam .mat-yui-button-context .yuimenuitemlabel {
+  padding: 0;
+}
+
+.yui-skin-sam .mat-yui-button-context .yui-button-menu .bd {
+  padding: 0 10px;
+}
+
+
+/* 
+  
+  END MENU AND BUTTON CUSTOMIZATION BLOCK
+
+*/
+
+.annotNameHover {
+  /* border: 1px solid black; */
+  background-color: lightgray;
+  cursor: pointer;
+}

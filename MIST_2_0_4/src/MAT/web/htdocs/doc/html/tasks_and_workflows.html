@@ -1,0 +1,188 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Tasks, Training and Automated Tagging</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Tasks, training and automated tagging</h1>
+    <p>The task you use will contain a number of different sorts of
+      information:<br>
+    </p>
+    <ul>
+      <li>The <a href="annotation_intro.html">annotations and
+          attributes</a> available to you, and how they're displayed<br>
+      </li>
+      <li>The workflows that you can apply to your documents, either
+        using the <a href="MATEngine.html">workflow engine</a> or the <a
+          href="use_ui.html">MAT UI</a></li>
+      <li>The UI customizations that will be applied in your task (e.g.,
+        whether text flows right to left or left to right, what special
+        code should be run to modify your UI display)</li>
+      <li>The settings that the <a href="MATModelBuilder.html">model
+          builder</a> will use to build your tagging models</li>
+      <li>The operations you apply to implement various <a
+          href="workspace.html">workspace</a> operations</li>
+      <li>The settings that MAT will use to create <a
+          href="ui_comparison.html">comparison views</a> and <a
+          href="scoring_transducing_reporting.html">score documents</a></li>
+    </ul>
+    <p>We'll talk about <a href="workspaces.html">workspaces</a> in a
+      bit; right now, we're going to talk about workflows, model
+      building, and automated tagging.<br>
+    </p>
+    <h2>Steps and workflows<br>
+    </h2>
+    <p>In MAT, each <b>workflow</b> consists of a series of <b>steps</b>.
+      These steps are global in the task; the workflows put subsets of
+      them in fixed orders, depending on your activity. In MAT 2.0, you
+      might encounter the following workflows:<br>
+    </p>
+    <ul>
+      <li>a workflow to do mixed-initiative annotation (typically called
+        "Demo")<br>
+      </li>
+      <li>a workflow to do hand annotation, with tokenization (typically
+        called "Hand annotation")<br>
+      </li>
+      <li>a workflow to do hand annotation, without tokenization
+        (typically called "Tokenless hand annotation")<br>
+      </li>
+      <li>a workflow to review and correct documents (typically called
+        "Review/repair")</li>
+    </ul>
+    <p>There will be others, but these are the important ones.<br>
+    </p>
+    <p>In these workflows, you'll typically find these steps:<br>
+    </p>
+    <table border="1" cellpadding="2" cellspacing="2" width="100%">
+      <tbody>
+        <tr>
+          <th valign="top">step name<br>
+          </th>
+          <th valign="top">purpose<br>
+          </th>
+          <th valign="top">details<br>
+          </th>
+        </tr>
+        <tr>
+          <td valign="top">"zone"<br>
+          </td>
+          <td valign="top">a step for <b>zoning</b> the document</td>
+          <td valign="top">This step adds zone and admin annotations.
+            The document zones are the areas that the subsequent steps
+            should pay attention to. The simplest zone step simply marks
+            the entire document as relevant.</td>
+        </tr>
+        <tr>
+          <td valign="top">"tokenize"<br>
+          </td>
+          <td valign="top">a step for <b>tokenizing</b> the document</td>
+          <td valign="top">This step adds token annotations. Tokens are
+            basically words, and the automated engine which comes with
+            MAT uses tokens, rather than characters, as its basis for
+            analysis. If you're going to use the automated engine,
+            either to build a model or to do automated annotation, you
+            have to have tokens. MAT comes with a default tokenizer for
+            English.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">"hand tag"<br>
+          </td>
+          <td valign="top">a step for doing hand annotation</td>
+          <td valign="top">This step is available (obviously) only in
+            the MAT UI, and in it you can add (by hand) the content
+            annotations in your task. </td>
+        </tr>
+        <tr>
+          <td valign="top">"tag"<br>
+          </td>
+          <td valign="top">a step for doing automated annotation</td>
+          <td valign="top">This step allows you to apply
+            previously-created models to your document to add content
+            annotations automatically. If you're in the UI, his step
+            also provides you with the opportunity to correct the output
+            of automated tagging.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">"mark gold"<br>
+          </td>
+          <td valign="top">a step for marking a document <b>gold</b>
+            (i.e., done)</td>
+          <td valign="top">This step modifies the admin annotations. In
+            this case, completing this step indicates that the annotator
+            judges that these annotations are complete and correct.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>There are other possible steps, but these are the ones you'll
+      encounter most frequently.<br>
+    </p>
+    <p>In <a href="tutorial_1.html">tutorial 1</a>, you saw how to
+      apply these steps in the MAT UI, and in <a href="tutorial_5.html">tutorial
+
+
+        5</a>, you saw how to apply them on the command line using the <a
+        href="MATEngine.html">MATEngine</a> tool.</p>
+    <h2>Training and automated tagging<br>
+    </h2>
+    <p>As we saw in <a href="tutorial_2.html">tutorial 2</a>, <a
+        href="tutorial_3.html">tutorial 3</a>, and <a
+        href="tutorial_5.html">tutorial 5</a>, we can build a model
+      using hand-annotated or hand-corrected documents, and apply these
+      models to other, unannotated documents.<br>
+    </p>
+    <p>The training engine that comes with MAT, <a
+        href="carafe_engine.html">Carafe</a>, only works on what we've
+      called <b>simple span </b><b>annotations</b>: spanned
+      annotations with labels or effective labels and no other
+      attributes. (The person who configured your task may have set up a
+      different engine, one which can build models for more complex
+      annotations; she'll tell you if she did that.) Approximately,
+      Carafe analyzes the annotated documents and computes the
+      likelihoods of the various labels occurring in the various
+      contexts it encounters, as defined by a set of features (e.g.,
+      what the word is, whether it's capitalized, whether it's
+      alphanumeric, what words precede and follow) it extracts from the
+      documents it builds a model from. (The specific technique it uses
+      is <b>conditional random fields</b>.) You can then present a new
+      document to Carafe, and based on the features it finds in that new
+      document, it will insert annotations in the locations the model
+      predicts should be there.<br>
+    </p>
+    <p>In general, the more documents you use to train an engine like
+      Carafe, and the more <b>exemplars</b> of each annotation label it
+      finds in the training documents, and the greater the variety of
+      contexts those labels occur in in the training documents, the
+      better a job the engine will do of predicting where the
+      annotations should be in new, unannotated documents. <br>
+    </p>
+    <p>These engines are not likely to do a perfect job. There are ways
+      to improve the engine's performance other than providing more
+      data; these engines, including Carafe, can be tuned in a wide
+      variety of ways. MAT doesn't help you do that. MAT is a tool for
+      corpus development and human annotator support; its goal is not to
+      help you produce the best automated tagging system. If you're
+      brave, you can tune Carafe in all sorts of ways, and MAT tries not
+      to hinder your ability to do that, if you know what you're doing;
+      but it's not the point of the toolkit.<br>
+    </p>
+    <p>The other thing you need to know is that while Carafe only works
+      on simple span annotations, complex annotations won't cause it to
+      break; it'll just ignore everything it can't handle. So if your
+      task has spanless annotations, and spanned annotations with lots
+      of attributes, Carafe will happily build a model for the spanned
+      labels alone, and you can use your complex annotated data to train
+      that simple model, and you can use that simple model to
+      automatically insert those simple span annotations, and insert the
+      remainder of the annotations and attributes by hand.<br>
+    </p>
+  </body>
+</html>

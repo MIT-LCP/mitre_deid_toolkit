@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Core Technologies</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1><span style="font-weight: bold;"></span>Core technologies</h1>
+    <h2>Carafe</h2>
+    <p>The central technology underlying MAT is <a
+        href="carafe_engine.html">Carafe</a>, a MITRE-built trainable
+      conditional random field text tagger, implemented in Scala, a
+      Java-compatible programming language which compiles to Java object
+      files. This engine creates models from annotated documents and
+      annotates documents based on those models. The tokenizer that
+      serves as a preprocess to Carafe is also implemented in Scala, and
+      is distributed with Carafe.<br>
+    </p>
+    <p>In many annotation systems, the main focus is on tweaking the
+      tagger to get the best possible results. This is definitely
+      possible with Carafe, but it's not the focus of MAT; the focus of
+      MAT is to build an annotation infrastructure around an existing
+      tagging feature set and tokenizer.<br>
+    </p>
+    <p>MAT makes Carafe available as a command-line tool, but also as a
+      server, which avoids repeatedly incurring the startup cost of
+      loading the annotation model. This server behavior is the default
+      behavior in MAT; it must be explicitly disabled using the
+      --tagger_local option to <a href="MATEngine.html">MATEngine</a>.<br>
+    </p>
+    <h2>JavaScript and AJAX</h2>
+    <p>MAT is distributed with a UI which is a novel combination of two
+      capabilities which are required for managing annotated documents.
+      On the one hand,&nbsp; it's a hand annotation tool, as well as an
+      annotation display tool. On the other hand, it also allows the
+      user to control the automated steps which the document goes
+      through. This UI is written entirely in JavaScript, and MAT runs
+      its own Web server to make the UI available.<br>
+    </p>
+    <h2>JSON</h2>
+    <p>MAT maintains its annotated documents in its own simple standoff
+      annotation format, which is based on the JavaScript Object
+      Notation (JSON). JSON is especially convenient for passing
+      documents back and forth via AJAX.<br>
+    </p>
+    <h2>Python</h2>
+    <p>The core engine which controls the automated document processing
+      is written in Python. This includes both the command-line
+      capabilities and the Web backend.<br>
+    </p>
+    <h2>Open-source packages used by MAT</h2>
+    <h3>YUI</h3>
+    <p>For its Web frontend, MAT relies on the <a
+        href="http://developer.yahoo.com/yui">Yahoo! YUI toolkit</a>, a
+      BSD-licensed library for building rich interactive Web
+      applications.<br>
+    </p>
+    <h3>CherryPy</h3>
+    <p>For its service infrastructure, including its Web server, MAT
+      relies on <a href="http://cherrypy.org">CherryPy</a>, a
+      BSD-licensed, lightweight, flexible threaded Web protocol engine
+      written in Python.<br>
+    </p>
+  </body>
+</html>

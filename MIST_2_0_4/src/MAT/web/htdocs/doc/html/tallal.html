@@ -1,0 +1,312 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Tag a Little, Learn a Little</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Tag a little, learn a little<br>
+    </h1>
+    <p>Now that we've talked about some of the MAT basics, we can see
+      how to put them together to achieve one of MAT's main
+      capabilities, which is to assist you in incrementally building a <span
+        style="font-weight: bold;">gold standard corpus</span> (i.e., a
+      body of annotated documents which are believed to be completely
+      and correctly annotated according to your set of desired
+      annotations), and a <span style="font-weight: bold;">trained
+        model</span> (a data object for your automated annotation engine
+      which has been constructed using your corpus, such that it can be
+      used to annotate additional documents, with reasonable accuracy),
+      using the tag-a-little, learn-a-little (TALLAL) loop strategy. <br>
+    </p>
+    <p>If you've read the tutorials, and the sections under "What you
+      need to know about..." that cover <a href="annotation_intro.html">annotations</a>,
+      <a href="tasks_and_workflows.html">tasks and training</a>, <a
+        href="files_and_workspaces.html">choosing a mode</a>, and <a
+        href="workspaces.html">workspaces</a>, you've already seen all
+      the steps in TALLAL. In this document, we're going to make
+      absolutely sure that you understand how all these steps fit
+      together. </p>
+    <p>First, a reminder: you may recall from the discussion of <a
+        href="annotation_intro.html">annotations</a> that MAT 2.0 does
+      not provide automated training and tagging for complex
+      annotations. We'll be addressing this in a future release, but in
+      MAT 2.0, the full TALLAL loop is only available for simple span
+      annotations.<br>
+    </p>
+    <p>With that caveat, here's how to use the various pieces of MAT to
+      accomplish this larger goal, in ten main steps that we'll review
+      in a minute. We've annotated the TALLAL loop illustration from the
+      <a href="overview.html">introduction</a> with those steps which
+      are relevant:<br>
+    </p>
+    <div style="text-align: center;">
+      <p><img style="width: 452px; height: 448px;" alt=""
+          src="../img/tallal_annotated.jpg"></p>
+      <p style="text-align: left;">We also present a more detailed
+        illustration of the lifecycle of document sets, again annotated
+        with those steps which are relevant: <br>
+      </p>
+    </div>
+    <p style="text-align: center;"><img style=" width: 700px; height:
+        338px;" alt="Tallal annotated"
+        src="../img/docflow_annotated.jpg" height="346" width="719"><br>
+    </p>
+    <p>In the table below, we summarize ten steps involved in TALLAL, as
+      illustrated in these two diagrams and in the documentation you've
+      already read. The TALLAL loop is available in either file mode or
+      workspace mode; we're going to present these two "tracks"
+      alongside each other, showing how they differ and overlap.</p>
+    <p> </p>
+    <table border="1" cellpadding="5" cellspacing="2" width="100%">
+      <tbody>
+        <tr>
+          <th valign="top"><br>
+          </th>
+          <th valign="top">File mode<br>
+          </th>
+          <th valign="top">Workspace mode<br>
+          </th>
+        </tr>
+        <tr>
+          <td valign="top">
+            <p><b>Step 1</b>: configure and install your task</p>
+          </td>
+          <td colspan="2" rowspan="1" valign="top">This step should
+            already have been done for you, especially if you've
+            received this toolkit as a tarball. If not, ask your <a
+              href="how_to_use.html">task maintainer</a>.</td>
+        </tr>
+        <tr>
+          <td valign="top"><b>Step 2</b>: choose an interaction mode<br>
+          </td>
+          <td colspan="2" rowspan="1" valign="top">
+            <p><a href="files_and_workspaces.html">This section</a>
+              tells you how to choose between file mode and workspace
+              mode. <br>
+            </p>
+            <p>Other relevant documentation pages are:<br>
+            </p>
+            <ul>
+              <li><a href="tutorial_1.html" target="iframetarget">Tutorial
+
+
+
+                  1: load and tag a document</a></li>
+              <li><a href="tutorial_2.html" target="iframetarget">Tutorial
+
+
+
+                  2: build a model</a></li>
+              <li><a href="tutorial_5.html">Tutorial 5: use the command
+                  line engine</a></li>
+              <li><a href="tutorial_6.html">Tutorial 6: workspaces</a></li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top"><b>Step 3</b>: organize your files<br>
+          </td>
+          <td valign="top">If you chose file mode, you should set aside
+            directories for storing the annotated documents, and develop
+            some heuristic for keeping track of which documents you've
+            finished.</td>
+          <td valign="top">If you chose workspace mode, you should
+            create your workspace and import some documents. If you want
+            to import more documents later, you can do that. <br>
+            <br>
+            The following documentation sections are relevant:<br>
+            <ul>
+              <li><a href="tutorial_6.html">Tutorial 6: workspaces</a></li>
+              <li><a href="MATWorkspaceEngine.html">MATWorkspaceEngine</a>
+                (advanced)</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="1" rowspan="2" valign="top"><b>Step 4</b>:
+            prepare documents for hand annotation<br>
+          </td>
+          <td colspan="2" rowspan="1" valign="top">In order to "seed"
+            the TALLAL loop, you'll need to hand-annotate some
+            documents, and in order to do that, you'll need to ensure
+            that the documents are ready to be annotated.</td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <p>You can prepare these documents using the steps in your
+              workflow that precede the hand annotation step. For hand
+              annotation, it's probably easiest to do it in the UI,
+              since you'll need to load the documents into the UI
+              anyway. You'll need to select the appropriate workflow,
+              which will likely be named "Hand annotation". MAT's
+              default tagging and training engine, <a
+href="file:///afs/rcf/project/anonymize/proj/users/sam/devel/MAT/web/htdocs/doc/html/carafe_engine.html">Carafe</a>,
+              requires that documents be tokenized, so you should make
+              sure that this step is included in the workflow you use. <a
+                href="tutorial_1.html">Tutorial 1</a> will get you
+              started. <br>
+            </p>
+            <p>The following documentation sections are also relevant:<br>
+            </p>
+            <ul>
+              <li><a href="tutorial_5.html">Tutorial 5: use the command
+                  line engine</a></li>
+              <li><a href="tasks_and_workflows.html">What you need to
+                  know about...tasks, training and automated tagging</a></li>
+              <li><a href="start_web.html" target="iframetarget">Starting
+
+
+
+                  the Web server</a></li>
+              <li><a href="start_ui.html" target="iframetarget">Starting
+                  the UI</a></li>
+              <li><a href="use_ui.html">UI basics</a></li>
+              <li><a href="MATEngine.html">MATEngine</a> (advanced)<br>
+              </li>
+            </ul>
+          </td>
+          <td valign="top">
+            <p>Preparing documents for annotation should be taken care
+              of for you when you import documents into the workspace.</p>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="1" rowspan="3" valign="top"><b>Step 5</b>: hand
+            annotate the document<br>
+          </td>
+          <td valign="top"><a href="tutorial_1.html">Tutorial 1</a>
+            covers loading a file in file mode via "File -&gt; Open
+            file...".<br>
+          </td>
+          <td valign="top"><a href="tutorial_6.html">Tutorial 6</a>
+            covers opening a workspace and a file within a workspace.<br>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" rowspan="1" valign="top">
+            <p>Once the document has been loaded into the UI, hand
+              annotation is the same in both modes. <a
+                href="tutorial_1.html">Tutorial 1</a> covers this step,
+              and the documentation on <a href="use_ui.html">using the
+                UI</a> describes hand annotation in more detail (among
+              other things). You don't have to complete the hand
+              annotation in one swoop; you can always open the document
+              again and do more annotation. </p>
+            Be sure to save the document when you're done.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">To save, you should press the "File" item in
+            the menu bar, and select "Save..." and then "mat-json". </td>
+          <td valign="top">You can simply save the document, or mark the
+            document as gold, which saves the document and indicates
+            that you're satisfied that the annotations in the document
+            are correct and complete.<br>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="1" rowspan="2" valign="top"><b>Step 6</b>: build
+            a model<br>
+          </td>
+          <td colspan="2" rowspan="1" valign="top">Once you've annotated
+            some documents, you can build a model from those documents.
+            You'll be able to use this model to automatically tag more
+            documents, which will reduce the time it takes to complete
+            the annotation.</td>
+        </tr>
+        <tr>
+          <td valign="top"><a href="tutorial_2.html">Tutorial 2</a>
+            covers this. For more detail, see the documentation on
+            the&nbsp; <a href="MATModelBuilder.html">MATModelBuilder</a>
+            tool. If your task is configured appropriately, you'll have
+            the option of saving the model as the default model for the
+            task.</td>
+          <td valign="top"><a href="tutorial_6.html">Tutorial 6</a>
+            covers this; you'll use the <a
+              href="MATWorkspaceEngine.html">MATWorkspaceEngine</a> on
+            the command line to perform the "modelbuild" operation. For
+            this operation, you have to option of performing the next
+            step at the same time.</td>
+        </tr>
+        <tr>
+          <td colspan="1" rowspan="2" valign="top"><b>Step 7</b>:
+            automatically tag some documents<br>
+          </td>
+          <td colspan="2" rowspan="1" valign="top">Next, you'll want to
+            automatically tag your next batch of documents.</td>
+        </tr>
+        <tr>
+          <td valign="top">
+            <p><a href="tutorial_5.html">Tutorial 5</a> covers using the
+              command line <a href="MATEngine.html">MATEngine</a> to
+              process a file or a directory of files; <a
+                href="tutorial_3.html">tutorial 3</a> covers using UI to
+              process one file at a time. On the command line, you'll
+              have to know which steps in which workflow you need to
+              perform to automatically tag; this depends on the
+              configuration of your task. In the UI, you'll have to know
+              which workflow to choose. <br>
+            </p>
+            <p>Other documentation that may be relevant:<br>
+            </p>
+            <ul>
+              <li><a href="tutorial_2.html">Tutorial 2: building a model</a></li>
+            </ul>
+          </td>
+          <td valign="top"><a href="tutorial_6.html">Tutorial 6</a>
+            covers this; you'll use the <a
+              href="MATWorkspaceEngine.html">MATWorkspaceEngine</a> on
+            the command line to perform the "modelbuild" operation. If
+            there are no unannotated or uncorrected files, you'll need
+            to import some more files into your workspace. <br>
+            <br>
+            Other documentation that may be relevant:<br>
+            <ul>
+              <li><a href="workspaces.html">What you need to know
+                  about...workspaces</a>.</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top"><b>Step 8</b>: hand correct the documents<br>
+          </td>
+          <td colspan="2" rowspan="1" valign="top">This step is
+            identical to step 5 above.</td>
+        </tr>
+        <tr>
+          <td valign="top"><b>Step 9</b>: lather, rinse, repeat<br>
+          </td>
+          <td colspan="2" rowspan="1" valign="top">At this point, you
+            have two paths to creating correct, complete documents:
+            either completely by hand, through steps 4 and 5, or
+            semi-automatically, through steps 7 and 8. You also know how
+            to build a model, which you can do at any time based on your
+            correct, complete documents.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top"><b>Step 10</b>: check your progress<br>
+          </td>
+          <td colspan="2" rowspan="1" valign="top">At any point after
+            you have some correct, complete documents, you can find out
+            how you're doing. (This process ought to be built into the
+            model building stage in workspace mode, but it isn't yet.) <a
+              href="tutorial_7.html"> Tutorial 7</a> covers the use of
+            the <a href="MATExperimentEngine.html">MATExperimentEngine</a>
+            for this purpose. You'll configure an XML file which
+            describes which documents you want to use as your test and
+            training corpora, how many alternative models you want to
+            build, and which runs you want to perform, and you'll get
+            back detailed, Excel- or OpenOffice-compatible spreadsheets
+            describing the performance of your automated annotation
+            tool.</td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

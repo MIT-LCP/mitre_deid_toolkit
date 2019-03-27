@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Creating Reader/Writers</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Creating reader/writers</h1>
+    <p>It's not too difficult to define your own reader/writer. The file
+      MAT_PKG_HOME/lib/mat/python/MAT/XMLIO.py provides a good example.
+      The template looks like this:<br>
+    </p>
+    <pre>from MAT.DocumentIO import declareDocumentIO, DocumentFileIO, SaveError<br>from MAT.Document import LoadError<br><br>class MyIO(DocumentFileIO):<br><br>    def deserialize(self, s, annotDoc):<br>        ....<br><br>    def writeToUnicodeString(self, annotDoc):<br>        ....<br><br>declareDocumentIO("my-io", MyIO, True, True)<br></pre>
+    <p>The arguments to deserialize() are the input data from the file
+      and an annotated document to populate; see XMLIO.py for an example
+      of how to populate it. writeToUnicodeString() should return a
+      Unicode string which serializes the annotated document passed in.
+      In order to do this, you'll have to familiarize yourself with the
+      API for manipulating documents and annotations, which is not
+      documented but reasonably easy to understand from the source code.
+      Once you do all this, the file type name you assign to the class
+      via the call to declareDocumentIO() will be globally available.<br>
+    </p>
+    <p> You can also define command-line arguments which will be
+      accepted by the tools when this file type is used. XMLIO.py also
+      exemplifies this.</p>
+    <p>Finally, you can register a document convertor, typically a file
+      containing <a href="doc_conversion_xml.html">document conversion
+        XML</a>, to apply whenever a document is read in the context of
+      a particular task.</p>
+    <p>In the remainder of this document, we'll explore creating a
+      reader for a fairly complex document format, the one associated
+      with the <a href="http://brat.nlplab.org/">brat</a> annotation
+      tool.</p>
+    <p>The annotation format for brat 1.2, which we digest here, looks
+      like this:</p>
+    <pre>T2	TITLE 1123 1131	Chairman<br>T4	IDEOLOGY 1147 1157	Republican<br>T6	PERSON 1132 1143	Lamar Smith<br>R1	Has-Ideology Arg1:T6 Arg2:T4	<br>R2	Has-Ideology Arg1:T2 Arg2:T4<br></pre>
+    <p>It also supports events, which have spans (as opposed to
+      relations, indicated by R elements here, which don't), and
+      supports string and boolean features on entities (indicated here
+      with T) and events. An additional challenge with brat is that it's
+      a standoff representation which does not include the document
+      signal. (The brat format also supports declaring the annotation
+      format, but we're going to ignore that here for the moment.)<br>
+    </p>
+    <p>We're only going to consider the reader here. We'll refer to the
+      following listing:<br>
+    </p>
+    <pre>     1	class BratIO(DocumentFileIO):<br>     2	    <br>     3	    inputArgs = OptionTemplate([OpArgument("signal_file_location", hasArg = True,<br>     4	                                           help = "The directory where the signal files are located. If missing, the directory of the annotated file is assumed. The signal file is assumed to have a .txt extension instead of the .xml extension of the annotation file.")],<br>     5	                               heading = "Options for brat input")<br>     6	<br>     7	    def __init__(self, signal_file_location = None, encoding = None,<br>     8	                 annotation_conf_location = None, write_annotation_conf = False, **kw):<br>     9	        # Ignore the encoding.<br>    10	        DocumentFileIO.__init__(self, encoding = "utf-8", **kw)<br>    11	        self.signalFileLocation = signal_file_location<br>    12	        self.signalFileName = None<br>    13	    <br>    14	    def readFromSource(self, source, **kw):<br>    15	        if (type(source) in (str, unicode)) and (source != "-"):<br>    16	            if os.path.splitext(source)[1] != ".ann":<br>    17	                raise LoadError, "brat annotation files must end with .ann"<br>    18	            if self.signalFileLocation is None:<br>    19	                self.signalFileLocation = os.path.dirname(source)<br>    20	            self.signalFileName = os.path.basename(source)<br>    21	        if self.signalFileName is None:<br>    22	            raise LoadError, "can't find the signal file"<br>    23	        return DocumentFileIO.readFromSource(self, source, **kw)<br>    24	<br>    25	    def deserialize(self, s, annotDoc):<br>    26	        if self.signalFileLocation is None:<br>    27	            raise LoadError, "Can't figure out where the signal is located"<br>    28	        # OK, now, try to find the signal.<br>    29	        import codecs<br>    30	        fp = codecs.open(os.path.join(self.signalFileLocation, os.path.splitext(self.signalFileName)[0] + ".txt"), "r", "utf8")<br>    31	        newSignal = fp.read()<br>    32	        fp.close()<br>    33	        if annotDoc.signal and (annotDoc.signal != newSignal):<br>    34	            raise LoadError, "signal from brat signal file doesn't match original signal"<br>    35	        annotDoc.signal = newSignal<br>    36	        annHash = {}<br>    37	        annotAttrs = []<br>    38	        stringAttrs = []<br>    39	        boolAttrs = []<br>    40	        equivSets = []<br>    41	        for line in lines:<br>    42	            if (not line) or (line[0] == "#"):<br>    43	                continue<br>    44	            [t1, tRest] = line.split("\t", 1)<br>    45	            if t1[0] == "T":<br>    46	                spanReg = tRest.split("\t")[0]<br>    47	                [lab, startI, endI] = spanReg.split()<br>    48	                a = annotDoc.createAnnotation(int(startI), int(endI), lab)<br>    49	                annHash[t1] = a<br>    50	                a.setID(t1)<br>    51	            elif t1[0] in "RE":<br>    52	                # Take it apart.<br>    53	                rToks = tRest.split()<br>    54	                lab = rToks[0]<br>    55	                args = [t.split(":") for t in rToks[1:]]<br>    56	                if t1[0] == "R":<br>    57	                    # Create it.<br>    58	                    a = annotDoc.createSpanlessAnnotation(lab)<br>    59	                    annHash[t1] = a<br>    60	                    a.setID(t1)<br>    61	                    idx = t1<br>    62	                else:<br>    63	                    [lab, idx] = lab.split(":")<br>    64	                annotAttrs.append((t1, idx, args))<br>    65	            elif t1[0] in "MA":<br>    66	                toks = tRest.split()<br>    67	                if len(toks) == 3:<br>    68	                    stringAttrs.append((toks[1], toks[0], toks[2]))<br>    69	                else:<br>    70	                    boolAttrs.append((toks[1], toks[0]))<br>    71	            elif t1 == "*":<br>    72	                # What do I do with equivs? Establish an equiv relation, I<br>    73	                # suppose, with a single attribute.<br>    74	                equivSets.append(tRest.split()[1:])<br>    75	        # So now, everyone is created.<br>    76	        for (idx, attrName, val) in stringAttrs:<br>    77	            a = annHash[idx]<br>    78	            a.atype.ensureAttribute(attrName, aType = "string")<br>    79	            a[attrName] = val<br>    80	        for (idx, attrName) in boolAttrs:<br>    81	            a = annHash[idx]<br>    82	            a.atype.ensureAttribute(attrName, aType = "boolean")<br>    83	            a[attrName] = True<br>    84	        # brat can reuse the event triggers, but MAT can't.<br>    85	        eventTriggersSaturated = set()<br>    86	        for (eid, idx, args) in annotAttrs:<br>    87	            a = annHash[idx]<br>    88	            if idx in eventTriggersSaturated:<br>    89	                newA = doc.createAnnotation(a.start, a.end, a.atype.lab)<br>    90	                newA.setID(eid)<br>    91	                for attr, val in zip(a.atype.attr_list, a.attrs):<br>    92	                    if attr._typename_ != "annotation":<br>    93	                        newA[attr.name] = val<br>    94	                a = newA<br>    95	            for [attrName, argIdx] in args:<br>    96	                a.atype.ensureAttribute(attrName, aType = "annotation")<br>    97	                a[attrName] = annHash[argIdx]<br>    98	            eventTriggersSaturated.add(idx)<br>    99	        if equivSets is not None:<br>   100	            atype = annotDoc.findAnnotationType("_Equiv", hasSpan = False)<br>   101	            atype.ensureAttribute("annots", aType = "annotation", aggregation = "set")<br>   102	            for equivSet in equivSets:<br>   103	                annotDoc.createSpanlessAnnotation("_Equiv", {"annots": AttributeValueSet([annHash[idx] for idx in equivSet])})<br></pre>
+    <h2>Step 1: (optional) handle external signals</h2>
+    <p>The MAT reader infrastructure does not yet provide built-in
+      support for dealing with external signals. Lines 3 - 35 provide a
+      pattern for handling this case. You provide a command-line option
+      for the location of the external signal (and, if necessary, you'd
+      probably want to add options for the encoding and how to compute
+      the signal pathname). You must specialize the readFromSource()
+      method and locate the signal file (note that lines 16 - 17 are
+      specific to brat, since we're looking for a specific file
+      extension which contains the annotations themselves). Finally, in
+      the beginning of the deserialize() method, you must read the
+      signal (lines 29 - 32), ensure that it doesn't clash with any
+      existing signal (lines 33 - 34), and set it in the document (line
+      35).<br>
+    </p>
+    <h2>Step 2: initial assembly of annotations</h2>
+    <p>If the format you're reading allows annotation-valued attributes,
+      you need to do the deserialization in two steps: first, create
+      actual annotations for each annotation reference, and second, set
+      the annotation-valued attributes appropriately. Lines 36 - 75
+      perform this initial step.<br>
+    </p>
+    <p>For instance, at line 45, we recognize that the first character
+      of the element ID is "T", indicating a spanned entity, and so on
+      line 48, we create a new annotation, using the start and end
+      character indices in the annotation file. (It just so happens that
+      the brat offsets are identical to the MAT offsets. In some
+      formats, the end index might be one less than the MAT end index,
+      due to how the format is intended to do its counting; in other
+      formats, the counts may be in bytes instead of characters. So the
+      offset computation may be considerably more involved than it is
+      here.) Once we create the annotation, we store it in a dictionary
+      under its brat ID, and we assign this brat ID to the annotation on
+      line 50.<br>
+    </p>
+    <p>On lines 51 - 64, we deal with events and relations. In brat,
+      relations are spanless annotations, so we create such an
+      annotation on line 58, and record it as we did the entity. (Events
+      in brat, on the other hand, are links between spanned entities and
+      arguments, so we don't need to introduce a new annotation for
+      events.) In both these cases, we postpone recording the
+      annotation-valued attributes which serve as the arguments, since
+      we're not guaranteed of having created those yet; we create the
+      list for later augmentation on line 64.<br>
+    </p>
+    <p>On lines 65 - 70, we deal with attributes. Again, we don't add
+      them to the annotations; we record them for future augmentation.<br>
+    </p>
+    <p>Once we reach line 76, we've read all the brat entries, and we're
+      ready to add the attributes. On lines 76 - 79, we deal with the
+      string attributes; first, we ensure the attribute exists with the
+      proper type (line 78), and then we set the attribute (line 79). We
+      do the same for boolean attributes on lines 80 - 83.<br>
+    </p>
+    <h2>Step 3: annotation-valued attributes</h2>
+    <p>At this point, we're ready to create the annotation-valued
+      attributes. Lines 88 - 94 deal with a feature of brat that MAT
+      does not have: because brat events are sets of arguments declared
+      against a spanned entity defined elsewhere, you can have multiple
+      events defined against the same spanned entity. Because MAT deals
+      with these as distinct event annotations, we must create copies
+      for those entities which have already been "claimed" by an event.
+      Once we've dealt with that detail, we handle the event attributes
+      very similarly to the others: we ensure it exists (line 96), and
+      then set the value (line 97), in this case pulling the annotation
+      from the dictionary of annotations we collected when we created
+      the annotations in step 2.<br>
+    </p>
+    <p>There are other details of the brat format that we've skipped
+      over in this description; for instance, brat has a notion of
+      entity equivalences which we model as spanless _Equiv annotations.
+      But this overview of an example reader should provide guidance on
+      how to implement these readers.</p>
+  </body>
+</html>

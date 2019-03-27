@@ -1,0 +1,91 @@
+<!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+     file LICENSE for license terms. -->
+<task name='AMIA Deidentification' parent='Deidentification'
+      class='AMIADeidentification.AMIADeidTaskDescriptor'>
+  <doc_enhancement_class>AMIADeidentification.DocEnhancer</doc_enhancement_class>
+  <java_subprocess_parameters/>
+  <annotation_set_descriptors all_annotations_known='no'
+                              inherit='category:zone,category:token'>
+    <annotation_set_descriptor category='content' name='content'>
+      <annotation label='PATIENT'/>
+      <annotation label='HOSPITAL'/>
+      <annotation label='DOCTOR'/>
+      <annotation label='ID'/>
+      <annotation label='DATE'/>
+      <annotation label='LOCATION'/>
+      <annotation label='PHONE'/>
+      <annotation label='AGE'/>
+    </annotation_set_descriptor>
+  </annotation_set_descriptors>
+  <annotation_display>
+    <label name='PATIENT' css='background-color: CCCCCC'/>
+    <label name='HOSPITAL' css='background-color: FFCC66'/>
+    <label name='DOCTOR' css='background-color: CCFF66'/>
+    <label name='ID' css='background-color: FF99CC'/>
+    <label name='DATE' css='background-color: 99CCFF'/>
+    <label name='LOCATION' css='background-color: FFFF33'/>
+    <label name='PHONE' css='background-color: 66FFCC'/>
+    <label name='AGE' css='background-color: 99CC66'/>
+  </annotation_display>
+  <workflows inherit='Resynthesize'>
+    <workflow name='Demo'>
+      <step proxy_for_steps='truezone,tokenize' name='zone'/>
+      <step name='tag'>
+        <run_settings tagger_model='/afs/rcf/project/anonymize/public/jcarafe-0984-amia-model-20121113-no-enamex-long-dates'
+                      heap_size='1G'/>
+      </step>
+      <step name='nominate'/>
+      <step name='transform'>
+        <run_settings prologue_file='prologue.xml'/>
+      </step>
+    </workflow>
+    <!-- We use this to import AMIA corpora, so we have to mark it gold to train on
+         (that's the only way to assign it an annotator at the moment). -->
+    <workflow name='Process tagged untokenized docs'>
+      <step proxy_for_steps='truezone,tokenize,align' name='zone and align'>
+        <run_settings mark_gold='yes'/>
+      </step>
+      <step hand_annotation_available='yes' name='nominate'/>
+      <step name='transform'>
+        <run_settings prologue_file='prologue.xml'/>
+      </step>
+    </workflow>
+    <workflow name='Hand annotation'>
+      <step proxy_for_steps='truezone,tokenize' name='zone'/>
+      <step pretty_name='hand tag' name='tag' by_hand='yes'/>
+      <step name='nominate'/>
+      <step name='transform'>
+        <run_settings prologue_file='prologue.xml'/>
+      </step>
+    </workflow>
+    <workflow name='Review/repair'>
+      <step hand_annotation_available='yes' name='nominate'/>
+      <step name='transform'>
+        <run_settings prologue_file='prologue.xml'/>
+      </step>
+    </workflow>
+  </workflows>
+  <step_implementations>
+    <step workflows='Demo,Hand annotation,Review/repair,Process tagged untokenized docs'
+          name='truezone' class='AMIADeidentification.AMIAZoneStep'/>
+    <step name='align' class='MAT.PluginMgr.AlignStep'/>
+  </step_implementations>
+  <settings>
+    <setting>
+      <name>redaction_replacers</name>
+      <value>BracketReplacementEngine.BracketReplacementEngine,CharacterReplacementEngine.CharacterReplacementEngine,AMIAReplacementEngine.AMIAPIIReplacementEngine,AMIAReplacementEngine.AMIADEIDReplacementEngine</value>
+    </setting>
+    <setting>
+      <name>redaction_replacers_workflows</name>
+      <value>Demo,Hand annotation,Review/repair,Process tagged untokenized docs</value>
+    </setting>
+    <setting>
+      <name>resynthesis_replacers</name>
+      <value>BracketReplacementEngine.BracketResynthesisEngine,AMIAReplacementEngine.AMIADEIDResynthesisEngine</value>
+    </setting>
+    <setting>
+      <name>resynthesis_replacers_workflows</name>
+      <value>Resynthesize</value>
+    </setting>
+  </settings>
+</task>

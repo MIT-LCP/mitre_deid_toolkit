@@ -1,0 +1,367 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Transducer</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Transducer</h1>
+    <h2>Description</h2>
+    <p>The transducer converts documents from one format to another, and
+      also provides the capability to manipulate the documents via the
+      use of an <a href="doc_conversion_xml.html">XML configuration
+        specification</a>.<br>
+    </p>
+    <h2>Usage</h2>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATTransducer</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATTransducer.cmd</span><br><br>Usage: MATTransducer [options]<br><br>Options:<br>  -h, --help            show this help message and exit<br><br>  Core options:<br>    --task=task         name of the task to use, if helpful to the reader/writer. Optional. Known tasks are: ...<br>    --debug             Enable debug output.<br>...<br></pre>
+    <p>If no arguments are provided to MATTransducer, the help message
+      above is presented.<br>
+    </p>
+    <p>The transducer will transduce all the files it can process, one
+      by one. It will skip (and report skipping) files which generate an
+      error. <br>
+    </p>
+    <p>You can also use <a href="MATEngine.html">MATEngine</a> for
+      transducing, but it's less useful in a number of ways. Here's a
+      comparison:<br>
+    </p>
+    <table style=" text-align: left;" border="1" cellpadding="2"
+      cellspacing="2">
+      <tbody>
+        <tr>
+          <td style="vertical-align: top;"><span style="font-weight:
+              bold;">MATTransducer</span><br>
+          </td>
+          <td style="vertical-align: top;"><span style="font-weight:
+              bold;">MATEngine</span><br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">Loads, transduces and saves
+            files one at a time<br>
+          </td>
+          <td style="vertical-align: top;">Loads and transduces all
+            files before any save is performed<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">Skips and reports files which
+            generate an error<br>
+          </td>
+          <td style="vertical-align: top;">Fails if any file generates
+            an error<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">Does not require a task<br>
+          </td>
+          <td style="vertical-align: top;">Requires a task<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">Does not require a workflow<br>
+          </td>
+          <td style="vertical-align: top;">Requires a workflow<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">Supports XML-configurable conversion<br>
+          </td>
+          <td valign="top">Does not support conversion<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2>Core options</h2>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <td style="vertical-align: top;">--task &lt;s&gt;<br>
+          </td>
+          <td style="vertical-align: top;">The name of the task to use,
+            if helpful to the reader/writer. Optional.. The known tasks
+            are reported here.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--verbose<br>
+          </td>
+          <td style="vertical-align: top;">If specified, report each
+            file to stdout as it's transduced.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>MATTransducer also makes the <a
+        href="common_cmdline_options.html">common options</a> available.</p>
+    <p>The remainder of the options can be grouped into input and output
+      options.</p>
+    <p> </p>
+    <h2>Input options</h2>
+    <p>The input options specify the input files. You can specify
+      individual files, or directories (possibly filtering their
+      contents using a regular expression). You must specify a file
+      type. For raw files, you can also specify an input character
+      encoding.<br>
+    </p>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Command line option<br>
+          </th>
+          <th style="vertical-align: top;">XML attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--input_file &lt;f&gt;<br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;">The file to process. Either
+            this or --input_dir must be specified. A single dash ('-')
+            will cause the engine to read from standard input.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--input_dir &lt;d&gt;<br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;">The directory to process.
+            Either this or --input_file must be specified.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--input_file_re &lt;s&gt;<br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;">If --input_dir is specified,
+            a regular expression to match the filenames in the directory
+            against. The pattern must cover the entire filename (and
+            only the filename, not the full path).<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--input_encoding &lt;e&gt;<br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;">Input character encoding for
+            raw files. Default is ascii.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--input_file_type &lt;t&gt;<br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;">The file type of the input.
+            One of the available <a href="readers_and_writers.html">readers
+
+
+
+
+
+
+
+
+
+
+              and writers</a>. Required.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2>Output options</h2>
+    <p>The output options specify how the result is saved. Unlike
+      MATEngine, an output is required. You can specify an output file
+      for an input file, or an output directory and/or name mapping for
+      an input directory. You must also specify the output format;
+      usually, you'll want this to be one of the rich formats, but "raw"
+      is useful in some rare circumstances. Finally, you can specify an
+      output character encoding for raw files.<br>
+    </p>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Command line option<br>
+          </th>
+          <th style="vertical-align: top;">XML attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--output_file &lt;f&gt;<br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;">Where to save the output.
+            Either this or --output_dir must be provided. Must be paired
+            with --input_file. A single dash ('-') will cause the engine
+            to write to standard output.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--output_dir &lt;d&gt;<br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;">Where to save the output.
+            Either this or --output_file must be provided. Must be
+            paired with --input_dir.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--output_fsuff &lt;s&gt;<br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;">The suffix to add to each
+            filename when --output_dir is specified. If absent, the name
+            of each file will be identical to the name of the file in
+            the input directory.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--output_file_type &lt;t&gt;<br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;">The type of the file to save.
+            One of the available <a href="readers_and_writers.html">readers
+
+
+
+
+
+
+
+
+
+
+              and writers</a>. Required if either --output_file or
+            --output_dir is specified.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--output_encoding &lt;e&gt;<br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;">Output character encoding for
+            raw files. Default is ascii.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2>Conversion options</h2>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Command line option<br>
+          </th>
+          <th style="vertical-align: top;">XML attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--document_mapping_xml
+            &lt;xml&gt;<br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;">If present, the <a
+              href="doc_conversion_xml.html">mapping XML</a> will be
+            applied to the document(s) before they're saved. Only one of
+            this and --document_mapping_xml_file can be provided.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--document_mapping_xml_file
+            &lt;f&gt;<br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;"><br>
+          </td>
+          <td style="vertical-align: top;">If present, the specified
+            file containing <a href="doc_conversion_xml.html">mapping
+              XML</a> will be applied to the document(s) before they're
+            saved. Only one of this and --document_mapping_xml can be
+            provided.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">--document_mapping_record &lt;f&gt;<br>
+          </td>
+          <td valign="top"><br>
+          </td>
+          <td valign="top"><br>
+          </td>
+          <td valign="top">If --document_mapping_xml or
+            --document_mapping_xml_file are present, or if the reader
+            itself has a convertor registered for this task, this option
+            specifies a file to save a CSV record of the mapping to, in
+            a format quite similar to the format found in <a
+              href="MATReport.html">MATReport</a>. If the value of this
+            option is '-', the record will be printed out in plain text
+            to the terminal.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2>Other options</h2>
+    <p>The readers and writers described above may introduce additional
+      options, which are described <a href="readers_and_writers.html">here</a>.
+      These options must follow the input and output options.<br>
+    </p>
+    <h2>Examples</h2>
+    <h3>Example 1</h3>
+    <p>Let's say you have an XML file /path/to/my/document.xml, and you
+      wish to translate it into MAT JSON, converting all its tags, and
+      printing it to standard output:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATTransducer --input_file /path/to/my/document.xml \<br>--input_file_type xml-inline --xml_translate_all \<br>--output_file - --output_file_type mat-json</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATTransducer.cmd</span><span style="font-weight: bold;"> --input_file c:\path\to\my\document.xml \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file_type xml-inline --xml_translate_all \<br>--output_file - --output_file_type mat-json</span><br></pre>
+  </body>
+</html>

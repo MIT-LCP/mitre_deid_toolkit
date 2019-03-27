@@ -1,0 +1,197 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=windows-1252"
+      http-equiv="Content-Type">
+    <title>Annotation Set Descriptor XML Use Cases</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Annotation set descriptor XML use cases</h1>
+    <p>Use cases for the XML format for the annotation set descriptors
+      in the task files (see <a href="create_task.html">"Creating a New
+        Task"</a>) <span style="text-decoration: underline;"></span>
+      are described in this document. The reference document is found <a
+        href="asd_reference.html">here</a>. Click <a
+        href="asd_xml_iframe.html">here</a> for a split-screen view.<br>
+    </p>
+    <p>At the moment, most of the task XML customizations are quite
+      complex, and not yet documented. Here, we focus on the ways that
+      the user can specify various variations on defining their content
+      annotations. For examples of how to customize the UI display of
+      your annotations, see <a href="task_xml_use_cases.html">here</a>.<br>
+    </p>
+    <ul>
+      <li><a href="#Defining_content_annotations">Defining content
+          annotations</a></li>
+      <li><a href="#Defining_spanless_annotations">Defining spanless
+          content&nbsp; annotations</a></li>
+      <li><a href="#Defining_attributes">Defining attributes</a><br>
+      </li>
+      <li><a href="#Defining_a_single_content_annotation_va">Defining a
+          single content annotation, partitioned by attribute values</a></li>
+      <li><a href="#Defining_complex_annotation-valued">Defining complex
+          annotation-valued attributes</a></li>
+      <li><a href="#Defining_relations_among_annotations">Defining
+          relations among annotations</a><br>
+      </li>
+    </ul>
+    <h2><a name="Defining_content_annotations"></a>Defining content
+      annotations</h2>
+    <p>The simplest example of customizing your annotations in your
+      task.xml file is inheriting all your structural annotations and
+      adding your own content annotations. The role of the different
+      annotation categories is described <a
+        href="tasks_and_workflows.html">here</a>.<br>
+    </p>
+    <pre>  &lt;annotation_set_descriptors inherit="category:zone,category:token"&gt;<br>    &lt;annotation_set_descriptor name="content" category="content"&gt;<br>      &lt;annotation label="TAG1"/&gt;<br>      &lt;annotation label="TAG2"/&gt;<br>    &lt;/annotation_set_descriptor&gt;<br>  &lt;/annotation_set_descriptors&gt;</pre>
+    <p>So here, we've inherited the structure annotations and defined
+      two content annotations, TAG1 and TAG2. The content annotations
+      are both spanned annotations, by default.<br>
+    </p>
+    <h2><a name="Defining_spanless_annotations"></a>Defining spanless
+      content annotations</h2>
+    <p>Not all content annotations are spanned annotations; some
+      annotations aren't anchored directly to the text. You can find
+      examples of such annotations in <a href="tutorial_8.html">Tutorial
+
+        8</a>. It's easy to define these annotations:<br>
+    </p>
+    <pre>  &lt;annotation_set_descriptors inherit="category:zone,category:token"&gt;<br>    &lt;annotation_set_descriptor name="content" category="content"&gt;<br>      ...<br>      &lt;annotation label="SPANLESS1" span="no"/&gt;<br>      ...<br>    &lt;/annotation_set_descriptor&gt;<br>  &lt;/annotation_set_descriptors&gt;<br></pre>
+    <p>The UI effects of defining spanless annotations are described <a
+        href="ui_spanless.html">here</a>.<br>
+    </p>
+    <h2><a name="Defining_attributes"></a>Defining attributes</h2>
+    <p>Annotations, spanned or spanless, can have attributes. These
+      attributes can be strings (the default), floats, integers,
+      Booleans, or other annotations, or sets or lists of these types.
+      Here's how to define a simple string attribute:<br>
+    </p>
+    <pre>  &lt;annotation_set_descriptors inherit="category:zone,category:token"&gt;<br>    &lt;annotation_set_descriptor name="content" category="content"&gt;<br>      ...<br>      &lt;attribute of_annotation="TAG1" name="string_attr"/&gt;<br>      ...<br>    &lt;/annotation_set_descriptor&gt;<br>  &lt;/annotation_set_descriptors&gt;<br></pre>
+    <p>String attributes can have default values, or choices:<br>
+    </p>
+    <pre>  &lt;annotation_set_descriptors inherit="category:zone,category:token"&gt;<br>    &lt;annotation_set_descriptor name="content" category="content"&gt;<br>      ...<br>      &lt;attribute of_annotation="TAG1" name="string_attr" default="Pronoun"&gt;<br>        &lt;choice&gt;Pronoun&lt;/choice&gt;<br>        &lt;choice&gt;Nominal&lt;/choice&gt;<br>        &lt;choice&gt;Proper name&lt;/choice&gt;<br>      &lt;/attribute&gt;<br>      ...<br>    &lt;/annotation_set_descriptor&gt;<br>  &lt;/annotation_set_descriptors&gt;<br></pre>
+    <p>Integer and float attributes can be defined with accepted ranges:<br>
+    </p>
+    <pre>  &lt;annotation_set_descriptors inherit="category:zone,category:token"&gt;<br>    &lt;annotation_set_descriptor name="content" category="content"&gt;<br>      ...<br>      &lt;attribute of_annotation="TAG1" type="int" name="int_attr"&gt;<br>        &lt;range from="10" to="20"/&gt;<br>      &lt;/attribute&gt;<br>      ...<br>    &lt;/annotation_set_descriptor&gt;<br>  &lt;/annotation_set_descriptors&gt;<br></pre>
+    <p>Annotation attributes must have label restrictions that specify
+      what types of annotations can fill this attribute value (more
+      examples <a href="#Defining_complex_annotation-valued">here</a>):<br>
+    </p>
+    <pre>  &lt;annotation_set_descriptors inherit="category:zone,category:token"&gt;<br>    &lt;annotation_set_descriptor name="content" category="content"&gt;<br>      ...<br>      &lt;attribute of_annotation="TAG1" type="annotation" name="annot_attr"&gt;<br>        &lt;label_restriction label="TAG2"/&gt;<br>      &lt;/attribute&gt;<br>      ...<br>    &lt;/annotation_set_descriptor&gt;<br>  &lt;/annotation_set_descriptors&gt;<br></pre>
+    <p>And any of these attributes can be set or list aggregations:<br>
+    </p>
+    <pre>  &lt;annotation_set_descriptors inherit="category:zone,category:token"&gt;<br>    &lt;annotation_set_descriptor name="content" category="content"&gt;<br>      ...<br>      &lt;attribute of_annotation="TAG1" type="annotation" aggregation="set" name="mentions"&gt;<br>        &lt;label_restriction label="TAG2"/&gt;<br>      &lt;/attribute&gt;<br>      ...<br>    &lt;/annotation_set_descriptor&gt;<br>  &lt;/annotation_set_descriptors&gt;</pre>
+    <h2><a name="Defining_a_single_content_annotation_va"></a>Defining a
+      single content annotation, partitioned by attribute values</h2>
+    <p>In some situations, you may want to define a single content
+      annotation, which has a distinguished attribute value. One common
+      example of this in language processing arises in tagging for
+      so-called named entities (people, locations, organizations). One
+      common tagging scheme assigns a single ENAMEX tag to these
+      entities, and distinguishes among them using the value of the
+      "type" attribute. This label + attribute/value pair is assigned a
+      notional name, for use in the UI, scorer, etc. We call these <b>effective
+
+
+        labels</b>.<br>
+    </p>
+    <p>Effective labels must be defined on choice restrictions of string
+      or integer attributes. If an effective label is declared for one
+      of the choices, there must be a declaration for all of them. In
+      other words, the choices must completely partition the label.<br>
+    </p>
+    <pre>  &lt;annotation_set_descriptors inherit="category:zone,category:token"&gt;<br>    &lt;annotation_set_descriptor name="content" category="content"&gt;<br>      ...<br>      &lt;annotation label="ENAMEX"/&gt;<br>      &lt;attribute of_annotation="ENAMEX" name="type"&gt;<br>        &lt;choice effective_label="PERSON"&gt;PER&lt;/choice&gt;<br>        &lt;choice effective_label="ORGANIZATION"&gt;ORG&lt;/choice&gt;<br>        &lt;choice effective_label="LOCATION"&gt;LOC&lt;/choice&gt;<br>      &lt;/attribute&gt;<br>      ...<br>    &lt;/annotation_set_descriptor&gt;<br>  &lt;/annotation_set_descriptors&gt;<br></pre>
+    <h2><a name="Defining_complex_annotation-valued"></a>&nbsp;Defining
+      complex annotation-valued attributes</h2>
+    <p>You can define complex restrictions on annotation-valued
+      attributes in a number of ways. These restrictions consist of a
+      label and its attributes; the attributes must be choice attributes
+      (i.e., string or integer attributes with choices defined). The
+      availability of these restrictions is independent of whether an
+      effective label is defined for the attribute.<br>
+    </p>
+    <p>Here's an example fragment. It starts with the effective label
+      attribute definition from the previous example, but defines a
+      second (nonsensical) integer choice attribute:<br>
+    </p>
+    <pre>  &lt;annotation_set_descriptors inherit="category:zone,category:token"&gt;<br>    &lt;annotation_set_descriptor name="content" category="content"&gt;<br>      ...<br>      &lt;annotation label="ENAMEX"/&gt;<br>      &lt;attribute of_annotation="ENAMEX" name="type"&gt;<br>        &lt;choice effective_label="PERSON"&gt;PER&lt;/choice&gt;<br>        &lt;choice effective_label="ORGANIZATION"&gt;ORG&lt;/choice&gt;<br>        &lt;choice effective_label="LOCATION"&gt;LOC&lt;/choice&gt;<br>      &lt;/attribute&gt;<br>      &lt;attribute of_annotation="ENAMEX" type="int" name="size"&gt;<br>        &lt;choice&gt;0&lt;/choice&gt;<br>        &lt;choice&gt;1&lt;/choice&gt;<br>      &lt;/attribute&gt;<br>      &lt;!-- and now, the annotation-valued attribute --&gt;<br>      <b>&lt;annotation label="LOCATED"/&gt;</b><b><br></b><b>      &lt;attribute of_annotation="LOCATED" name="who" type="annotation"&gt;</b><b><br></b><b>        &lt;label_restriction label="ENAMEX"&gt;</b><b><br></b><b>          &lt;attributes type="PERSON" size="1"/&gt;</b><b><br></b><b>        &lt;/label_restriction&gt;</b><b><br></b><b>      &lt;/attribute&gt;</b><br>      ...<br>    &lt;/annotation_set_descriptor&gt;<br>  &lt;/annotation_set_descriptors&gt;<br></pre>
+    <p>The label restriction itself can refer either to a true or an
+      effective label, and the effective label can be combined with
+      additional attribute restrictions:<br>
+    </p>
+    <pre>      &lt;annotation label="LOCATED"/&gt;<br>      &lt;attribute of_annotation="LOCATED" name="who" type="annotation"&gt;<br>        &lt;label_restriction label="PERSON"&gt;<br>          &lt;attributes size="1"/&gt;<br>        &lt;/label_restriction&gt;<br>      &lt;/attribute&gt;<br></pre>
+    <h2><a name="Defining_relations_among_annotations"></a>Defining
+      relations among annotations</h2>
+    <p>As you can see from the previous example, you can use
+      annotation-valued attributes and label restrictions to create
+      relations among annotations. This is the only facility that MAT
+      provides for making these connections. We acknowledge that this
+      approach has limitations:<br>
+    </p>
+    <ul>
+      <li>There's no facility for creating "unnamed" spans as attribute
+        fillers (although there are good reasons to want such a
+        capability, for marking head-extent relations, for instance).</li>
+      <li>There's no explicit facility for making annotation-valued
+        attributes "optional". Leaving an attribute unfilled is the
+        recommended strategy. (Although, again, in the UI, there are
+        good reasons to want to be able to hide unfilled attributes.)<br>
+      </li>
+      <li>There's no facility for providing any sort of structure for
+        attributes, e.g., a subtype. If the attribute requires
+        structure, it should be implemented as its own relation. (Again,
+        there are good reasons to want to do this otherwise, e.g.,
+        complex modifiers like temporal modifiers.)</li>
+      <li>There's no facility for labeling an annotation type as being a
+        singleton (e.g., for document-level annotations), or as
+        many-to-one or one-to-many (although, again, we recognize that
+        both these features would be valuable).</li>
+    </ul>
+    <p>So, for instance, how might you represent an array of time
+      restrictions (before, after, etc.) on an event? Here are three
+      different strategies.<br>
+    </p>
+    <h3>Strategy 1: a slot for each restriction type</h3>
+    <pre>  &lt;annotation_set_descriptors inherit="category:zone,category:token"&gt;<br>    &lt;annotation_set_descriptor name="content" category="content"&gt;<br>      ...<br>      &lt;annotation label="TIME"/&gt;<br>      &lt;!-- this annotation can be spanned or spanless --&gt;<br>      &lt;annotation label="EVENT"/&gt;<br>      &lt;!-- if you're anticipating multiple times for a restriction type, <br>           make these set aggregations --&gt;<br>      &lt;attribute of_annotation="EVENT" type="annotation" name="before"&gt;<br>        &lt;label_restriction label="TIME"/&gt;<br>      &lt;attribute of_annotation="EVENT" type="annotation" name="after"&gt;<br>        &lt;label_restriction label="TIME"/&gt;
+      ...<br>    &lt;/annotation_set_descriptor&gt;<br>  &lt;/annotation_set_descriptors&gt;</pre>
+    <p>The obvious problem with this strategy is that you might have
+      many, many temporal relations you care about, and/or you may want
+      to provide attributes for the temporal relations.<br>
+    </p>
+    <h3>Strategy 2: separate relations for time</h3>
+    <pre>  &lt;annotation_set_descriptors inherit="category:zone,category:token"&gt;<br>    &lt;annotation_set_descriptor name="content" category="content"&gt;<br>      ...<br>      &lt;annotation label="TIME"/&gt;<br>      &lt;!-- this annotation can be spanned or spanless --&gt;<br>      &lt;annotation label="EVENT"/&gt;<br>      &lt;!-- so can this annotation --&gt;
+      &lt;annotation label="BEFORE"/&gt;<br>      &lt;attribute of_annotation="BEFORE" type="annotation" name="event"&gt;<br>        &lt;label_restriction label="EVENT"/&gt;<br>      &lt;/attribute&gt;<br>      &lt;attribute of_annotation="BEFORE" type="annotation" name="time"&gt;<br>        &lt;label_restriction label="TIME"/&gt;<br>      &lt;/attribute&gt;<br>     &nbsp;...<br>    &lt;/annotation_set_descriptor&gt;<br>  &lt;/annotation_set_descriptors&gt;<br></pre>
+    <p>You could generalize this strategy by having a single temporal
+      relation with an attribute to indicate what kind of temporal
+      relation it is:<br>
+    </p>
+    <pre>  &lt;annotation_set_descriptors inherit="category:zone,category:token"&gt;<br>    &lt;annotation_set_descriptor name="content" category="content"&gt;<br>      ...<br>      &lt;annotation label="TIME"/&gt;<br>      &lt;!-- this annotation can be spanned or spanless --&gt;<br>      &lt;annotation label="EVENT"/&gt;<br>      &lt;!-- so can this annotation --&gt;
+      &lt;annotation label="TEMPORAL"/&gt;<br>      &lt;attribute of_annotation="TEMPORAL" type="annotation" name="event"&gt;<br>        &lt;label_restriction label="EVENT"/&gt;<br>      &lt;/attribute&gt;<br>      &lt;attribute of_annotation="TEMPORAL" type="annotation" name="time"&gt;<br>        &lt;label_restriction label="TIME"/&gt;<br>      &lt;/attribute&gt;<br>      &lt;attribute of_annotation="TEMPORAL" name="type"&gt;<br>        &lt;choice&gt;BEFORE&lt;/choice&gt;<br>        &lt;choice&gt;AFTER&lt;/choice&gt;<br>        ...<br>      &lt;/attribute&gt;<br>     &nbsp;...<br>    &lt;/annotation_set_descriptor&gt;<br>  &lt;/annotation_set_descriptors&gt;</pre>
+    <p>The obvious problem with this strategy is that the temporal
+      relations are separated from the events they modify (because
+      there's no way of showing or representing relations as subordinate
+      attributes).<br>
+    </p>
+    <h3>Strategy 3: subordinate the temporal relation</h3>
+    <p>This strategy is a combination of the first two:<br>
+    </p>
+    <pre>  &lt;annotation_set_descriptors inherit="category:zone,category:token"&gt;<br>    &lt;annotation_set_descriptor name="content" category="content"&gt;<br>      ...<br>      &lt;annotation label="TIME"/&gt;<br>      &lt;!-- this annotation can be spanned or spanless --&gt;<br>      &lt;annotation label="EVENT"/&gt;<br>      &lt;!-- so can this annotation --&gt;
+      &lt;annotation label="TEMPORAL"/&gt;<br>      &lt;attribute of_annotation="TEMPORAL" type="annotation" name="time"&gt;<br>        &lt;label_restriction label="TIME"/&gt;<br>      &lt;/attribute&gt;<br>      &lt;attribute of_annotation="TEMPORAL" name="type"&gt;<br>        &lt;choice&gt;BEFORE&lt;/choice&gt;<br>        &lt;choice&gt;AFTER&lt;/choice&gt;<br>        ...<br>      &lt;/attribute&gt;<br>      &lt;attribute of_annotation="EVENT" type="annotation" aggregation="set" name="temporal"&gt;<br>        &lt;label_restriction label="TEMPORAL"/&gt;<br>      &lt;/attribute&gt;<br>     &nbsp;...<br>    &lt;/annotation_set_descriptor&gt;<br>  &lt;/annotation_set_descriptors&gt;<br></pre>
+    <p>The distinction here is subtle: instead of TEMPORAL being a
+      two-place relation between an event and a time, it's got only one
+      argument, the time, and its relation to the EVENT is represented
+      by the its presence in the "temporal" set-aggregation
+      annotation-valued attribute.<br>
+    </p>
+    <p>The obvious disadvantage to this strategy is that it doesn't
+      correspond trivially to what we'd think of as the "correct event
+      logic". However, given that we're talking about annotations, not
+      objects in a knowledge representation, it might ultimately be the
+      proper compromise.<br>
+    </p>
+    <p></p>
+  </body>
+</html>

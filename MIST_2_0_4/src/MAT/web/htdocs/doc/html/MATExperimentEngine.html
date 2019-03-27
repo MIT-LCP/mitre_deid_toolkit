@@ -1,0 +1,192 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Experiment Engine</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Experiment Engine</h1>
+    <h2>Description</h2>
+    <p>The experiment engine runs the experiment described in an <a
+        href="experiment_xml.html">experiment XML file</a>. The
+      experiment engine runs this experiment in a directory which is
+      provided to it either via the XML file (the "dir" attribute of the
+      &lt;experiment&gt; element) or on the command line (the --exp_dir
+      option). The experiment engine prepares the corpora, builds the
+      models, and performs the experiment runs in this directory. The
+      experiment XML file is copied into the experiment directory, if a
+      file with the same name is not already present.<br>
+    </p>
+    <p>By default, the engine can continue an experiment which is halted
+      in the middle. Each corpus, model set and run stores its metadata
+      in a file called "properties.txt" in its specified directory, and
+      keeps track of whether it's been completed or not. If the engine
+      fails in the middle, it will not redo work it knows has been
+      completed. The --force argument overrides this default behavior,
+      and ought to force a full rerun of the experiment; however, the
+      interactions among the components are extremely complex, and
+      --force often fails. If you want to rerun an experiment, the
+      safest thing to do is use a different experiment directory.<br>
+    </p>
+    <p> There is one exception to this generalization. If there are
+      experimental runs present, the engine will always score them, even
+      if it's scored them before. So an easy way to review the scores
+      for an experiment is just to run the engine again.<br>
+    </p>
+    <p>See <a href="experiment_xml_use_cases.html">here</a> for a set
+      of use cases for the experiment engine; see <a
+        href="experiment_output.html">here</a> for the structure of its
+      output directory.</p>
+    <h2>Usage</h2>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATExperimentEngine</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATExperimentEngine.cmd</span><br><br>Usage: MATExperimentEngine [options] &lt;xml_file&gt;<br><br>&lt;xml_file&gt;: An experiment XML file<br></pre>
+    <h2>Options</h2>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <td style="vertical-align: top;">--exp_dir &lt;dir&gt;<br>
+          </td>
+          <td style="vertical-align: top;">Optionally, the directory the
+            experiment will be run in. This directory may also be
+            provided in the experiment XML file (if both are provided,
+            the command-line setting is ignored). The directory will be
+            created if it doesn't yet exist.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--pattern_dir &lt;dir&gt;<br>
+          </td>
+          <td style="vertical-align: top;">Optionally, this path is the
+            prefix used for relative directory paths in file patterns in
+            the &lt;pattern&gt; element in the corpora in the experiment
+            XML file. Otherwise, these patterns must be absolute
+            pathnames.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--binding &lt;k&gt;=&lt;v&gt;<br>
+          </td>
+          <td style="vertical-align: top;">Optionally, add a binding to
+            be used in expanding settings in the experiment file. These
+            values override values in the experiment file itself.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--csv_formula_output
+            &lt;s&gt;<br>
+          </td>
+          <td style="vertical-align: top;">A comma-separated list of
+            options for CSV output. The possibilities are 'oo' (formulas
+            with OpenOffice separators), 'excel' (formulas with Excel
+            separators), 'literal' (no formulas). The experiment engine
+            will produce CSV output files for each of the conditions you
+            specify. By default, this value is 'excel'. Note that the
+            OpenOffice and Excel formula formats are incompatible with
+            each other, so you'll only be able to open output files with
+            Excel separators in Excel, etc.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--dont_compute_confidence<br>
+          </td>
+          <td style="vertical-align: top;">By default, the experiment
+            engine computes confidence measures when it runs the scorer.
+            This process can be time consuming. Disable it with this
+            flag.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--dont_rescore<br>
+          </td>
+          <td style="vertical-align: top;">By default, the experiment
+            engine rescores complete runs when it's restarted. Use this
+            flag to disable this feature. This should only be used for
+            debugging purposes, because the scores from the completed
+            runs won't be accumulated in this mode.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>MATExperimentEngine also makes the <a
+        href="common_cmdline_options.html">common options</a> available.</p>
+    <h2>Advanced options</h2>
+    <p>These options are more complicated, and not as well supported.
+      Use them at your own risk.<br>
+    </p>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <td style="vertical-align: top;">--force<br>
+          </td>
+          <td style="vertical-align: top;">If present, forces the
+            reprocess of the experiment file.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--batch_test_runs<br>
+          </td>
+          <td style="vertical-align: top;">By default, test runs are
+            performed as soon as the relevant model is available. This
+            flag postpones all test runs until after all models are
+            constructed.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--mark_done<br>
+          </td>
+          <td style="vertical-align: top;">This flag is intended for the
+            exceptional situation where you've interrupted an experiment
+            before it's completed, and you just want to rerun the
+            scoring for what's already done. This flag will force the
+            engine to mark all corpora, models and runs as completed.
+            The effect is that from this point on, the engine will only
+            report scores for this experiment.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2>Examples<br>
+    </h2>
+    <p>For examples of the experiment XML files themselves, look <a
+        href="experiment_xml_use_cases.html">here</a>.<br>
+    </p>
+    <h3>Example 1</h3>
+    <p>Let's say your experiment XML file /document/exp_files/exp.xml
+      contains a value for the "dir" attribute of the &lt;experiment&gt;
+      element, and all the paths in the &lt;pattern&gt; elements are
+      absolute. Then your invocation is simple:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATExperimentEngine /documents/exp_files/exp.xml</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATExperimentEngine.cmd c:\documents\exp_files\exp.xml</span><br></pre>
+    <h3>Example 2</h3>
+    <p>Let's say that your experiment XML file does not contain a value
+      for the "dir" attribute, and you want to create an experiment run
+      in /documents/exp_runs/run1:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATExperimentEngine --exp_dir /documents/exp_runs/run1 \<br>/documents/exp_files/exp.xml</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATExperimentEngine.cmd --exp_dir c:\documents\exp_runs\run1 \<br>c:\documents\exp_files\exp.xml</span><br></pre>
+    <h3>Example 3</h3>
+    <p>Let's say you have the same situation as in example 2, but you
+      don't want spreadsheet formulas in your output, because you're
+      feeding the data to a statistical package like R instead of to
+      Excel:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATExperimentEngine --exp_dir /documents/exp_runs/run1 \<br>--csv_formula_output literal /documents/exp_files/exp.xml<br><br></span>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATExperimentEngine.cmd --exp_dir c:\documents\exp_runs\run1 \<br></span><span style="font-weight: bold;">--csv_formula_output literal</span><span style="font-weight: bold;"> c:\documents\exp_files\exp.xml</span><br></pre>
+    <h3>Example 4</h3>
+    <p>Let's say that you have the same situation as in example 2, and
+      you want to view the results in a spreadsheet, but you can't
+      afford Excel, and you're using OpenOffice instead:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATExperimentEngine --exp_dir /documents/exp_runs/run1 \<br></span><span style="font-weight: bold;">--csv_formula_output oo</span><span style="font-weight: bold;"> /documents/exp_files/exp.xml<br><br></span>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATExperimentEngine.cmd --exp_dir c:\documents\exp_runs\run1 \<br></span><span style="font-weight: bold;">--csv_formula_output oo</span><span style="font-weight: bold;"></span><span style="font-weight: bold;"> c:\documents\exp_files\exp.xml</span><br></pre>
+    <h3>Example 5</h3>
+    <p>Let's say you're in the same situation as in example 2, but you
+      have relative pathnames in &lt;pattern&gt; elements in your XML
+      file, and all the document paths are a suffix of
+      /documents/completed:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATExperimentEngine --exp_dir /documents/exp_runs/run1 \<br>--pattern_dir /documents/completed /documents/exp_files/exp.xml<br><br></span>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATExperimentEngine.cmd --exp_dir c:\documents\exp_runs\run1 \<br>--pattern_dir c:\documents\completed c:\documents\exp_files\exp.xml</span><br></pre>
+  </body>
+</html>

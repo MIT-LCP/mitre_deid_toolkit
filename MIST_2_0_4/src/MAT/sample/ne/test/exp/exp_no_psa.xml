@@ -1,0 +1,26 @@
+<experiment task='Named Entity'>
+  <corpora dir="corpora">
+    <partition name="train" fraction=".8"/>
+    <partition name="test" fraction=".2"/>
+    <corpus name="test">
+      <pattern>*.json</pattern>
+    </corpus>
+  </corpora>
+  <model_sets dir="model_sets">
+    <build_settings training_method=""/>
+    <!-- again, use dir to override. training_increment is also an option for build.
+         Actually, you can repeat model_sets. -->
+    <model_set name="test">
+      <training_corpus corpus="test" partition="train"/>
+    </model_set>
+  </model_sets>
+  <runs dir="runs">
+    <!-- and you can repeat runs -->
+    <run_settings>
+      <args steps="zone,tokenize,tag" workflow="Demo"/>
+    </run_settings>
+    <run name="test" model="test">
+      <test_corpus corpus="test" partition="test"/>
+    </run>
+  </runs>
+</experiment>

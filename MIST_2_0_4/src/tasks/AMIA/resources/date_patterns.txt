@@ -1,0 +1,24 @@
+# Format of file is weight|date pattern. Patterns drawn
+# from test suite for python-dateutil package. Weights
+# drawn from my imagination. 
+# Years removed to humor the AMIA markup.
+20.0|Thu Sep 25
+20.0|Thu, Sep 25
+30.0|Thursday, September 25
+20.0|Sep-25
+30.0|25-Sep
+70.0|09-25
+70.0|9-25
+70.0|10-09
+10.0|09.25
+10.0|9.25
+10.0|10.09
+30.0|09/25
+30.0|9/25
+80.0|10/09
+1.0|09 25
+5.0|Sep 25
+30.0|25 September
+40.0|25 Sep
+10.0|September 25
+1.0|10 09

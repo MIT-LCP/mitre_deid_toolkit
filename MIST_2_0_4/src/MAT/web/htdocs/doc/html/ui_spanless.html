@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Spanless Annotation</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Spanless annotation</h1>
+    <p>MAT supports the notion of <a href="annotation_ref.html">spanless
+
+        annotations</a>, which aren't directly anchored to a text span.
+      The UI provides special facilities for editing such annotations.<br>
+    </p>
+    <ul>
+      <li><a href="#The_spanless_sidebar">The spanless sidebar</a></li>
+      <li><a href="#Creating_a_spanless_annotation">Creating a spanless
+          annotation</a></li>
+      <li><a href="#Operations_on_spanless_annotations">Operations on
+          spanless annotations</a></li>
+      <li><a href="#Spanless_annotations_and_choose_mode">Spanless
+          annotations and choose mode</a><br>
+      </li>
+    </ul>
+    <h2><a name="The_spanless_sidebar"></a>The spanless sidebar</h2>
+    <p>If your task contains spanless annotations, your window will look
+      like this when you open a document:<br>
+    </p>
+    <img alt="[spanless sidebar]" src="../img/voa1_complex_open.jpg"
+      height="662" width="1018"><br>
+    <p>Note the blank region immediately to the left of the document
+      text. This is the <b>spanless sidebar</b>. In this region, you'll
+      create and operate on spanless annotations in a manner quite
+      similar to the text area.<br>
+    </p>
+    <h2><a name="Creating_a_spanless_annotation"></a>Creating a spanless
+      annotation</h2>
+    <p>To create a spanless annotation, click in any blank region of the
+      spanless sidebar:<br>
+    </p>
+    <img alt="[spanless popup]" src="../img/ui_spanless_popup.jpg"
+      height="411" width="719">
+    <p>You'll see a popup menu very similar to the menu you'd get if you
+      were to swipe text in the document. When you swipe text, your
+      popup menu contains only the spanned annotations you can create;
+      analogously, when you click in the spanless sidebar, your popup
+      menu contains only the spanless annotations. Notice, too, that the
+      spanless labels are styled, just like the spanned annotations are.<br>
+    </p>
+    <p>When you create a spanless annotation, an icon is created, styled
+      appropriately, and placed in the spanless sidebar. The location of
+      this icon is dictated by the annotation attribute values the
+      annotation points to; the UI will attempt to place the icon
+      halfway between the first and last spanned annotations the
+      spanless annotation points to. If the spanless annotation doesn't
+      point to any annotations yet (as will be the case when it's
+      created, usually), it will be placed at the top of the document.
+      In order to facilitate editing this annotation, and so you don't
+      have to go looking for its icon, spanless annotations will
+      automatically open an annotation editor.<br>
+    </p>
+    <img alt="[spanless editor]"
+      src="../img/voa1_spanless_annotation_editor.jpg" height="668"
+      width="1020">
+    <p>At this point, you can select or create the annotation attribute
+      values, or otherwise edit the annotation.<br>
+    </p>
+    <h2><a name="Operations_on_spanless_annotations"></a>Operations on
+      spanless annotations</h2>
+    <p>Once you have created a spanless annotation, you can click on its
+      icon in the spanless sidebar to obtain a popup menu analogous to
+      the popup menu for spanned annotations. From this menu, you can
+      delete the annotation, or edit or view the annotation. When you
+      hover over the spanless icon, it will highlight its annotation
+      attribute values, just as a spanned annotation would. You can also
+      view it in the annotation tables, and scroll to it just as you
+      would for a spanned annotation.<br>
+    </p>
+    <h2><a name="Spanless_annotations_and_choose_mode"></a>Spanless
+      annotations and choose mode</h2>
+    <p>Spanless annotations also interact seamlessly with
+      annotation-valued attributes and choose mode. You can select
+      attribute values for such an annotation just as you would for
+      spanned annotations. Similarly, if you're viewing an annotation
+      which can be a value of an spanless annotation attribute, you can
+      select or create a spanless annotation which it's a value of by
+      interacting with the spanless sidebar to create or select a
+      spanless annotation.<br>
+    </p>
+  </body>
+</html>

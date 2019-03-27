@@ -1,0 +1,174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Document Comparison</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Document comparison</h1>
+    <p>MAT provides a facility for <a href="ui_comparison.html">comparing
+
+
+
+        documents</a> using the <a href="score_algorithm.html">same
+        algorithm</a> the scorer uses. Documents may be compared if they
+      have the identical underlying signal. (It only makes sense to
+      compare documents which have been annotated using the same task,
+      but MAT doesn't necessarily know which task was used to annotate a
+      document, so it only enforces the signal condition - it's up to
+      the user to enforce the task condition.)<br>
+    </p>
+    <p>Document comparison works for all annotation set descriptors
+      which can be compared using the scorer's pairing algorithm,
+      including spanless annotations and annotations with complex
+      attribute structure.<br>
+    </p>
+    <ul>
+      <li><a href="#Selecting_documents_for_comparison">Selecting
+          documents for comparison</a></li>
+      <li><a href="#Customizing_the_presentation_">Customizing the
+          presentation</a></li>
+      <li><a href="#Viewing_the_result">Viewing the result</a><br>
+      </li>
+    </ul>
+    <h2><a name="Selecting_documents_for_comparison"></a>Selecting
+      documents for comparison<br>
+    </h2>
+    <p>From the file menu, select "Compare files...". You'll be
+      presented with a modal dialog that looks like this:<br>
+    </p>
+    <p><img style=" width: 342px; height: 146px;" alt="[dialog start]"
+        src="../img/ui_compare_dialog_start.jpg"><br>
+    </p>
+    <p>From this dialog, you must first select a task. Once you do,
+      you'll be able to make a selection from the "Compare:" menu. This
+      menu contains a list of all the available documents which have
+      been loaded with the selected task (including workspace
+      documents), plus an option to "Load document...". Select an
+      element and press the "Go!" button, and the document will be
+      listed:<br>
+    </p>
+    <p><img style=" width: 459px; height: 146px;" alt="[docmenu]"
+        src="../img/ui_compare_dialog_docmenu.jpg"><br>
+    </p>
+    <p><img alt="[first doclist]"
+        src="../img/ui_compare_dialog_first_doclist.jpg" height="212"
+        width="489"><br>
+    </p>
+    <p>Once the first document is selected, only documents with a
+      matching underlying signal which haven't been selected previously
+      will be available for selection:<br>
+    </p>
+    <p><img alt="[next docmenu]"
+        src="../img/ui_compare_dialog_next_docmenu.jpg" height="211"
+        width="474"><br>
+    </p>
+    <p>The "Load document..." option will place another modal dialog at
+      the front which allows you to select a document in the usual way.
+      Once you open this document, it too will be listed in the "Align
+      documents" dialog:<br>
+    </p>
+    <p><img style=" width: 485px; height: 207px;" alt="[docload]"
+        src="../img/ui_compare_dialog_docload.jpg"><br>
+    </p>
+    <p>The elements in the "Compare documents" document list can be <a
+        href="#Customizing_the_presentation_">reordered</a>. You can
+      select as many documents as you like. Once at least two documents
+      have been selected, the "Compare" button will be enabled.<br>
+    </p>
+    <p><img alt="[full doclist]"
+        src="../img/ui_compare_dialog_alldocs.jpg" height="298"
+        width="513"><br>
+    </p>
+    <p>Before you press the "Compare" button, you might want to
+      customize the comparison presentation.<br>
+    </p>
+    <h2><a name="Customizing_the_presentation_"></a>Customizing the
+      presentation</h2>
+    <p>You have a number of options available to you for your comparison
+      presentation. You can choose where the annotations for a given
+      document will be shown (above, behind, or below the text) and
+      whether to associate a mnemonic initial with a given document.<br>
+    </p>
+    <p>To the left of each entry in the "Align documents" dialog you'll
+      see either "[Reference]", or a menu with the values "above" and
+      "below". The reference can be selected by clicking the radio
+      button, as instructed; the reference document is always placed
+      behind the text. The menus can be used to place the remaining
+      documents either above or below the text; the document annotations
+      for those documents will be stacked in the order in which the
+      documents are listed.<br>
+    </p>
+    <p>Below each entry is a place to enter an mnemonic initial, in the
+      "Initial:" field. This initial will appear in the list of
+      documents at the head of the alignment display, and also in the
+      annotation description at the bottom of the alignment display when
+      you hover your mouse over the annotation. If no initial is
+      provided, a number will be assigned.<br>
+    </p>
+    Here's the alignment dialogue above with the documents placed in
+    their intended positions, and initials provided:
+    <p><img alt="[modified doclist]"
+        src="../img/ui_compare_dialog_alldocs_modified.jpg" height="298"
+        width="514"><br>
+    </p>
+    <h2><a name="Viewing_the_result"></a>Viewing the result</h2>
+    <p>Now, press the "Compare" button. Your window will look like this:<br>
+    </p>
+    <p><img alt="[comparison window]" src="../img/ui_compare_window.jpg"
+        height="690" width="1019"><br>
+    </p>
+    <p>Note that the documents are listed in the panel on the right,
+      with their initials and positions, and that the mouse in this
+      example is hovering over one of the annotations from the document
+      corresponding to annotator A. </p>
+    Each pairing among annotations is described in the table in the
+    "Pairings" tab at the bottom. The reference document is in the first
+    document column; all other columns show the documents which are
+    being paired with the reference. At the beginning of each line, a
+    box indicates whether the pairing is a perfect pairing or not; in
+    order to be a perfect pairing, all the annotations in all the
+    non-reference document must match the reference document exactly. In
+    each non-reference column, an icon indicates whether the element in
+    that cell matches the reference in that row (green for match, red
+    for mismatch). If one of the documents doesn't have an element which
+    matches the reference, the cell will be blank.<br>
+    <br>
+    A special case is if the non-reference documents contain elements
+    which aren't present in the reference. In this case, the reference
+    column cell will be blank; however, no attempt is made to match the
+    non-reference elements with each other. So, for instance, if both
+    annotators A and B were to annotate (identically) a span of text
+    which isn't annotated in the reference, there will be two pairings
+    in the pairings table, not one.<br>
+    <br>
+    As you can see, if you hover over an annotation in the document, the
+    corresponding row is highlighted in the pairings table. The popup
+    menu for the annotation in the document will also have a "Scroll to
+    pairings" entry, which will bring the row in the pairings table into
+    view. Conversely, if you hover over a row in the pairings table, the
+    annotations corresponding to that row are highlighted in the
+    document:<br>
+    <br>
+    <img alt="[highlighted pairing]"
+      src="../img/ui_compare_window_highlight.jpg" height="691"
+      width="1020"><br>
+    <p>You can also click on an annotation in the pairings table to
+      access a popup menu which allows you to scroll to that annotation.<br>
+    </p>
+    <p>Finally, immediately above the pairings table in the pairings
+      detail tab, there's a menu which allows you to filter the pairings
+      table. You can filter on matched vs. nonmatched, spanned vs.
+      spanless, or on individual labels.<br>
+    </p>
+    <p>The comparison display works identically in the case of spanless
+      annotations. The spanless pairs will be listed in the table along
+      with the spanned pairs, and highlighting and scrolling work
+      straightforwardly as well.<br>
+    </p>
+  </body>
+</html>

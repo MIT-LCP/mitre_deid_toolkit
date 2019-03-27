@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Tutorial 3: Automated Tagging in the UI</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Tutorial 3: Automated tagging in the UI<br>
+    </h1>
+    <p>In <a href="tutorial_2.html">Tutorial 2</a>, you used a
+      command-line tool to build a model. In this step, we'll use the UI
+      to process documents using, among other things, the model you
+      built. We're going to use the same simple named entity task that
+      comes with MAT, and we're going to assume that your task is
+      installed.&nbsp; Like Tutorial 2, we're going to do this tutorial
+      in <a href="files_and_workspaces.html">file mode</a>.<br>
+    </p>
+    <p>In this tutorial, we're going to make use of the model we built
+      in Tutorial 2.<br>
+    </p>
+    <h2>Step 1: Start up the Web server and UI<br>
+    </h2>
+    <p>See the section on <a href="tutorial_1.html#Start_the_UI">starting
+
+
+        the UI</a> in Tutorial 1<a href="start_ui.html"></a>. If you
+      failed to shut down your Web server at the end of Tutorial 1, shut
+      it down and restart it now; any models you built in Tutorial 2
+      won't be visible to the server until you restart it.<br>
+    </p>
+    <h2>Step 2: Prepare a document for automated tagging<br>
+    </h2>
+    <p>Back in <a href="tutorial_1.html">Tutorial 1</a>, we used the UI
+      to prepare a document for hand tagging. Please repeat steps 3 and
+      4 from Tutorial 1, except you should use the "Demo" workflow
+      instead of the "Hand annotation" workflow. Once you complete those
+      steps, your window should look like this:<br>
+    </p>
+    <p><img alt="[voa2 zoned and toked]" src="../img/voa2_zone_tok.jpg"
+        height="663" width="1020"><br>
+    </p>
+    <p>Note that the zone and tokenize steps are grayed out, indicating
+      that they've been completed, and that the word units in the
+      document are delimited by gray boxes.<br>
+    </p>
+    <h2>Step 3: Tag</h2>
+    <p>You may recall from <a href="tutorial_2.html">Tutorial 2</a>
+      that we built a <span style="font-weight: bold;">default model</span>
+      for the Named Entity task. The UI knows about this default model,
+      and we can use it now.<br>
+    </p>
+    <p>Press the forward button again. The "tag" label in the Status
+      line should blink momentarily while the Web server loads the
+      model, and then you should see a window like this:<br>
+    </p>
+    <p><img alt="[voa2 zoned, toked, tagged]"
+        src="../img/voa2_zone_tok_tag.jpg" height="662" width="1020"><br>
+    </p>
+    <h2>Step 4: Undo and redo</h2>
+    <p>In the UI, you can undo an operation. Let's say, for instance,
+      you've applied the model as in step 3, but you haven't done any
+      hand correction, and you've subsequently prepared a more accurate
+      default model, and you want to undo the automated tagging and
+      apply the newer model.<br>
+    </p>
+    <p>Press the backward button. The UI will warn you that it's about
+      to undo unsaved changes:<br>
+    </p>
+    <p><img alt="" src="../img/warn_unsaved.jpg"><br>
+    </p>
+    <p>Press "Yes", and the document will return to the state it was in
+      at the end of Step 2. Press the forward button again, and the
+      document will return to the state it was in at the end of Step 3.<br>
+    </p>
+    <p>At this point, you can hand-correct annotations in the same way
+      you added and edited annotations in <a href="tutorial_1.html">Tutorial
+
+
+
+
+        1</a>. You can also save the document.<br>
+    </p>
+    <h2>Step 5: Clean up (optional)</h2>
+    <p>If you're not planning on doing any other tutorials, and you
+      don't want the "Named Entity" task hanging around, remove it as
+      shown in the final step of <a href="tutorial_1.html">Tutorial 1</a>.<br>
+    </p>
+    This concludes Tutorial 3.
+  </body>
+</html>

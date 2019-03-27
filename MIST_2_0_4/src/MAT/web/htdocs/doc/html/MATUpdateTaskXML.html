@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Task Updater</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Task updater<br>
+    </h1>
+    <h2>Description</h2>
+    <p>Version 2.0 of MAT introduced numerous modifications of the
+      task.xml task file format. MAT 2.0 will not work with tasks
+      created for previous versions of MAT. You can use this tool to
+      create a 2.0-compliant copy of your pre-2.0 task.xml file. <br>
+    </p>
+    <h2>Usage</h2>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATUpdateTaskXML</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATUpdateTaskXML.cmd</span><br><br>Usage: MATUpdateTaskXML [options] mat_1_3_root task_xml [outdir]<br><br>mat_1_3_root: a 1.3 final MAT root directory, typically src/MAT in the 1.3 distribution<br>task_xml: the task.xml file to update. The original file will be written to task.xml.1_3, and the new<br>  file, no matter what this name is, is task.xml. This way, you can repeatedly update the<br>  1.3 task.xml file if you need to<br>outdir: the directory to save the task.xml files to. Optional. By default, this will be the same<br>  directory you started with.<br></pre>
+    <h2>Options</h2>
+    <p></p>
+    <table border="1" cellpadding="2" cellspacing="2" width="100%">
+      <tbody>
+        <tr>
+          <td valign="top">--print_to_stdout<br>
+          </td>
+          <td valign="top">if present, print to stdout instead of
+            task.xml, and don't copy the original<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">--cheat_on_1_3_requirement<br>
+          </td>
+          <td valign="top">don't require that the mat_1_3_root actually
+            be 1.3, but permit early versions of 2.0<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

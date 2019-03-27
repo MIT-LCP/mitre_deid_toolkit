@@ -1,0 +1,432 @@
+/* Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. */
+
+body {
+  font-family: sans-serif;
+}
+
+/* Doubling up on the classes to override, again. */
+.yui-skin-sam .yui-layout.yui-layout {
+  background-color: transparent;
+}
+
+.yui-skin-sam .yui-layout .yui-layout-unit div.yui-layout-bd.yui-layout-bd {
+  background-color: transparent;
+}
+
+.yui-skin-sam .yui-navset .yui-content.yui-content {
+  background-color: transparent;
+}
+
+/* The various panes */
+
+#layoutright {
+  height: 100%;
+  overflow: auto;
+}
+
+.docInput td {
+  vertical-align: middle;
+}
+
+.dataTable td {
+  vertical-align: top;
+  border: ridge black;
+  height: 100%;
+}
+
+.docColumn {
+  border: ridge black;
+  padding: 5px;
+}
+
+.resizeableTabSet .yui-navset {
+  position: relative;
+  height: 100%;
+}
+
+.resizeableTabSet .yui-navset .yui-nav {
+  position: absolute;
+  top: 0px;
+  width: 100%;
+  /* bottom will be set programmatically */
+}
+
+.resizeableTabSet .yui-navset .yui-content {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  /* top will be set programmatically */
+}
+
+/* Doc steps. */
+
+.docstep {
+  white-space: nowrap;
+  display: inline-block; /* apparently, this only works if it's on a block */
+  line-height: 1em; /* turning off padding from enclosing element */
+}
+
+.docstep.stepunderway, .docstep.stepdone {
+  background-color: #CCCCCC;
+}
+
+.verticallyAligned {
+  vertical-align: middle;
+}
+
+.stepbuttonspan > img {
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: middle;
+}
+
+.stepbuttonspan {
+  border: 1px solid black;
+  padding: 3px;
+  line-height: 2em;
+}
+
+/* Positioning information */
+
+html {
+  overflow: hidden;
+}
+
+body {
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* At the moment, we're sort of hosed here. I'd like
+   the docColumnContainer to fill whatever of the body
+   isn't taken up by the controlDiv, but that seems not
+   to be possible. CSS sucks. */
+
+.docColumnContainer {
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+.docPaneContainer {
+  position: absolute;
+  top: 1em;
+  bottom: 15px;
+  width: 100%;
+  overflow: auto;
+}
+
+.readOnly .docPaneContainer {
+  top: 0px;
+}  
+
+.docHeader {
+  position: absolute;
+  top: 0px;
+  height: 1em;
+  display: normal;
+  width: 100%;
+  border-bottom: 1px solid black;
+  font-size: 77%;
+}
+
+.readOnly .docHeader {
+  display: none;
+}
+
+.docFooter {
+  position: absolute;
+  height:15px;
+  bottom: 0px;
+  font-size: 77%;
+  padding:0;
+  border-top: 1px solid black;
+  width: 100%
+}
+
+.controlDiv.suppressControls tr.writeonly {
+  display: none;
+}
+
+.collapsibleDiv {
+  padding: 5px;
+}
+
+.collapsibleDiv .hd {
+  border: ridge black;
+  padding: 5px;
+  font-size: 150%;
+  position: relative;
+}
+
+.collapsibleDiv .hd .columnHideShow {
+  display: inline-block;
+  position: absolute;
+  height: 20px;
+  width: 40px;
+  top: 10px;
+  right: 15px;
+  cursor: pointer;
+}
+
+.collapsibleDiv.expanded .hd .columnHideShow {
+  /* Switch to 800px for down arrow */
+  background: url(/MAT/resources/yui-2.6.0-dist/build/assets/skins/sam/sprite.png) no-repeat scroll 0 -750px transparent;
+}
+
+.collapsibleDiv.contracted .hd .columnHideShow {
+  background: url(/MAT/resources/yui-2.6.0-dist/build/assets/skins/sam/sprite.png) no-repeat scroll 0 -800px transparent;
+}
+
+.collapsibleDiv.expanded .bd {
+  display: block;
+}
+
+.collapsibleDiv.contracted .bd {
+  display: none;
+}
+
+.docButtonRow {
+  top: 0;
+  right: 0;
+  height: 1.5em;
+  position: absolute;
+}
+
+.tabControlButton {
+  border: 2px inset gray;
+  margin-left: 2px;
+  text-align: center;
+  display: inline-block;
+  width: 1em;
+  font-size: 60%;
+}
+
+/*
+
+   DESKTOP BLOCK
+
+   This block of CSS was adoped directly from the Yahoo! UI toolkit OS menu
+   example at http://developer.yahoo.com/yui/examples/menu/applicationmenubar.html.
+
+*/
+
+/*
+  Setting the "zoom" property to "1" triggers the "hasLayout" 
+  property in IE.  This is necessary to fix a bug IE where 
+  mousing off a the text node of MenuItem instance's 
+  text label, or help text without the mouse actually exiting the
+  boundaries of the MenuItem instance will result in the losing  
+  the background color applied when it is selected.
+*/
+            
+.appmenubar .yuimenu.visible .yuimenuitemlabel {
+  *zoom: 1;
+}
+
+/*
+  Remove "hasLayout" from the submenu of the file menu.			
+*/
+
+.appmenubar .yuimenu.visible .yuimenu .yuimenuitemlabel {
+  *zoom: normal;
+}
+
+/*
+  
+  END DESKTOP BLOCK
+
+*/
+
+/* 
+  
+  TAGGED PANEL BLOCK
+
+  A good deal of this was taken directly from the YUI example at 
+
+  http://developer.yahoo.com/yui/examples/container/panel-resize.html
+
+*/
+
+/* See the positioning for .controlDiv and .docData above. */
+
+/* This has to be more specific than the normal resize spec.
+   Since you can increase the specificity of rules by adding
+   classes, I'll just repeat the class. */
+
+.yui-resize.resizeablePanel.resizeablePanel .yui-resize-handle-br {
+  right:0;
+  bottom:0;
+  height: 8px;
+  width: 8px;
+  position:absolute;
+}
+
+.resizeablePanel .bd {
+  overflow: auto;
+}
+
+/* I really don't want this to be hard-coded to the version, but 
+   right now, I don't want to mess with it. Otherwise, the CSS
+   is copied pretty directly from the container-close CSS, and
+   the location and shape of the icon is taken from the collapse
+   icon in the YUI rich text editor. */
+
+.yui-panel-container .container-hide {
+  background: transparent url(/MAT/resources/yui-2.6.0-dist/build/assets/skins/sam/sprite.png) no-repeat scroll 0 -400px;
+  cursor:pointer;
+  height:15px;
+  position:absolute;
+  right:35px;
+  top:6px;
+  width:15px;
+  overflow:hidden;
+  text-decoration:none;
+  text-indent:-10000em;
+}
+
+/*  
+   The following CSS is added to prevent scrollbar bleedthrough on
+   Gecko browsers (e.g. Firefox) on MacOS.
+*/
+
+/*
+   PLEASE NOTE: It is necessary to toggle the "overflow" property 
+   of the body element between "hidden" and "auto" in order to 
+   prevent the scrollbars from remaining visible after the the 
+   Resizable Panel is hidden.  For more information on this issue, 
+   read the comments in the "container-core.css" file.
+       
+   We use the #reziablepanel_c id based specifier, so that the rule
+   is specific enough to override the .bd overflow rule above.
+
+   SAM: I'm hoping we're not going to need this without the bd overflow
+   rule. #resizeablepanel_c is the ID of the container around
+   the resizeable panel.
+   
+*/
+
+.hide-scrollbars > .resizeablePanel.yui-resize .bd {
+  overflow: hidden;
+}
+
+.show-scrollbars > .resizeablePanel.yui-resize .bd {
+  overflow: auto;
+}
+
+/*
+   PLEASE NOTE: It is necessary to set the "overflow" property of
+   the underlay element to "visible" in order for the 
+   scrollbars on the body of a Resizable Panel instance to be 
+   visible.  By default the "overflow" property of the underlay 
+   element is set to "auto" when a Panel is made visible on
+   Gecko for Mac OS X to prevent scrollbars from poking through
+   it on that browser + platform combintation.  For more 
+   information on this issue, read the comments in the 
+   "container-core.css" file.
+
+*/
+
+.show-scrollbars .underlay {
+  overflow: visible;
+}
+
+/*
+  
+  END TAGGED PANEL BLOCK
+
+*/
+
+/*
+
+   WORKSPACE PANEL BLOCK
+
+   I have to customize the table in here to stretch all the way across.
+
+*/
+
+/* So I'm once again having trouble figuring out how to scroll just
+   the table, because now the table header takes up room, but it's not
+   sized, and I'd have to size it explicitly in order to pin the
+   top and bottom of the other element in the table widget and
+   scroll inside it. CSS really, really sucks. The easy answer is
+   to get rid of the table header, because I don't need it, and then
+   make the table 100% height. Cheating, but desperate times, etc... */
+
+/* Actually, I've now adopted a different solution, where I explicitly
+   relocate the header, into the padding for the wsPanelBody.
+
+   I'm trying to override the defaults, which is why I've stuck in the
+   extra yui-dt-scrollable. */
+
+.wsPanelBody .yui-dt-scrollable .yui-dt-hd {
+    position: absolute;
+    top: 0px;
+}
+
+/* Leave this in, in case I ever want to show the header again. */
+
+.wsPanelBody .yui-dt-bd > table,
+.wsPanelBody .yui-dt-hd > table {
+  width: 100%;
+}
+
+.wsPanelBody {
+  position: absolute;
+  overflow: hidden;
+  top: 5px;
+  bottom: 5px;
+  left: 5px;
+  right: 5px;
+  /* I'm going to displace the header, because that seems to be
+     the only way to get resize to work properly. */
+  padding-top: 2em;
+}
+
+/*
+
+  END WORKSPACE PANEL BLOCK
+
+*/
+
+/*
+  
+  Customizations for file menu 
+
+*/
+
+.suppressedMenus .taskandworkflow {
+  display: none;
+}
+
+/*
+
+  End customizations for file menu
+
+*/
+
+/*
+
+  RECONCILIATION PANEL BLOCK
+
+*/
+
+.reconciliationDocColumn .legendColumnTop {
+   height: 50%;
+}
+
+.reconciliationDocColumn .legendColumnBottom {
+   height: 50%;
+   border-top: 1px solid black;
+}
+
+/*
+
+  END RECONCILIATION PANEL BLOCK
+
+*/

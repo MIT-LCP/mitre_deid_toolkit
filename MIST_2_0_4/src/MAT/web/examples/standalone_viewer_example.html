@@ -1,0 +1,118 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<title>MAT Standalone Document Viewer Example</title>
+<!-- You should be able to load this example using file:///,
+     otherwise, rewrite these paths to point to your MAT installation. -->
+
+<script type="text/javascript" src="../htdocs/js/mat_utils.js"></script>
+<script type="text/javascript" src="../htdocs/js/mat_core.js"></script>
+<script type="text/javascript" src="../htdocs/js/core_ui.js"></script>
+<script type="text/javascript" src="../htdocs/js/mat_doc_display.js"></script>
+<link rel="stylesheet" type="text/css" href="../htdocs/css/mat_core.css">
+
+<!-- If you want the viewer to support annotation, uncomment these three tags.
+     These must appear BEFORE mat_standalone_doc_viewer.js appears.
+
+     You'll need to support the path to the YAHOO! UI Toolkit, which is included with
+     your MAT distribution zip file. If you've obtained MAT some other way,
+     you'll need a distribution of YUI 2.6.0, and you'll need to update the
+     reference to yuiloader.js below. -->
+<!--
+<script type="text/javascript" src="../../../yui-2.6.0-dist/build/yuiloader/yuiloader.js" ></script>
+<script type="text/javascript" src="../htdocs/js/workbench_ui_popup_mgr.js"></script>
+<link href="../htdocs/css/workbench_ui_annotation.css" rel="stylesheet" type="text/css">
+-->
+
+<script type="text/javascript" src="../htdocs/js/mat_standalone_doc_viewer.js"></script>
+
+<!-- If you load YUI, you'll need to wrap any code that creates a document viewer
+     in the MAT.DocDisplay.StandaloneViewer.waitForYUI function. -->
+
+<script type="text/javascript">
+var Tags = [{label: "PERSON", css: "background-color: #CCFF66"},
+            {label: "LOCATION", css: "background-color: #FF99CC"},
+            {label: "ORGANIZATION", css: "background-color: #99CCFF"}];
+
+function onload() {
+  MAT.DocDisplay.StandaloneViewer.waitForYUI(function () {
+    var legendDiv = document.getElementById("legendDiv");
+    var docDiv = document.getElementById("docDiv");
+    var annotUpdate = document.getElementById("annotHighlight");
+    
+    // Set up the viewer.
+    var viewer = new MAT.DocDisplay.StandaloneViewer({
+      tags: Tags,
+      taskName: "Named Entity",
+      div: docDiv,
+      legendDiv: legendDiv,
+      // Uncomment if you want hand annotation enabled.
+      // annotatable: true,
+      callbacks: {
+        mouseOverAnnotations: function(contentObj) {
+          annotUpdate.innerHTML = contentObj.labels.join(", ") + (contentObj.suffix || "");
+        },
+        cancelMouseOverAnnotations: function() {
+          annotUpdate.innerHTML = "";
+        }
+      }
+    });
+    
+    // Uncomment if you want hand annotation enabled.
+    // viewer.enableHandAnnotation();
+    
+    var DocTable = {
+      Gold: {"signal": "David Asher is a former coordinator of North Korea policy at the\nU.S. State Department. During a visit to Seoul this week, he said\nthere are signs North Korea may be contemplating more missile tests. \n", "metadata": {}, "asets": [{"type": "ORGANIZATION", "attrs": [], "annots": [[70, 86]]}, {"type": "LOCATION", "attrs": [], "annots": [[39, 50], [65, 69], [106, 111], [147, 158]]}, {"type": "PERSON", "attrs": [], "annots": [[0, 11]]}]},
+      Annotator1: '{"signal": "David Asher is a former coordinator of North Korea policy at the\\nU.S. State Department. During a visit to Seoul this week, he said\\nthere are signs North Korea may be contemplating more missile tests. \\n", "metadata": {}, "asets": [{"type": "PERSON", "attrs": [], "annots": [[0, 11]]}, {"type": "LOCATION", "attrs": [], "annots": [[106, 111], [147, 158], [45, 50]]}, {"type": "ORGANIZATION", "attrs": [], "annots": [[65, 86]]}]}',
+      Annotator2: viewer.newDocument("David Asher is a former coordinator of North Korea policy at the\nU.S. State Department. During a visit to Seoul this week, he said\nthere are signs North Korea may be contemplating more missile tests. \n")
+    };
+
+    var annots = [["ORGANIZATION", 70, 86], ["ORGANIZATION", 147, 158], ["PERSON", 0, 11], ["LOCATION", 39, 50]];
+    var d = DocTable.Annotator2;
+    for (var i = 0; i < annots.length; i++) {
+      d.createAnnotation(annots[i][0], annots[i][1], annots[i][2]);
+    }
+
+    // Render a document.
+    var singleDocButton = document.getElementById("singledocbutton");
+    var multiDocButton = document.getElementById("multipledocbutton");
+    var animateDocButton = document.getElementById("animatebutton");
+    singleDocButton.onclick = function () {
+      viewer.renderSingleDocument(DocTable.Gold);
+    };
+    multiDocButton.onclick = function () {
+      viewer.renderDocumentAlignment([{doc: DocTable.Annotator1, position: "above", initial: "1"}, {doc: DocTable.Annotator2, position: "above", initial: "2"}, {doc: DocTable.Gold, position: "behind", initial: "G"}]);
+    };
+    animateDocButton.onclick = function() {
+      viewer.renderSingleDocument(DocTable.Annotator2);
+      var allAnnots = DocTable.Annotator2.allContentAnnotations({ordered: true});
+      var i = 0;
+      var undoer = null;
+      function doIt() {
+        if (undoer) {
+          undoer();
+          undoer = null;
+        }
+        if (i < allAnnots.length) {
+          undoer = viewer.styleAnnotation(allAnnots[i], {returnUndoFn: true, all: {styleDict: {textDecoration: "underline", fontWeight: "bold"}}});
+          i+= 1;
+          setTimeout(doIt, 500);
+        }
+      }
+      setTimeout(doIt, 500);
+    };
+  });
+}
+</script>
+</head>
+<body onload="onload()">
+<div><p><input type="button" value="Single doc" id="singledocbutton">
+  <input type="button" value="Multiple docs" id="multipledocbutton">
+  <input type="button" value="Animate annotations" id="animatebutton">
+<h1>Legend</h1>
+<div id="legendDiv"></div>
+<p>Current annotation (hover mouse over doc): <span id="annotHighlight"></span>
+<h2>Document</h2>
+<div id="docDiv"></div>
+</div></body>
+</html>

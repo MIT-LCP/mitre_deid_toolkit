@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>The UI and Workspace Security</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>The UI and workspace security<br>
+    </h1>
+    <p>The <a href="MATWeb.html">MAT Web server</a> provides service
+      access to workspaces, which the UI subscribes to. Unlike file
+      mode, workspace mode is <span style="font-weight: bold;">stateful</span>
+      from the point of view of the UI. It is the server, rather than
+      the client, which loads and saves the files. However, we don't
+      want just anybody to be able to cause the server to perform these
+      stateful operations, so the <a href="MATWeb.html">MAT web server</a>
+      implements a very simple security mechanism.<br>
+    </p>
+    <div style="margin-right: 10px; margin-left: 10px; padding-left:
+      10px; padding-right: 10px; border: 1px solid black;
+      background-color: lightgray">
+      <h2>The MAT Web server is NOT SECURE<br>
+      </h2>
+      <p>The MAT Web server is <span style="font-weight: bold;">not an
+          enterprise-secure implementation, and will never be one</span>.
+        It does not use SSL; in workspace mode, it does not perform any
+        sort of user authentication beyond the workspace key; it does
+        not provide any security logging or traceability. You should
+        assume that anyone who has access to your network can see your
+        Web server traffic, and either observe or (in the case of
+        workspaces) overwrite your data.</p>
+    </div>
+    <p>The MAT Web server doesn't support accounts, logins, or special
+      file permissions. Instead, when the server starts, it generates
+      and prints a <span style="font-weight: bold;">workspace key</span>.
+      This key is a 32-character random alphanumeric sequence. When the
+      user wants to interact with the server in workspace mode, the UI
+      prompts the user for this key, and transmits it to the server,
+      which compares it to the key it generated. If they match,
+      workspace mode is enabled; if they don't, it's not. This mechanism
+      guarantees that only the person who started the Web server, or
+      someone that person has transmitted the workspace key to, can
+      access the workspace via that Web server.<br>
+    </p>
+    <p>In addition, by default, the Web server only allows local clients
+      to access workspaces; if you're contacting the Web server from
+      another machine, you won't be able to open any workspaces.
+      However, you can override this behavior by starting the server
+      with the --allow_remote_workspace_access option.</p>
+    <p>This mechanism is simple and straightforward. There's no account
+      management required, and the server can only be interrogated for
+      the workspace key via its command loop, which means that unless
+      you have console access to the Web server, you can't discover the
+      key.<br>
+    </p>
+    <h2>Refinements<br>
+    </h2>
+    <p> Permissions aren't issued per workspace; the Web server has
+      exactly as much file access as the user who started the Web
+      server. As a result, we need to provide the ability to carefully
+      circumscribe the workspace access the clients have. So we've added
+      the --workspace_container_directory option to the MAT Web server.
+      This option can be used to force the Web server to search only the
+      directories specified for workspaces. With this flag, although all
+      changes are still made with the UID of the user who started the
+      Web server, the accessible directories are strictly limited.</p>
+    <ul>
+    </ul>
+    <p>The user can provide a workspace key to the Web server rather
+      than having one automatically generated. The MAT Web server
+      provides a simple command-line option, --workspace_key, for this.
+      However, if the user uses this option, the key will be visible in
+      Unix process listings. This may be acceptable for single-user
+      local access or for testing, but is clearly unacceptable for
+      deploying the MAT Web server as a persisent service. To address
+      this shortcoming, we've added the --workspace_key_file option to
+      the MAT Web server. This file should be UTF-8 text file readable
+      only by the user who starts MATWeb. As an added bit of security,
+      this mechanism is the only mechanism used when the MAT Web server
+      automatically restarts - even if the user originally used the
+      --workspace_key option.<br>
+    </p>
+    <p>If the MAT Web server is being run as a persistent service, it's
+      likely that the output of the MAT Web server will be saved to a
+      log file using the --output_log option. The workspace key is
+      printed to the console when the MAT Web server starts up, so the
+      key will be visible in this file. As a precaution, then, whoever
+      sets up the MAT Web server should ensure that the output log is
+      readable only by the user who starts MATWeb.<br>
+    </p>
+  </body>
+</html>

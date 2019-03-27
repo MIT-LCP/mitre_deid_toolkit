@@ -1,0 +1,268 @@
+/* Copyright (C) 2007 - 2011 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. */
+
+/* I want the text to preserve whitespace, but
+wrap. See http://archivist.incutio.com/viewlist/css-discuss/55677.  */
+
+.docView {
+  font-family: sans-serif;
+  white-space: pre-wrap;       /* css 2.1; not supported in Firefox */
+  white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+  word-wrap: break-word;       /* Internet Explorer 5.5+ */
+  padding: 5px; /* This is to give the highlighting boxes enough room on the margins. */
+}
+
+/* Turning off a specification in YUI. This works in current Safari, Chrome, Firefox.
+   Not Opera. */
+
+.yui-skin-sam .yui-layout .yui-layout-unit div.yui-layout-bd .docView {
+    text-align: start;
+}
+
+.spanlessSidebar {
+  font-family: sans-serif;
+  min-height: 100%;
+  width: 6em;
+  /* Originally, this was on alongsideSpanlessSidebar  - but
+     it turns out that only the sidebar is guaranteed to fill the viewport. */
+  border-right: 1px solid black;
+  position: relative;
+}
+
+.wordspan {
+  position: relative;
+  display: inline-block;
+  /* Establish a stacking order. */
+  z-index: 0;
+}
+
+/* Three different layers. superLayer is for the layers above the line;
+   subLayer for layers below; inLayer for layers in the text itself. */
+
+/* All these have 0px to position them at the left of the parent, so 
+   I can add them in any order. */
+
+.superLayer {
+  position: absolute;
+  width: 100%;
+  bottom: 100%;
+  left: 0px;
+}
+
+.subLayer {
+  position: absolute;
+  top: 100%;
+  width: 100%;
+  left: 0px;
+}
+
+.inLayer {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  width: 100%;
+  left: 0px;
+}
+
+/*
+
+   HIGHLIGHTING
+
+*/
+
+/* So the left, middle and right must be at different positions. */
+
+.annotHighlight {
+  /* default */
+  left: 0px;
+  z-index: -1;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: -5px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  border-top-width: 3px;
+  border-bottom-width: 3px;
+  /* Turns out that we need to do these one at a time,
+     otherwise, there's a solid border around everything.
+     Bug? No idea. */
+  border-top-style: solid;
+  border-bottom-style: solid;
+}
+
+.annotHighlight.hlStart {
+  border-left-width: 3px;
+  left: -5px;
+  padding-left: 2px;
+  border-bottom-left-radius: 3px;
+  border-top-left-radius: 3px;
+  border-left-style: solid;
+}
+
+.annotHighlight.hlEnd {
+  border-right-width: 3px;
+  padding-right: 2px;
+  border-bottom-right-radius: 3px;
+  border-top-right-radius: 3px;
+  border-right-style: solid;
+}
+
+/*
+.annotHighlight.hlStart.hlEnd {
+  border-left-width: 3px;
+  border-right-width: 3px;
+  padding-left: 2px;
+  padding-right: 2px;
+}
+*/
+
+.hlBoth.annotHighlight {
+  border-top-color: teal;
+  border-right-color: teal;
+  border-bottom-color: green;
+  border-left-color: green;
+}
+
+/* Highlighting the annotation AS A CHILD. */
+
+.hlChild.annotHighlight {
+  border-color: teal;
+}
+
+/* Highlighting the annotation AS A PARENT. */
+
+.hlParent.annotHighlight {
+  border-color: green;
+}
+
+.hlNeither.annotHighlight {
+  border-color: gray;
+}
+
+/* Tooltip. */
+
+.hlTooltip {
+  border: 2px solid gray;
+  z-index: 1;
+  position: absolute;  
+  font-size: 75%;
+  /* Make sure a bunch of things aren't inherited from the parent.
+     but you can't use text-decoration: none to undo parent text
+     decoration. Sigh. */
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-decoration: none;
+  padding: 2px;
+  margin: 2px;
+  background-color: white;
+  /* This has to be specified because we're the child
+     of spans which are styled with text color. */
+  color: black;
+  border-radius: 3px;
+  /* For some reason, it's wrapping each word. Tell it to stop. */
+  white-space: nowrap;
+}
+
+/*
+
+   ANNOTATE MENU BLOCK
+
+   Not borrowing any CSS here, but this is how I customize the
+   annotation menu.
+
+*/
+
+/* Providing feedback for annotated spans. Both of these are needed, one
+   for the token case and one for the tokenless case. */
+
+.docView span.annotationConsidered span, .docView span.annotationConsidered {
+  background-color: gray;
+}
+
+table.annEditor td {
+  padding: 5px;
+  vertical-align: top;  
+}
+
+/*
+
+  END ANNOTATE MENU BLOCK
+
+*/
+  
+/*
+
+  SEGMENT CUSTOMIZATIONS
+
+*/
+
+.segmentBeingReviewed > .docView .reconciliationDisplay.SEGMENT > .content {
+  background-color: #DDDDDD;
+}
+
+.segmentBeingReviewed > .docView .reconciliationDisplay.SEGMENT > .content.segmentUnderReview {
+  background-color: white;
+}
+
+.reconciliationDisplay.SEGMENT.attr_status_is_human_gold.attr_to_review_is_yes > .content.highlighted {
+  background-color: #DDDDDD;
+  /* font-weight: bold; */ /* Changes the width of the text - not wise */
+}
+
+.SEGMENT > .boundaryMarker {
+  font-weight: bold;
+  font-size: 200%;
+  vertical-align: middle;
+}
+
+/* In reconciliation, the gold boundary marker is always visible.
+   When .showProcessedVotes is present on the docview, then the
+   reconciled voted on segments are also visible. When hiddensegments
+   is not present, they're ALL visible. */
+
+.hiddenSegments .docView .fileDisplay.SEGMENT > .boundaryMarker {
+  display: none;
+}
+
+.hiddenSegments .docView .compDisplay.SEGMENT > .boundaryMarker {
+  display: none;
+}
+
+.reconciliationDisplay.SEGMENT.attr_status_is_human_gold > .boundaryMarker {
+  color: #FFCC00; /* Not quite yellow, but easier to read, I hope */
+}
+
+/* These are not displayed, in general. */
+
+.hiddenSegments .docView .reconciliationDisplay.SEGMENT > .boundaryMarker {
+  display: none;
+}
+
+/* Except in these conditions. */
+
+.hiddenSegments .docView .reconciliationDisplay.SEGMENT.attr_status_is_human_gold > .boundaryMarker,
+.hiddenSegments.showProcessedVotes .docView .reconciliationDisplay.SEGMENT.attr_status_is_reconciled.votedOn > .boundaryMarker {
+  display: inline;
+}
+
+/* Whether or not the reconciliation document has been voted on, it'green. */
+
+.fileDisplay.SEGMENT.attr_status_is_human_gold > .boundaryMarker,
+.SEGMENT.attr_status_is_reconciled > .boundaryMarker {
+  color: green;
+}
+
+/* And here, we set the cursor for when we hover over a segment boundary
+   that has a menu. */
+
+.segmentBoundaryMenuHover {
+  cursor: default;
+}
+
+/*
+
+  END SEGMENT CUSTOMIZATIONS
+
+*/

@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Experiment Engine</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>The experiment engine</h1>
+    <p>At various points, you might want to know how your system is
+      performing, and you might want to conduct an experiment. In a
+      typical experiment of this sort, you'd have to do a number of
+      things:<br>
+    </p>
+    <ul>
+      <li>Select an annotated training corpus to build a model from</li>
+      <li>Select an annotated test corpus to test the output of the
+        tagging engine</li>
+      <li>Build your model</li>
+      <li>Tag an unannotated version of the test corpus using the
+        constructed model</li>
+      <li>Score the tagging output against the annotated test corpus</li>
+    </ul>
+    <p>You may also want to select your training and test corpora by
+      partitioning an single corpus of documents, or iterate through a
+      variety of settings for the model builder or tagger to compare
+      their performance (e.g., different bias values for recall vs.
+      precision).<br>
+    </p>
+    <p>MAT provides an <a href="MATExperimentEngine.html">engine</a> to
+      do all this for you, guided by an extensive, <a
+        href="experiment_xml.html">declarative XML specification</a> for
+      your experiment. The experiment XML file consists of three types
+      of information:</p>
+    <p> </p>
+    <ul>
+      <li>descriptions of corpora</li>
+      <li>descriptions of model sets<br>
+      </li>
+      <li>descriptions of experiment runs </li>
+    </ul>
+    <p>The experiment engine runs this experiment in a directory which
+      is provided to it either via the XML file (the "dir" attribute of
+      the &lt;experiment&gt; element) or on the command line (the
+      --exp_dir option). The experiment engine prepares the corpora,
+      builds the models, and performs the experiment runs in this
+      directory. The experiment XML file is copied into the experiment
+      directory, if a file with the same name is not already present.<br>
+    </p>
+    <p>We document the wide range of ways that this engine can be used <a
+        href="experiment_xml_use_cases.html">here</a>; we describe the
+      rich structure of its output directory <a
+        href="experiment_output.html">here</a>. </p>
+  </body>
+</html>

@@ -1,0 +1,452 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Score Output</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Score output</h1>
+    <p>This document describes the output of the <a
+        href="MATScore.html">MATScore</a> tool. There are several
+      spreadsheets which can be produced: tag-level scores, token-level
+      scores, character-level scores, "pseudo-token"-level scores, and
+      details. By default, only the tag-level scores are produced.</p>
+    <h3>Annotation pairing and label matching</h3>
+    <p>The scorer uses a sophisticated <a href="score_algorithm.html">pairing
+
+
+
+
+
+        algorithm</a> to determine which annotation pairs should
+      generate the scores.<br>
+    </p>
+    <p>Throughout&nbsp; the scorer, we use the notion of <span
+        style="font-weight: bold;">effective label</span>, which we
+      describe <a href="annotation_intro.html">here</a> and <a
+        href="asd_reference.html#choice_of_attribute">here</a>. Whenever
+      possible, the scorer will use effective labels to display its
+      scores.<br>
+    </p>
+    <p> </p>
+    <h3>All score tables<br>
+    </h3>
+    <p>The four score tables have the following columns:<br>
+    </p>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <td style="vertical-align: top;">similarity profile<br>
+          </td>
+          <td style="vertical-align: top;">The similarity profile used
+            to generate the similarity scores for the annotations.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">score profile<br>
+          </td>
+          <td valign="top">The score profile used to group the output
+            scores.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">file<br>
+          </td>
+          <td valign="top">The file basename of the document being
+            scored.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">test docs<br>
+          </td>
+          <td style="vertical-align: top;">The number of test
+            (hypothesis) documents. This value will be the same for all
+            rows.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">tag</td>
+          <td valign="top">The true or effective label which is being
+            scored in this row. The final row will be a cumulative
+            score, with label "&lt;all&gt;".</td>
+        </tr>
+        <tr>
+          <td valign="top">tag subset<br>
+          </td>
+          <td valign="top">Optional. This column lists the particular
+            subset of the tag instances to be scored, if such a
+            decomposition is described in the score profile.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">test toks<br>
+          </td>
+          <td style="vertical-align: top;">The number of tokens in the
+            test documents. This value will be the same for all rows.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">match<br>
+          </td>
+          <td style="vertical-align: top;">The number of elements for
+            this true or effective label whose pairs have a perfect
+            similarity score.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">refclash<br>
+          </td>
+          <td style="vertical-align: top;">The number of elements which
+            bear this true or effective label in the reference document
+            which are paired with annotations in the corresponding
+            hypothesis document but do not have a perfect similarity
+            score. The scorer does not yet make it possible to make this
+            value the sum of the similarity scores, rather than the
+            count of elements.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">missing<br>
+          </td>
+          <td style="vertical-align: top;">The number of elements which
+            bear this true or effective label in the reference document
+            but are not paired with any element in the corresponding
+            hypothesis document.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">refonly<br>
+          </td>
+          <td style="vertical-align: top;">refclash + missing<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">reftotal<br>
+          </td>
+          <td style="vertical-align: top;">refonly + match<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">hypclash<br>
+          </td>
+          <td style="vertical-align: top;">The number of elements which
+            bear this true or effective label in the hypothesis document
+            which are paired with annotations in the corresponding
+            reference document but do not have a perfect similarity
+            score. The scorer does not yet make it possible to make this
+            value the sum of the similarity scores, rather than the
+            count of elements.</td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">spurious<br>
+          </td>
+          <td style="vertical-align: top;">The number of elements which
+            bear this true or effective label in the hypothesis document
+            but are not paired with any element in the corresponding
+            reference document.</td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">hyponly<br>
+          </td>
+          <td style="vertical-align: top;">hypclash + spurious<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">hyptotal<br>
+          </td>
+          <td style="vertical-align: top;">hyponly + match<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">precision<br>
+          </td>
+          <td style="vertical-align: top;">match / hyptotal<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">recall<br>
+          </td>
+          <td style="vertical-align: top;">match / reftotal<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">fmeasure<br>
+          </td>
+          <td style="vertical-align: top;">2 * ((precision * recall) /
+            (precision + recall))<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>For tag-level scores, the elements counted in the match,
+      refclash, missing, hypclash and spurious columns are annotations;
+      for the other scores, the elements counted are the basic elements
+      for the table (tokens, pseudo-tokens, or characters).<br>
+    </p>
+    <h3>Confidence data<br>
+    </h3>
+    <p>When the user requests confidence data in MATScore via the
+      --compute_confidence_data option, the scorer adds three columns
+      (mean, variance and standard deviation) to the spreadsheet for
+      each of the computed metrics (precision, recall, f-measure). These
+      columns appear immediately to the right of the column for the
+      metric.</p>
+    <h3><a name="Optional_error_detail_columns_in_the_tag"></a>Optional
+      error detail columns in the tag spreadsheet<br>
+    </h3>
+    When the pairing algorithm produces a similarity score for a pair of
+    annotations, and that pair is not perfect (between 0 and 1.0), the
+    pairing algorithm optionally records a "slug" for the cause of the
+    mismatch. If you specify the --tag_output_mismatch_details flat in
+    MATScore, the accumulated causes will be tabulated and reported in
+    the tag spreadsheet. These cause slugs vary by similarity dimension:
+    overmark and undermark for spans, tagclash for labels, setclash (set
+    mismatch) for set-valued attributes, etc. A pairing may contribute
+    multiple causes; so if a pair exhibits both a span and label
+    mismatch, both will be recorded. So the sum of the causes will not
+    correspond to the counts in the refclash or hypclash columns.<br>
+    <br>
+    If these causes are displayed, a column for each cause will appear
+    immediately after the refclash and hypclash columns in the tag
+    spreadsheet. For each &lt;slug&gt;, the reference column will be
+    named "ref&lt;slug&gt; (detail)" and the hypothesis column will be
+    named "hyp&lt;slug&gt; (detail)".<br>
+    <h2> <span style="font-weight: bold;"></span></h2>
+    <h3>Fixed-span scores (token, character, pseudo-token)</h3>
+    <p>The token, character and pseudo-token tables each use a different
+      basic element for their element counts. Because these elements are
+      fixed across the reference and hypothesis documents, there are no
+      span clashes in these score tables. The "test toks" column will be
+      labeled "test chars" and "test pseudo-toks" in the last two
+      spreadsheets.</p>
+    <p>The fixed-span score tables have some additions to the core
+      column set. The additional columns are:<br>
+    </p>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <td style="vertical-align: top;">tag_sensitive_accuracy<br>
+          </td>
+          <td style="vertical-align: top;">(test toks - refclash -
+            missing - spurious)/test toks (essentially, the fraction of
+            tokens in the reference which were tagged correctly,
+            including those which were not tagged at all)<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">tag_sensitive_error_rate<br>
+          </td>
+          <td style="vertical-align: top;">1 - tag_sensitive_accuracy<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">tag_blind_accuracy<br>
+          </td>
+          <td style="vertical-align: top;">(test toks - missing -
+            spurious)/test toks (essentially, the fraction of tokens in
+            the reference which were properly assigned a tag - any tag)</td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">tag_blind_error_rate<br>
+          </td>
+          <td style="vertical-align: top;">1 - tag_blind_accuracy<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>If user requests confidence data, it will be reported for all
+      four of these additional columns.<span style="font-weight: bold;"><br>
+      </span></p>
+    <h3><span style="font-weight: bold;"><a name="Pseudo-token_scores"></a>P</span>seudo-token
+
+
+
+
+
+      scores</h3>
+    <p>The token-level score elements are generated by whatever
+      tokenizer was used to tokenize the scored documents. If no
+      tokenizer was used, you won't be able to produce token-level
+      scores. Character scores, on the other hand, are always available,
+      because the characters themselves serve as the basic elements.<br>
+    </p>
+    <p>We've included character-level scoring to provide sub-tag-level
+      granularity in situations where tokenization hasn't been performed
+      or isn't available for some reason (although nothing stops you
+      from using these methods alongside token-level scores). In
+      addition, in the interest of producing something more "token-like"
+      in the absence of actual tokenization, we've designed a notion of
+      "pseudo-token". To compute the pseudo-tokens for a document, we
+      collect the set of start and end indices for the content
+      annotations in both the reference and hypothesis documents, order
+      the indices, and count the whitespace-delimited tokens in each
+      span, including the edge spans of the document. This count will
+      be, at minimum, the number of whitespace-delimited tokens in the
+      document as a whole, but may be greater, if annotation boundaries
+      don't abut whitespace.<br>
+    </p>
+    <p>For example, consider this deeply artificial example:<br>
+    </p>
+    <pre>ref: the future &lt;NP&gt;President of the United State&lt;/NP&gt;s<br>hyp: the&lt;NP&gt; future President of the Unit&lt;/NP&gt;ed States<br></pre>
+    <p>The pseudo-tokens in this document are computed as follows:<br>
+    </p>
+    <ul>
+      <li>First, find all the annotations. In the reference document,
+        there's an NP annotation at 11 - 40; in the hypothesis, an NP
+        annotation at 3 - 32. <br>
+      </li>
+      <li>Next, order all the indices. The sequence here is [3, 11, 32,
+        40].</li>
+      <li>Now, tokenize each interval. There's 1 token from 0 - 3, 1
+        token from 3 - 11, 4 tokens from 11 - 32 ("President of the
+        Unit"), 2 tokens from 32 - 40 ("ed State"), and 1 token at the
+        end ("s").</li>
+      <li>Add them up. The total number of pseudo-tokens is 9: 1
+        spurious, 4 match, and 2 missing, and 2 not involved in any
+        annotation.</li>
+    </ul>
+    <p>The granularity of pseudo-tokens is hopefully more informative
+      than character granularity for those languages which are
+      substantially whitespace-delimited, without having to make any
+      complex, and perhaps irrelevant, decisions about tokenization.
+      Using both the whitespace boundaries and the annotation boundaries
+      as region delimiters allows us to deal with the minimum level of
+      granularity that the pair of documents in question requires to
+      account for all the annotation contrasts. We recognize that this
+      is a novel approach, but we hope it will be useful.<br>
+    </p>
+    <p><span style="font-weight: bold;">Note</span>: unlike token and
+      character scores, the number of pseudo-tokens is a function of the
+      overlaps between the reference and hypothesis. Therefore, the
+      actual number of pseudo-tokens in the document will vary slightly
+      depending on the performance and properties of your tagger. <span
+        style="font-weight: bold;">Do not be alarmed by this</span>.<br>
+    </p>
+    <h3>Details</h3>
+    <p>The detail spreadsheet is intended to provide a span-by-span
+      assessment of the scoring inputs.<br>
+    </p>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <td style="vertical-align: top;">file<br>
+          </td>
+          <td style="vertical-align: top;">the name of the hypothesis
+            from which the entry is drawn<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">type<br>
+          </td>
+          <td style="vertical-align: top;">one of missing, spurious,
+            match (the meaning of these values should be clear from the
+            preceding discussion), or one of the error causes <a
+              href="#Optional_error_detail_columns_in_the_tag">described
+              above</a><br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">refid<br>
+          </td>
+          <td valign="top">the ID of the annotation in the reference
+            document, if the ID exists (used for cross-referencing with
+            annotation attribute values)<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">hypid<br>
+          </td>
+          <td valign="top">the ID of the annotation in the hypothesis
+            document, if the ID exists (used for cross-referencing with
+            annotation attribute values)</td>
+        </tr>
+        <tr>
+          <td valign="top">refdescription<br>
+          </td>
+          <td valign="top">the description of the annotation in the
+            reference document<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">hypdescription<br>
+          </td>
+          <td valign="top">the description of the annotation in the
+            hypothesis document<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">reflabel<br>
+          </td>
+          <td style="vertical-align: top;">the label on the annotation
+            in the reference document<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">refstart<br>
+          </td>
+          <td style="vertical-align: top;">the start index, in
+            characters, of the annotation in the reference document, if
+            spanned<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">refend<br>
+          </td>
+          <td style="vertical-align: top;">the end index, in characters,
+            of the annotation in the reference document, if spanned<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">hyplabel<br>
+          </td>
+          <td style="vertical-align: top;">the label on the annotation
+            in the hypothesis document</td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">hypstart<br>
+          </td>
+          <td style="vertical-align: top;">the start index, in
+            characters, of the annotation in the hypothesis document, if
+            spanned<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">hypend<br>
+          </td>
+          <td style="vertical-align: top;">the end index, in characters,
+            of the annotation in the hypothesis document, if spanned<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">refcontent<br>
+          </td>
+          <td style="vertical-align: top;">the text between the start
+            and end indices of the annotation in the reference document,
+            if spanned<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">hypcontent<br>
+          </td>
+          <td style="vertical-align: top;">the text between the start
+            and end indices of the annotation in the hypothesis
+            document, if spanned<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>In addition to these columns, if the task contains an
+      explicitly-defined similarity profile (i.e., not the default)
+      which specifies dimensions other than the label and span, the
+      mismatch type associated with each dimension will be listed, one
+      per column, immediately after the "hypend" column.<br>
+    </p>
+  </body>
+</html>

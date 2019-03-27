@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>File and Workspace Modes</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>File and workspace modes<br>
+    </h1>
+    <p>You can work with documents in MAT either in <span
+        style="font-weight: bold;">file mode</span> or in <span
+        style="font-weight: bold;">workspace mode</span>. In this
+      section, we describe each mode and the differences between the
+      two.<br>
+    </p>
+    <h2>File mode</h2>
+    <p>In file mode, you work with documents on an individual basis. MAT
+      doesn't care where they're loaded from, or where they're saved to.
+      If they're in MAT's rich standoff annotation format, they'll know
+      what steps have already been applied to them, but other than that,
+      the user must specify all the other parameters of any file mode
+      operation:<br>
+    </p>
+    <ul>
+      <li>the task</li>
+      <li>the workflow</li>
+      <li>the input encoding of raw documents</li>
+      <li>the exact location of the document or directory of documents
+        to be processed</li>
+      <li>the exact name of the input and output documents, including
+        whatever suffixes should be removed or added in order to
+        distinguish them from one another</li>
+      <li>whether the input and output are rich or raw</li>
+      <li>the workflow steps to apply to the document</li>
+    </ul>
+    <p>File mode is provided by <a href="MATEngine.html">MATEngine</a>
+      on the command line, and via "File -&gt; Open file..." in the Web
+      UI.<br>
+    </p>
+    <p>From the point of view of the UI, file mode in the Web server is
+      <span style="font-weight: bold;">stateless</span>. Files are
+      loaded from the client, and saved to the client, and the Web
+      server has no access to the file system to load and save the
+      files. The Web server is still crucial for the file loading and
+      saving, due to the nature of Web interfaces, and also applies all
+      the automated steps.<br>
+    </p>
+    <h2>Workspace mode</h2>
+    <p>A workspace is a directory, which contains a set of predefined
+      subdirectories for storing documents. We call these subdirectories
+      <span style="font-weight: bold;">folders</span>. Each folder has a
+      set of operations that you can perform on documents in that
+      folder; these operations may create versions of the file in other
+      folders, or move the file to another folder as a result of the
+      operation. Unlike file mode, the way you interact with a workspace
+      is almost entirely defined for you.<br>
+    </p>
+    <p><a href="workspaces.html">Workspace mode</a> is provided by <a
+        href="MATWorkspaceEngine.html">MATWorkspaceEngine</a> on the
+      command line, and via "File -&gt; Open workspace..." in the Web
+      UI. Unlike file mode, workspace mode is <span style="font-weight:
+        bold;">stateful</span> from the point of view of the UI. It is
+      the server that accesses the workspaces and loads and saves all
+      the files.</p>
+    <h2>Comparing the two modes</h2>
+    <h2> </h2>
+    <p>File mode requires more of the user at each step, but is also
+      significantly more flexible than workspace mode. Workspace mode,
+      on the other hand, provides considerably more structured support
+      and bookkeeping for the user, at the sacrifice of flexibility. For
+      instance:<br>
+    </p>
+    <ul>
+      <li>In file mode, you can undo steps in the UI. Your ability to
+        undo steps in workspace mode is much more limited.</li>
+      <li>In workspace mode, you never have to worry about where your
+        documents live, or what they're named. In file mode, you have to
+        manage this yourself.</li>
+      <li>In workspace mode, the initial preparation steps are handled
+        for you when you import the documents. In file mode, you have to
+        perform these steps by hand.</li>
+      <li>In workspace mode, you have a database which tracks the state
+        of each document, so you know what you've done and what needs to
+        be done.<br>
+      </li>
+      <li>Using workspace logging, you can keep a record of every change
+        you've made to a document.</li>
+    </ul>
+    <p>There are numerous other advantages to workspace mode, if you're
+      a task maintainer or you're managing multiple annotators. If
+      you're interested, look <a href="workspace_advanced.html">here</a>.<br>
+    </p>
+    <p>If you choose workspace mode, you can find more information about
+      it <a href="workspaces.html">here</a>.</p>
+    <h2>Switching modes<br>
+    </h2>
+    <p>It's important to stress that file mode and workspace mode <span
+        style="font-weight: bold;">cannot be freely mixed</span>. You
+      can invoke the file mode engine on a file in a workspace, but
+      you'll likely make a mess of things if you save it back to the
+      workspace. Similarly, you can't invoke the workspace engine on any
+      file that hasn't been imported into it. You can, for instance,
+      process some documents in file mode, and then import them into the
+      workspace, but you can make a mess of things by importing them
+      into the wrong folder in the workspace. Ideally, you'll load raw
+      documents into the "core" folder in the workspace and do all your
+      operations on those documents starting from there.<br>
+    </p>
+    <p>If you switch modes, you'll want to do it all at once. To switch
+      from workspace mode to file mode, copy the contents of the
+      "folders/core" subdirectory out of the workspace, and discard the
+      workspace directory. To switch from file mode to workspace mode,
+      just create a workspace and import your files into it. But you
+      should <b>never</b> use file mode operations on files when
+      they're in a workspace.<br>
+    </p>
+  </body>
+</html>

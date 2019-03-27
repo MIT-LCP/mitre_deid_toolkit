@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Creating a New Demo</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Creating a New Demo</h1>
+    <p>Once you've created your task, you have the option of setting up
+      a demo for the task. <a href="tutorial_4.html">Tutorial 4</a>
+      shows you what this demo looks like in the sample task.<br>
+    </p>
+    <h2>Step 1: Create a demo.xml file</h2>
+    <p>In your task directory, create an empty file named demo.xml.<br>
+    </p>
+    <h2>Step 2: Name your demo and set up your template</h2>
+    <p>Create a toplevel &lt;demo&gt; element, and give your demo a
+      name:<br>
+    </p>
+    <pre>&lt;demo name="My Widget Demo"&gt;<br>&lt;/demo&gt;<br></pre>
+    <p>This name is the name the user will see as the heading and title
+      of the demo page.<br>
+    </p>
+    <h2>Step 3: Add a description</h2>
+    <p>You'll probably want to describe the demo to your audience. You
+      can do this using the &lt;description&gt; element, which can
+      contain arbitrary HTML if you mark it explicitly as XML CDATA:<br>
+    </p>
+    <pre>&lt;demo name="My Widget Demo"&gt;<br>  &lt;description&gt;<br>&lt;![CDATA[<br>&lt;p&gt;This demo shows the widget task.<br><br>&lt;p&gt;Contact &lt;a href="mailto:me@myhost.com"&gt;me&lt;/a&gt; for more details.<br>]]&gt;<br>  &lt;/description&gt;<br>&lt;/demo&gt;<br></pre>
+    <h2>Step 4: Add your activities</h2>
+    <p>There might be a number of activities the user can do on the demo
+      page, especially if you've customized your task. Typically,
+      however, there will be a single activity, namely to tag documents.
+      The &lt;engine_settings&gt; element defines the arguments to
+      MATEngine which maps the input document to the outputs. You can
+      also make it possible to enable blank documents (i.e., allow empty
+      documents that the user can type into):<br>
+    </p>
+    <pre>...<br>  &lt;activity name="Tag" enable_blank_document="yes"&gt;<br>    &lt;description&gt;Automatically locate widgets in the document.&lt;/description&gt;<br>    &lt;engine_settings task = "My Widget Task" workflow="Demo" steps="zone,tokenize,tag"/&gt;<br>    &lt;sample_document description="Sample article #1"<br>                     file_type = "raw"<br>                     relative_location="examples/doc1.txt"/&gt;<br>    ...<br>  &lt;/activity&gt;<br></pre>
+    <p>You can have multiple sample documents.</p>
+    <p>One reason to have multiple activities might be if you want to
+      prepare some documents ahead of time, e.g., to zone and tokenize
+      the document.<br>
+    </p>
+    <p>Note that in order for automated tagging to work, you must either
+      have a default model specified in your task (and already built),
+      or you must provide the path to an existing model as part of the
+      &lt;engine_settings&gt;.<br>
+    </p>
+    <h2>Step 5: Install the demo</h2>
+    <p>If your task isn't already installed, use the MATManagePluginDirs
+      tool to ensure that MAT knows about your task directory. If
+      &lt;dir&gt; is your task directory:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATManagePluginDirs install &lt;dir&gt;</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATManagePluginDirs.cmd install &lt;dir&gt;</span><br></pre>
+    <h2>Step 6: View the demo</h2>
+    <p>Once you have a task, a demo, and a model specified and built for
+      the task, you can view and interact with your demo by surfing to
+      http://localhost:7801/tasks/&lt;lastpathcomponent&gt;/demo, where
+      &lt;lastpathcomponent&gt; is the last path component of the
+      directory path of your task.</p>
+  </body>
+</html>

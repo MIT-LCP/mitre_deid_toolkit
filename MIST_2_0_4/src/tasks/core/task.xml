@@ -1,0 +1,84 @@
+<!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+     file LICENSE for license terms. -->
+<tasks>
+  <task visible='no' name='Deidentification'
+        class='Deidentification.DeidTaskDescriptor'>
+    <doc_enhancement_class>Deidentification.DocEnhancer</doc_enhancement_class>
+    <annotation_set_descriptors all_annotations_known='no'
+                                inherit='category:zone,category:token'/>
+    <web_customization display_config='Deidentify'>
+      <js>js/deidentification_enhancements.js</js>
+      <short_name>MIST</short_name>
+      <long_name>MIST: The MITRE Identification Scrubber Toolkit</long_name>
+    </web_customization>
+    <workflows>
+      <workflow name='Hand annotation'>
+        <step proxy_for_steps='truezone,tokenize' name='zone'/>
+        <step pretty_name='hand tag' name='tag' by_hand='yes'/>
+        <step name='nominate'/>
+        <step name='transform'/>
+      </workflow>
+      <workflow name='Review/repair'
+                hand_annotation_available_at_beginning='yes'>
+        <step name='nominate'/>
+        <step name='transform'/>
+      </workflow>
+      <workflow name='Demo'>
+        <step proxy_for_steps='truezone,tokenize' name='zone'/>
+        <step name='tag'/>
+        <step name='nominate'/>
+        <step name='transform'/>
+      </workflow>
+      <workflow name='Resynthesize'>
+        <step name='tag'/>
+        <step name='nominate'/>
+        <step name='transform'/>
+      </workflow>
+    </workflows>
+    <step_implementations>
+      <!-- The default implementation here is for undo. This is in spite of the
+           fact that only Resynthesize will use it, and it actually may never be
+           used. I'm going to have to unwind this. -->
+      <step name='tokenize' class='MAT.JavaCarafe.CarafeTokenizationStep'/>
+      <step name='truezone' class='MAT.PluginMgr.WholeZoneStep'/>
+      <step name='zone' class='Deidentification.MultiZoneStepForUndo'/>
+      <step workflows='Resynthesize' name='zone'
+            class='Deidentification.ResynthZoneStep'/>
+      <!-- need a default implementation for undo -->
+      <step name='tag' class='MAT.PluginMgr.TagStep'/>
+      <!-- <step name="tag" workflows="Demo"
+           class="MAT.JavaCarafe.CarafeTagStep" heap_size="2G"/> -->
+      <step workflows='Demo' name='tag' class='MAT.JavaCarafe.CarafeTagStep'/>
+      <step workflows='Resynthesize' name='tag'
+            class='Deidentification.ResynthTagStep'/>
+      <step name='nominate' class='Deidentification.NominateStep'/>
+      <step name='transform' class='Deidentification.TransformStep'/>
+    </step_implementations>
+    <model_config class='MAT.JavaCarafe.CarafeModelBuilder'>
+      <build_settings feature_spec='../core/resources/amia.fspec'
+                      training_method='psa' max_iterations='6' heap_size='2G'/>
+    </model_config>
+    <default_model>default_model</default_model>
+    <workspace>
+      <operation name='autotag'>
+        <settings steps='tag' workflow='Demo'/>
+      </operation>
+      <operation name='modelbuild'>
+        <settings/>
+      </operation>
+      <operation name='import'>
+        <settings steps='zone' workflow='Hand annotation'/>
+      </operation>
+      <operation name='redact'>
+        <settings steps='nominate,transform' workflow='Demo'/>
+      </operation>
+      <operation name='nominate'>
+        <settings steps='nominate' workflow='Demo'/>
+      </operation>
+      <operation name='nominate_save'>
+        <settings steps='transform' workflow='Demo'/>
+      </operation>
+    </workspace>
+    <settings/>
+  </task>
+</tasks>

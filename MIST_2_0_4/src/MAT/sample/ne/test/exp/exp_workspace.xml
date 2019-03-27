@@ -1,0 +1,26 @@
+<experiment task='Named Entity'>
+  <workspace_corpora dir="corpora" workspace_dir="$(WS)" document_statuses="partially_gold,gold,reconciled">
+    <workspace_corpus name="test">
+      <partition name="train" fraction=".75"/>
+      <partition name="test" fraction=".25"/>
+    </workspace_corpus>
+  </workspace_corpora>
+  <model_sets dir="model_sets">
+    <!-- again, use dir to override. training_increment is also an option for build.
+         Actually, you can repeat model_sets. -->
+    <build_settings partial_training_on_gold_only="yes"/>
+    <model_set name="test">
+      <training_corpus corpus="test" partition="train"/>
+    </model_set>
+  </model_sets>
+  <runs dir="runs">
+    <!-- and you can repeat runs -->
+    <run_settings>
+      <args steps="zone,tokenize,tag" workflow="Demo"/>
+      <score_args gold_only="yes"/>
+    </run_settings>
+    <run name="test" model="test">
+      <test_corpus corpus="test" partition="test"/>
+    </run>
+  </runs>
+</experiment>

@@ -1,0 +1,99 @@
+# Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+# file LICENSE for license terms.
+
+# This file is a Python config file in the spirit of a Windows INI
+# file (see the ConfigParser module in Python).
+
+# Use this file by copying it to some location, like MAT_settings.config.<plat>,
+# and use the --mat_settings_file parameter of setup_mat.py to point to
+# that file during build. This will establish these
+# settings as the default values for the MAT system. 
+
+# MAT_VERSION, MAT_PKG_HOME and MAT_PKG_PYLIB will be provided 
+# wnen the settings file is loaded. See etc/config_utilities.py.
+
+# For the moment, we're going to put all the variables
+# in the global space. We're reserving other spaces for
+# task prefixes in the future.
+
+[_GLOBALS]
+
+###############################################
+#
+#           EXTERNAL DEPENDENCIES
+#
+###############################################
+
+# The path to the Python executable.
+# This package requires Python 2.6 or later.
+
+PYTHONBIN:
+
+# Tabbed terminal. mrxvt 0.5.3 or later on Linux, Solaris.
+# Terminator on MacOS X, Windows. Now optional.
+
+TABBED_TERMINAL_BIN:
+
+# The path to a Java 1.6 or later executable.
+
+JAVA_BIN:
+
+# The path to a Java Carafe JAR file.
+
+JCARAFE_JAR:
+
+# Pathname of the YUI library (or that subset that we'll be 
+# using). It will be copied from this location into /resources 
+# in the Web server.
+
+YUI_JS_LIB:
+
+# Pathname to the CherryPy Web server, version 3.1.2 or later.
+# This directory should be such that if you put it in your Python
+# sys.path, "import cherrypy" should work.
+
+CHERRYPY_PYTHONLIB:
+
+# Pathname to the Python implementation of the Kuhn-Munkres
+# alignment algorithm, from http://pypi.python.org/pypi/munkres,
+# version 1.0.5.4 or later.
+
+MUNKRES_PYTHONLIB:
+
+###############################################
+#
+#           WEB SETTINGS
+#
+###############################################
+
+# This is the port of the MAT server which provides 
+# Web and Java services. This port can be overridden when
+# you start up MATWeb.
+
+HTTP_PORT: 7801
+
+# This is the lowest port of the Java Carafe tagger
+# server. A server will be started up by MATWeb for each
+# model, and the port numbers will be incremented from here.
+
+JCARAFE_SERVER_PORT: 8091
+
+###############################################
+#
+#           OTHER SETTINGS
+#
+###############################################
+
+# Set this setting to "yes" if you want to see the
+# actual command line invocations of the subprocesses that
+# MAT invokes.
+
+SUBPROCESS_DEBUG:
+
+# Set this setting to "yes" if you want to see the
+# memory usage and time for every synchronous 
+# subprocess call. Only available on Linux, and only if
+# the psutil package is provided.
+
+SUBPROCESS_STATISTICS:
+PSUTIL_PYTHONLIB:

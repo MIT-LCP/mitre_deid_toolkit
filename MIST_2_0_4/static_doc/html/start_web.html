@@ -1,0 +1,129 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Starting the Web Server</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Starting the Web Server<br>
+    </h1>
+    <p>This documentation assumes that you know what MAT_PKG_HOME refers
+      to. See the "Conventions" section in your platform-specific
+      instructions in the "Getting Started" section of the
+      documentation.<br>
+    </p>
+    <h2>All platforms</h2>
+    <p>You have two options for running the Web infrastructure. In all
+      cases, you can run the <a href="MATWeb.html">MATWeb</a> script in
+      a shell; in some cases, if your distribution comes with the
+      appropriate tools, you can start up a multipane terminal
+      application using the --spawn_tabbed_terminal option to MATWeb. To
+      find out whether tabbed terminals are available in your
+      installation, invoke MATWeb with the --help option and consult the
+      details for --spawn_tabbed_terminal.<br>
+    </p>
+    <p>If you have tabbed terminals and you choose to use them, you'll
+      be presented with four panes: <br>
+    </p>
+    <ul>
+      <li>Pane 1: the interactive loop for the Web server</li>
+      <li>Pane 2: the message output for the Web server</li>
+      <li>Pane 3: the error output for the Web server</li>
+      <li>Pane 4: the output for the annotation thread of the Web server<br>
+      </li>
+    </ul>
+    <p>Either in pane 1, or in the console if you've just started up
+      MATWeb without the multipane terminal, you'll see something like
+      this:<br>
+    </p>
+    <pre wrap="">Web server started on port 7801.<br><br>Web server command loop. Commands are:<br><br>exit       - exit the command loop and stop the Web server<br>loopexit   - exit the command loop, but leave the Web server running<br>taggerexit - shut down the tagger service, if it's running<br>restart    - restart the Web server<br>ws_key     - show the workspace key<br>help, ?    - this message<br><br>Workspace key is S6KHBrVEk3RI1dM5XU7q5CQ8vNILokXI<br>Command: </pre>
+    <p>The workspace key is an element of <a
+        href="workspace_security.html">workspace security</a>; a new key
+      is generated each time the user starts the Web server (but is
+      preserved if the user issues the "restart" command in the command
+      loop).</p>
+    <div style="margin-right: 10px; margin-left: 10px; padding-left:
+      10px; padding-right: 10px; border: 1px solid black;
+      background-color: lightgray">
+      <h2>The MAT Web server is NOT SECURE<br>
+      </h2>
+      <p>The MAT Web server is <span style="font-weight: bold;">not an
+          enterprise-secure implementation, and will never be one</span>.
+        It does not use SSL; in workspace mode, it does not perform any
+        sort of user authentication beyond the workspace key; it does
+        not provide any security logging or traceability. You should
+        assume that anyone who has access to your network can see your
+        Web server traffic, and either observe or (in the case of
+        workspaces) overwrite your data.</p>
+    </div>
+    <p>Details for each platform follow.<br>
+    </p>
+    <h2>Unix<br>
+    </h2>
+    <p>Once you've built the toolkit, if you have a tabbed terminal
+      application, you can start up the server in a tabbed terminal as
+      follows. If you don't have a tabbed terminal application, MATWeb
+      will gracefully revert to a single terminal:<br>
+    </p>
+    <pre>% <span style="font-weight: bold;">cd $MAT_PKG_HOME</span><br>% <span style="font-weight: bold;">bin/MATWeb --spawn_tabbed_terminal &amp;</span><br></pre>
+    <p>This will launch the mrxvt tabbed terminal application. To shut
+      down the server, exit the mrxvt application (closing the window
+      ought to do it).</p>
+    <p>If you prefer to run your application in a single terminal, or
+      you want to specify additional arguments to MATWeb, or if you
+      don't have a tabbed terminal application, do this instead:<br>
+    </p>
+    <pre>% <span style="font-weight: bold;">cd $MAT_PKG_HOME</span><br>% <span style="font-weight: bold;">bin/MATWeb</span></pre>
+    <p> </p>
+    <p>You'll see the output of the Web server console, interspersed
+      with other status messages from the Web server. To shut down
+      MATWeb, type "exit" or hit Ctrl-C.<br>
+    </p>
+    <h2>MacOS X<br>
+    </h2>
+    <p>Once you've built the toolkit, if you have a tabbed terminal
+      application, you can start up the server in a tabbed terminal as
+      follows. If you don't have a tabbed terminal application, MATWeb
+      will gracefully revert to a single terminal: </p>
+    <pre>% <span style="font-weight: bold;">cd $MAT_PKG_HOME</span><br>% <span style="font-weight: bold;">bin/MATWeb --spawn_tabbed_terminal &amp;</span><br></pre>
+    <p>This will launch the Terminator tabbed terminal application. To
+      shut down the toolkit, exit the Terminator application via
+      Terminator -&gt; Quit Terminator (or Apple-Q). You'll be prompted
+      with warnings about the applications that will be shutting down;
+      press the Close button for each warning.</p>
+    <p>If you prefer to run your application in a single terminal, or
+      you want to specify additional arguments to MATWeb, or if you
+      don't have a tabbed terminal application, do this instead:<br>
+    </p>
+    <pre>% <span style="font-weight: bold;">cd $MAT_PKG_HOME</span><br>% <span style="font-weight: bold;">bin/MATWeb</span></pre>
+    <p>You'll see the output of the Web server console, interspersed
+      with other status messages from the Web server. To shut down
+      MATWeb, type "quit" or hit Ctrl-C.</p>
+    <h2>Windows native<br>
+    </h2>
+    <p>Once you've built the toolkit, you can start it up by
+      double-clicking on %MAT_PKG_HOME%\bin\mat_controller.bat on your
+      desktop. This will start up a cmd window, and then, if you have
+      a&nbsp; tabbed terminal application, a few seconds later, it'll
+      shut down, and you'll see the Console tabbed terminal application
+      showing the four panes described above. To shut down Console,
+      press the "x" in the upper right corner. <br>
+    </p>
+    <p>If you prefer to run your application in a single terminal, or
+      you want to specify additional arguments to MATWeb, open a cmd
+      shell, via Start -&gt; Run -&gt; "cmd". In this shell, type the
+      following at the command prompt if you want to start up your
+      server in a single console: </p>
+    <pre>&gt; <span style="font-weight: bold;">cd %MAT_PKG_HOME%</span><br>&gt; <span style="font-weight: bold;">bin\MATWeb.cmd</span></pre>
+    <p>or, if you want to start up the tabbed terminal: </p>
+    <pre>&gt; <span style="font-weight: bold;">cd %MAT_PKG_HOME%</span><br>&gt; <span style="font-weight: bold;">bin\MATWeb.cmd --spawn_tabbed_terminal</span></pre>
+    <p>If you choose the console option, you'll see the output of the
+      Web server console, interspersed with other status messages from
+      the Web server. You can exit this application by typing "exit" or
+      hit Ctrl-C. </p>
+  </body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Known Bugs</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Known bugs</h1>
+    <p>The bug numbers refer to our internal bug database (and no, we
+      don't have tens of thousands of MAT bugs - the bug database covers
+      a huge number of projects).<br>
+    </p>
+    <ul>
+      <li>MATWeb cannot restart on Windows if it's connected to a
+        terminal.<br>
+      </li>
+      <li>"Save rich" in the UI is always assumed to succeed, since the
+        system asks the browser to save the document and there's no
+        possibility of feedback. This means that if the document has
+        been changed, the system will believe that the changes have now
+        been saved, whether or not the user completes the save action in
+        the browser. Future undo/redo steps will not prompt the user to
+        confirm that unsaved changes can be undone.</li>
+      <li>Bug 14510: The annotation palette redraws itself whenever an
+        annotation is added or removed, leading to sluggish behavior
+        with large files.<br>
+      </li>
+      <li>Bug 16227: rerunning the experiment engine, except to
+        regenerate scores, seems to be a good idea which is poorly
+        implemented.</li>
+      <li>Bug 18422: Neither the Python nor the Javascript
+        implementations for document manipulation do the right thing for
+        Unicode characters outside plane 0. If your document contains
+        such characters, expect your offsets to be wrong; the system is
+        basically unusable for such documents, and unfortunately does
+        not yet report that.</li>
+      <li>Bug 23906: The Java service API only permits JSON files to be
+        imported into workspaces.</li>
+      <li>Bug 24027: Under some unusual circumstances involving the
+        proxy_for_steps attribute in task XML files, the MAT engine will
+        not be able to infer that certain steps have occurred. This
+        problem arises when proxy_for_steps has been used to group
+        together multiple overlapping but not identical sets of steps.</li>
+      <li>Bug 27456: The model inventory for the Web server is collected
+        at startup time. If you build a model after the Web server
+        starts up, it won't see the model.</li>
+      <li>Bug 35858: In some limited circumstances, if you change the
+        value of an annotation attribute in the UI and then click "OK"
+        in the annotation popup editor, the UI will reconfigure itself
+        in such a way that it moves the "OK" button out from under your
+        mouse and fails to dismiss the dialog, due to the order of blur
+        and click methods in the UI library.</li>
+      <li>Bug 36574: The xml-inline writer preserves set and list
+        attribute values by concatenating them using a comma, but it
+        doesn't escape the comma in string values.</li>
+      <li>Bug 36827: Because CSS is case-insensitive, annotation labels
+        which differ only in case will not be distinguishable in the UI
+        presentation.</li>
+      <li>Bug 37250: The XML template digester reduces its digested
+        values to ASCII, meaning that label names, attribute names, etc.
+        - any value in the task.xml file - must be ASCII. The code now
+        makes an exception for tokenless whitespace delimiters, but this
+        restriction must ultimately be globally removed.</li>
+      <li>Autotagging in the UI intentionally fails to copy
+        annotation-valued attributes. We do this because anchored
+        events, when autotagged, will almost always want their own
+        argument fillers. We recognize that there are situations where
+        we'd want to retain these attributes, and other situations in
+        which we'd want to fail to copy certain string-valued
+        attributes. We hope to address these issues in a future release.<br>
+      </li>
+    </ul>
+  </body>
+</html>

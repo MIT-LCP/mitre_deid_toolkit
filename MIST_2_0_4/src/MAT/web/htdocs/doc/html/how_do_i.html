@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=windows-1252"
+      http-equiv="Content-Type">
+    <title>How Do I...?</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>How do I...?</h1>
+    <p>You can do an enormous number of things with MAT. In this
+      section, we provide you with some initial pointers for the various
+      capabilities of MAT. This is by no means an exhaustive list of all
+      the ways the toolkit can be used; but we hope it will point you in
+      the right directions.</p>
+    <p>How do I...</p>
+    <ul>
+      <li><a href="#tallal">...incrementally build a corpus and train a
+          Carafe model?</a></li>
+      <li><a href="#hand_annotate">...use the MAT UI to hand-annotate
+          documents?</a></li>
+      <li><a href="compare">...use the MAT scorer and UI to compare the
+          output of multiple annotators or annotation tools?</a></li>
+      <li><a href="#visualize">...use MAT without its web server to
+          visualize or create annotations?</a></li>
+      <li><a href="#upgrade">...upgrade the version of Java or Python
+          that MAT depends on?</a><br>
+      </li>
+    </ul>
+    <h2><a name="tallal"></a>...incrementally build a corpus and train a
+      Carafe model?</h2>
+    <p>The various steps involved in this incremental, tag-a-little,
+      learn-a-little loop deserve their own page, and are described <a
+        href="tallal.html">here</a>.<br>
+    </p>
+    <h2><a name="hand_annotate"></a>...use the MAT UI to hand-annotate
+      documents?</h2>
+    <p>You don't need to train a model or automatically tag data to use
+      MAT. You can use the MAT UI as a pure hand annotation tool. <a
+        href="tutorial_1.html">Tutorial 1</a> covers this process pretty
+      well, or, if your task involves more than <a
+        href="annotation_intro.html">simple span annotations</a>, check
+      out <a href="tutorial_8.html">tutorial 8</a>.<br>
+    </p>
+    <p>Here's a summary with pointers to more of the details. First, <a
+        href="create_task.html">create your task</a> and <a
+        href="MATManagePluginDirs.html">install</a> it, or use a task
+      you've already defined. Make sure that this task has a <a
+        href="tasks_and_workflows.html">hand annotation step</a>, as
+      illustrated in the <a href="sample_task.html">sample 'Named
+        Entity' task</a>. Then, <a href="start_web.html">start the Web
+        server</a> and load the <a href="start_ui.html">MAT UI</a>. You
+      can either manually load and save <a href="use_ui.html">individual
+        documents</a> on your local machine, or you can set up a <a
+        href="workspaces.html">workspace</a> and <a
+        href="ui_workspaces.html">access it in the UI</a>.<br>
+    </p>
+    <h2><a name="compare"></a>...use the MAT scorer and UI to compare
+      the output of multiple annotators or annotation tools?</h2>
+    <p>To score simple span annotations (that is, annotations whose main
+      label is the distinguishing element) against each other, you don't
+      even need to have a <a href="tasks_and_workflows.html">task</a>.
+      You can use the <a href="MATScore.html">scorer</a> with the
+      --content_annotations option.<br>
+    </p>
+    <p>If you're comparing multiple annotation tools, you can run them
+      outside of MAT and ensure that their output can be read by MAT by
+      identifying or creating a MAT <a href="readers_and_writers.html">reader</a>.
+      Alternatively, you can write a wrapper for the annotation tool,
+      and create <a href="task_xml.html">workflows and model
+        configurations in task.xml</a> which use the tool (this is
+      harder, and not really documented).<br>
+    </p>
+    <p>If you're comparing multiple annotators, you can have them
+      annotate the files in <a href="files_and_workspaces.html">file
+        mode</a> and then compare them using the scorer, or you can use
+      the&nbsp; assignment capability in the <a href="workspaces.html">workspaces</a>
+      to have the files multiply-annotated in the context of a
+      workspace. In the future, you'll be able to score and reconcile
+      these multiply-annotated files directly in the workspace.<br>
+    </p>
+    <h2><a name="visualize"></a>...use MAT without its Web server to
+      visualize or create annotations?</h2>
+    <p>The MAT document visualization and annotation tool is available
+      as a <a href="standalone_viewer.html">standalone utility</a>
+      which does not require the <a href="MATWeb.html">MATWeb</a>
+      server.<br>
+    </p>
+    <h2><a name="upgrade"></a>...upgrade the version of Java or Python
+      that MAT depends on?</h2>
+    <p>If you upgrade your version of Java or Python, and you want MAT
+      to use the new version, the easiest thing to do is rerun the
+      installer. See the installation instructions for your platform (<a
+        href="unix_req_etc.html">Unix</a>, <a href="mac_req_etc.html">MacOS</a>
+      or <a href="win32_req_etc.html">Windows native</a>).<br>
+    </p>
+  </body>
+</html>

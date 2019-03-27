@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Comparison Document Creation Tool</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Comparison Document Creation Tool<br>
+    </h1>
+    <h2>Description</h2>
+    <p>MAT 2.0 introduces comparison documents, which contain multiple
+      sets of annotations against the same signal, together with
+      pairings and similarity judgments. These pairings are created by
+      the same <a href="score_algorithm.html">algorithm</a> that
+      underlies <a href="MATScore.html">MATScore</a>. These pairings
+      can be visualized, and (ultimately) reconciled, in the MAT UI, and
+      these comparison documents are created by the MAT server in
+      response to comparison requests from the UI. The <a
+        href="standalone_viewer.html">standalone viewer</a> has no
+      corresponding ability to create these documents on demand; this
+      tool is provided for those who wish to create comparison documents
+      for viewing in the standalone tool.<br>
+    </p>
+    <h2>Usage</h2>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATCreateComparisonDocument</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATCreateComparisonDocument<br></span><br>Usage: MATCreateComparisonDocument [options] task_name output_doc pivot_doc otherdoc...<br><br>task_name: the name of a known task. Known tasks are: ...<br>output_doc: the file to save the comparison document to.<br>pivot_doc: the document to which each of the other documents will be compared.<br>otherdoc...: a sequence of other documents, which all share the same signal with the pivot_doc.<br></pre>
+    <h2>Options</h2>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <td style="vertical-align: top;">--file_type &lt;t&gt;<br>
+          </td>
+          <td style="vertical-align: top;">The file type of the input
+            document(s). One of the <a href="readers_and_writers.html">readers</a>.
+            Default is mat-json. </td>
+        </tr>
+        <tr>
+          <td valign="top">--similarity_profile<br>
+          </td>
+          <td valign="top">If provided, the name of a similarity profile
+            in the specified task.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><span style="font-weight: bold;"></span>Example</h2>
+    <p>Let's say you've annotated a document ne.json using the "Named
+      Entity" task, and you have another annotator's annotations as
+      well, in the file ne_other.json and you want to create a
+      comparison document for use in the standalone viewer, and you want
+      to treat your document as the reference (pivot) document.<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATCreateComparisonDocument "Named Entity" ne_comparison.json ne.json ne_other.json</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATCreateComparisonDocument</span><span style="font-weight: bold;">.cmd "Named Entity" ne_comparison.json ne.json ne_other.json</span><span style="font-weight: bold;"><br></span><span style="font-weight: bold;"></span></pre>
+  </body>
+</html>

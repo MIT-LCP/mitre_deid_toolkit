@@ -1,0 +1,437 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Scoring Engine</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Scoring Engine</h1>
+    <h2>Description</h2>
+    <p>The scoring engine compares two tagged files, or two directories
+      of tagged files. Typically, one input is the hypothesis (an
+      automatically tagged file) and the other is the reference (a
+      gold-standard tagged file). But this tool can be used to compare
+      any two inputs.<br>
+    </p>
+    <p>For a description of the pairing and scoring algorithm, see <a
+        href="score_algorithm.html">here</a>. For a description of the
+      scorer output, see <a href="score_output.html">here</a>.<br>
+    </p>
+    <h2>Usage<br>
+    </h2>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATScore</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATScore.cmd</span><br><br>Usage: MATScore [options]<br></pre>
+    <h2>Core options</h2>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <td style="vertical-align: top;">--task &lt;task&gt;<br>
+          </td>
+          <td style="vertical-align: top;">Optional. If specified, the
+            scorer will use the tags (or tag+attributes) specified in
+            the named task.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--content_annotations
+            ann,ann,ann...<br>
+          </td>
+          <td style="vertical-align: top;">Optional. If no task is
+            specified, the scorer requires additional, external
+            information to determine which annotations are content
+            annotations. Use this flag to provide a commma-separated
+            sequence of annotation labels which should be treated as
+            content annotations. Ignored if --task is present.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--token_annotations
+            ann,ann,ann...<br>
+          </td>
+          <td style="vertical-align: top;">Optional. If no task is
+            specified, the scorer requires additional, external
+            information to determine which annotations are content
+            annotations. Use this flag to provide a commma-separated
+            sequence of annotation labels which should be treated as
+            token annotations. Ignored if --task is present.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--equivalence_class
+            equivlabel oldlabel,oldlabel,...<br>
+          </td>
+          <td style="vertical-align: top;">Optional and repeatable. In
+            some cases, you may wish to collapse two or more labels into
+            a single equivalence class when you run the scorer. The
+            first argument to this parameter is the label for the
+            equivalence class; the second argument is a comma-separated
+            sequence of existing effective annotation labels.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--ignore label,label,...<br>
+          </td>
+          <td style="vertical-align: top;">Optional. In some cases, you
+            may wish to ignore some labels entirely. The value of this
+            parameter is a comma-separated sequence of effective
+            annotation labels. If an annotation in the reference or
+            hypothesis bears this label, it will be as if the annotation
+            is simply not present.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">--similarity_profile profile<br>
+          </td>
+          <td valign="top">If provided, the name of a similarity profile
+            in the provided task. Ignored if --task is not provided.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">--score_profile profile<br>
+          </td>
+          <td valign="top">If provided, the name of a score profile in
+            the provided task. Ignored if --task is not provided.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2>Hypothesis options</h2>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <td style="vertical-align: top;">--file &lt;file&gt;<br>
+          </td>
+          <td style="vertical-align: top;">The hypothesis file to
+            evaluate. Must be paired with --ref_file. Either this or
+            --dir must be specified.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--dir &lt;dir&gt;<br>
+          </td>
+          <td style="vertical-align: top;">A directory of files to
+            evaluate. Must be paired with --ref_dir. Either this or
+            --file must be specified.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--file_re &lt;re&gt;<br>
+          </td>
+          <td style="vertical-align: top;">A Python regular expression
+            to filter the basenames of hypothesis files when --dir is
+            used. Optional. The expression should match the entire
+            basename.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--file_type &lt;t&gt;<br>
+          </td>
+          <td style="vertical-align: top;">The file type of the
+            hypothesis document(s). One of the <a
+              href="readers_and_writers.html">readers</a>. Default is
+            mat-json.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--encoding &lt;e&gt;<br>
+          </td>
+          <td style="vertical-align: top;">Hypothesis file character
+            encoding. Default is the default encoding of the file type.
+            Ignored for file types such as mat-json which have fixed
+            encodings.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--gold_only<br>
+          </td>
+          <td style="vertical-align: top;">Under normal circumstances,
+            if segments are present, all segments are compared. Use this
+            flag to restriction the comparison to those regions which
+            overlap with 'human gold' or 'reconciled' segments in the
+            hypothesis.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2>Reference options<br>
+    </h2>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <td style="vertical-align: top;">--ref_file &lt;file&gt;<br>
+          </td>
+          <td style="vertical-align: top;">The reference file to compare
+            the hypothesis to. Must be paired with --file. Either this
+            or --ref_dir must be specified.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--ref_dir &lt;dir&gt;<br>
+          </td>
+          <td style="vertical-align: top;">A directory of files to
+            compare the hypothesis to. Must be paired with --dir. Either
+            this or --ref_file must be specified.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--ref_fsuff_off &lt;suff&gt;<br>
+          </td>
+          <td style="vertical-align: top;">When --ref_dir is used, each
+            qualifying file in the hypothesis dir is paired, by default,
+            with a file in the reference dir with the same basename.
+            This parameter specifies a suffix to remove from the
+            hypothesis file before searching for a pair in the reference
+            directory. If both this and --ref_fsuff_on are present, the
+            removal happens before the addition.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--ref_fsuff_on &lt;suff&gt;<br>
+          </td>
+          <td style="vertical-align: top;">When --ref_dir is used, each
+            qualifying file in the hypothesis dir is paired, by default,
+            with a file in the reference dir with the same basename.
+            This parameter specifies a suffix to add to the hypothesis
+            file before searching for a pair in the reference directory.
+            If both this and --ref_fsuff_off are present, the removal
+            happens before the addition.</td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--ref_file_type &lt;t&gt;<br>
+          </td>
+          <td style="vertical-align: top;">The file type of the
+            reference document(s). One of the <a
+              href="readers_and_writers.html">readers</a>. Default is
+            mat-json.</td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--ref_encoding &lt;e&gt;<br>
+          </td>
+          <td style="vertical-align: top;">Reference file character
+            encoding. Default is the default encoding of the file type.
+            Ignored for file types such as mat-json which have fixed
+            encodings.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--ref_gold_only<br>
+          </td>
+          <td style="vertical-align: top;">Under normal circumstances,
+            if segments are present, all segments are compared. Use this
+            flag to restrict the comparison to those regions which
+            overlap with 'human gold' or 'reconciled' segments in the
+            reference.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2>Score output options</h2>
+    <p>Note that all the CSV files created by the scorer are in UTF-8
+      encoding.<br>
+    </p>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <td style="vertical-align: top;">--tag_output_mismatch_details<br>
+          </td>
+          <td style="vertical-align: top;">By default, the tag scores,
+            like the other scores, present a single value for all the
+            mismatches. If this option is specified, the tag scores will
+            provide a detailed breakdown of the various mismatches:
+            overmarks, undermarks, overlaps, label clashes, etc.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--details<br>
+          </td>
+          <td style="vertical-align: top;">If present, generate a
+            separate spreadsheet providing detailed alignments of
+            matches and errors. See this <a
+              href="view_text_in_csv.html">special note</a> on viewing
+            CSV files containing natural language text.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--confusability<br>
+          </td>
+          <td style="vertical-align: top;">If present, generate a
+            separate spreadsheet providing a token- or
+            pseudo-token-level confusability matrix for all paired
+            tokens. If any token is paired more than once, the
+            confusability matrix will not be generated (because the
+            result would make no sense). The null label comparisons are
+            included in the matrix.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--by_token<br>
+          </td>
+          <td style="vertical-align: top;">By default, the scorer
+            generates aggregate tag-level scores. If this flag is
+            present, generate a separate spreadsheet showing aggregate
+            token-level scores. <span style="font-weight: bold;">Note</span>:
+            in order for token-level scoring to work, the hypothesis
+            document must be contain token annotations, and the content
+            annotation boundaries in both documents must align with
+            token annotation boundaries. If there are no token
+            annotations, no token-level scores will be generated; if one
+            or both documents contain token annotations but they're not
+            aligned with content annotations, the behavior is undefined.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--by_pseudo_token<br>
+          </td>
+          <td style="vertical-align: top;">By default, the scorer
+            generates aggregate tag-level scores. If this flag is
+            present, generate a separate spreadsheet showing aggregate
+            scores using what we're call 'pseudo-tokens', which is
+            essentially the spans created by the union of whitespace
+            boundaries and span boundaries. For English and other
+            Roman-alphabet languages, this score should be very, very
+            close to the token-level score, without requiring the
+            overhead of having actual token annotations in the document.
+            For details about pseudo-tokens, see <a
+              href="score_output.html#Pseudo-token_scores">here</a>.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--by_character<br>
+          </td>
+          <td style="vertical-align: top;">By default, the scorer
+            generates aggregate tag-level scores. If this flag is
+            present, generate a separate spreadsheet showing aggregate
+            character-scores. For languages like Chinese, this score may
+            provide some useful sub-phrase metrics without requiring the
+            overhead of having token annotations in the document.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--compute_confidence_data<br>
+          </td>
+          <td style="vertical-align: top;">If present, the scorer will
+            compute means and variances for the various metrics provided
+            in the tag and token spreadsheets, if --csv_output_dir is
+            specified.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--csv_output_dir &lt;dir&gt;<br>
+          </td>
+          <td style="vertical-align: top;">By default, the scorer
+            formats text tables to standard output. If this flag is
+            present, the scores (if requested) will be written as CSV
+            files to &lt;dir&gt;/bytag_&lt;format&gt;.csv,
+            &lt;dir&gt;/bytoken_&lt;format&gt;.csv,
+            &lt;div&gt;/bypseudotoken_&lt;format&gt;.csv,
+            &lt;dir&gt;/bychar_&lt;format&gt;.csv,
+            &lt;dir&gt;/details.csv, and &lt;dir&gt;/confusability.csv.
+            The value or values for &lt;format&gt; are governed by the
+            --csv_formula_output option.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--csv_formula_output
+            &lt;s&gt;<br>
+          </td>
+          <td style="vertical-align: top;">A comma-separated list of
+            options for CSV output. The possibilities are 'oo' (formulas
+            with OpenOffice separators), 'excel' (formulas with Excel
+            separators), 'literal' (no formulas). The scorer will
+            produce CSV output files for each of the conditions you
+            specify. By default, if --csv_output_dir is specified, this
+            value is 'excel'. Note that the OpenOffice and Excel formula
+            formats are incompatible with each other, so you'll only be
+            able to open output files with Excel separators in Excel,
+            etc.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>When the user requests confidence data via the
+      --compute_confidence_data option, the scorer produces 1000
+      alternative score sets. Each score set is created by making M
+      random selections of file scores from the core set of M file
+      scores. (This procedure will naturally have multiple copies of
+      some documents and no copies of others in each score set, which is
+      the source of the variation for this computation.) The scorer then
+      computes the overall metrics for each alternative score set, and
+      computes the mean and variance over the 1000 instances of each of
+      the precision, recall, and fmeasure metrics. This "sampling with
+      replacement" yields a more stable mean and variance.</p>
+    <h2>Other options</h2>
+    <p>The readers referenced in the --file_type and --ref_file_type
+      options may introduce additional options, which are described <a
+        href="readers_and_writers.html">here</a>. These additional
+      options must follow the --file_type and --ref_file_type options.
+      The options for the reference file types are all prepended with a
+      ref_ prefix; so for instance, to specify the
+      --xml_input_is_overlay option for xml-inline reference documents,
+      use the option --ref_xml_input_is_overlay. </p>
+    <h2>Examples</h2>
+    <h3>Example 1</h3>
+    <p>Let's say you have two files, /path/to/ref and /path/to/hyp,
+      which you want to compare. The default settings will print a table
+      to standard output.<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATScore --file /path/to/hyp --ref_file /path/to/ref</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATScore.cmd --file c:\path\to\hyp --ref_file c:\path\to\ref</span><br></pre>
+    <h3>Example 2</h3>
+    <p>Let's say that instead of printing a table to standard output,
+      you want to produce CSV output with embedded Excel formulas (the
+      default formula type), and you want all three spreadsheets.<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATScore --file /path/to/hyp --ref_file /path/to/ref \<br>--csv_output_dir $PWD --details --by_token<br><br></span>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATScore.cmd --file c:\path\to\hyp --ref_file c:\path\to\ref \<br>--csv_output_dir %CD% --details --by_token</span><br></pre>
+    <p>This invocation will not produce any table on standard output,
+      but will leave three files in the current directory:
+      bytag_excel.csv, bytoken_excel.csv, and details.csv.<br>
+    </p>
+    <h3>Example 3</h3>
+    <p>Let's say you have two directories full of files. /path/to/hyp
+      contains files of the form file&lt;n&gt;.txt.json, and
+      /path/to/ref contains files of the form file&lt;n&gt;.json. You
+      want to compare the corresponding files to each other, and you
+      want tag and token scoring, but not details, and you intend to
+      view the spreadsheet in OpenOffice.<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATScore --dir /path/to/hyp --ref_dir /path/to/ref \<br>--ref_fsuff_off '.txt.json' --ref_fsuff_on '.json' \<br>--csv_output_dir $PWD --csv_formula_output oo --by_token<br><br></span>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATScore.cmd --dir c:\path\to\hyp --ref_dir c:\path\to\ref \<br>--ref_fsuff_off ".txt.json" --ref_fsuff_on ".json" \<br>--csv_output_dir %CD% </span><span style="font-weight: bold;">--csv_formula_output oo</span><span style="font-weight: bold;"> --by_token</span><br></pre>
+    <p>For each file in /path/to/hyp, this invocation will prepare a
+      candidate filename to look for in /path/to/ref by removing the
+      .txt.json suffix and adding the .json suffix. The current
+      directory will contain bytag_oo.csv and bytoken_oo.csv.<br>
+    </p>
+    <h3>Example 4</h3>
+    <p>Let's say that you're in the same situations as example 3, but
+      you want confidence information included in the output
+      spreadsheets:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATScore --dir /path/to/hyp --ref_dir /path/to/ref \<br>--ref_fsuff_off '.txt.json' --ref_fsuff_on '.json' \<br>--csv_output_dir $PWD </span><span style="font-weight: bold;">--csv_formula_output oo</span><span style="font-weight: bold;"> --by_token --compute_confidence_data<br><br></span>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATScore.cmd --dir c:\path\to\hyp --ref_dir c:\path\to\ref \<br>--ref_fsuff_off ".txt.json" --ref_fsuff_on ".json" \<br>--csv_output_dir %CD% </span><span style="font-weight: bold;">--csv_formula_output oo</span><span style="font-weight: bold;"> --by_token --compute_confidence_data</span><br></pre>
+    <h3>Example 5<br>
+    </h3>
+    <p>Let's say that you're in the same situation as example 3, but
+      your documents contain lots of tags, but you're only interested in
+      scoring the tags listed in the "Named Entity" task. Furthermore,
+      you're going to import the data into a tool other than Excel, so
+      you want the values calculated for you rather than having embedded
+      equations:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATScore --dir /path/to/hyp --ref_dir /path/to/ref \<br>--ref_fsuff_off '.txt.json' --ref_fsuff_on '.json' \<br>--csv_output_dir $PWD -</span><span style="font-weight: bold;">-csv_formula_output literal</span><span style="font-weight: bold;"> --by_token --task "Named Entity"<br><br></span>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATScore.cmd --dir c:\path\to\hyp --ref_dir c:\path\to\ref \<br>--ref_fsuff_off ".txt.json" --ref_fsuff_on ".json" \<br>--csv_output_dir %CD% </span><span style="font-weight: bold;">-</span><span style="font-weight: bold;">-csv_formula_output literal</span><span style="font-weight: bold;"> --by_token --task "Named Entity"</span><br><span style="font-weight: bold;"></span></pre>
+    <h3>Example 6<br>
+    </h3>
+    <p>Let's say you're in the same situation as example 3, but your
+      reference documents are XML inline documents, and are of the form
+      file&lt;n&gt;.xml. Do this:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATScore --dir /path/to/hyp --ref_dir /path/to/ref \<br>--ref_fsuff_off '.txt.json' --ref_fsuff_on '.xml' \<br>--csv_output_dir $PWD </span><span style="font-weight: bold;">--csv_formula_output oo</span><span style="font-weight: bold;"> --by_token --ref_file_type xml-inline<br><br></span>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATScore.cmd --dir c:\path\to\hyp --ref_dir c:\path\to\ref \<br>--ref_fsuff_off ".txt.json" --ref_fsuff_on ".xml" \<br>--csv_output_dir %CD% </span><span style="font-weight: bold;">--csv_formula_output oo</span><span style="font-weight: bold;"> --by_token --ref_file_type xml-inline</span><br></pre>
+    <p>Note that --ref_fsuff_on has changed, in addition to adding the
+      --ref_file_type option.<br>
+    </p>
+    <p></p>
+  </body>
+</html>

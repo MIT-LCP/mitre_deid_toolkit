@@ -1,0 +1,1031 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Document Conversion XML Reference</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Document conversion XML reference</h1>
+    <p>The <a href="MATTransducer.html">MAT transducer</a> supports a
+      very sophisticated conversion language which supports an enormous
+      range of operations on annotations: changing labels, demoting and
+      promoting labels, extracting spans, changing attribute values,
+      etc. Using this language, you can do an enormous range of things
+      to annotations without ever writing any code. <br>
+    </p>
+    <ul>
+      <li><a href="#Overview_">Overview</a></li>
+      <li><a href="#Selectors_and_selector_scope">Selectors and selector
+          scope</a></li>
+      <li><a href="#Global_scope">Global scope</a></li>
+      <li><a href="#Annotation_scope">Annotation scope</a></li>
+      <li><a href="#Attribute_scope">Attribute scope</a></li>
+      <li><a href="#Value_scope">Value scope</a><br>
+      </li>
+    </ul>
+    <h2><a name="Overview_"></a>Overview<br>
+    </h2>
+    <p>The general format of the XML is<br>
+    </p>
+    <pre>&lt;instructions&gt;<br>  &lt;...selector ...&gt;<br>    &lt;...operation.../&gt;<br>    &lt;...selector ...&gt;<br>       ...<br>    &lt;/...selector...&gt;<br>  &lt;/...selector...&gt;<br>  &lt;...operation.../&gt;<br>  ...<br>&lt;/instructions&gt;<br></pre>
+    <p>The selectors or operations are processed in order, and each is
+      applied to the current state of the annotations. You can have as
+      many selectors or operations as you want. For instance, let's say
+      you want to change the name of the PER annotation to PERSON, and
+      the ORG annotation to ORGANIZATION, and you want to rename the
+      nomtype attribute on all of them to NOMTYPE:<br>
+    </p>
+    <pre>&lt;instructions&gt;<br>  &lt;labels source="PER"&gt;<br>    &lt;map target="PERSON"/&gt;<br>  &lt;/labels&gt;<br>  &lt;labels source="ORG"&gt;<br>    &lt;map target="ORGANIZATION"/&gt;<br>  &lt;/labels&gt;<br>  &lt;labels source_re="ORGANIZATION|PERSON"&gt;<br>    &lt;map_attr source="nomtype" target="NOMTYPE"/&gt;<br>  &lt;/labels&gt;<br>&lt;/instructions&gt;<br></pre>
+    <h2><a name="Selectors_and_selector_scope"></a>Selectors and
+      selector scope</h2>
+    <p>There are three selectors: &lt;labels&gt;, which establishes an
+      annotation scope; &lt;attrs&gt;, which occurs only within the
+      &lt;label&gt; scope and establishes an attribute scope, and
+      &lt;values&gt;, which occurs only within the &lt;attr&gt; scope
+      and establishes an attribute value scope. Within the annotation
+      scope, the default object being modified is the annotation; within
+      the attribute scope, the default object being modified is the
+      attribute label; and within the value scope, the default object
+      being modified is the attribute value.<br>
+    </p>
+    <h2></h2>
+    <p>Here's an index of all the selectors and their operators:</p>
+    <p>
+      &nbsp;&nbsp;&nbsp;&nbsp; &lt;labels&gt;<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#discard">&lt;discard&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a
+        href="#discard_failed">&lt;discard_failed&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#make_spanless">&lt;make_spanless&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#of_attr">&lt;of_attr&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#with_attrs">&lt;with_attrs&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#demote">&lt;demote&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#apply">&lt;apply&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a
+        href="#discard_if_null">&lt;discard_if_null&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#touch">&lt;touch&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#untouch">&lt;untouch&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#map">&lt;map&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#map_attr">&lt;map_attr&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#promote_attr">&lt;promote_attr&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#discard_attrs">&lt;discard_attrs&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#split_attr">&lt;split_attr&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#join_attrs">&lt;join_attrs&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#set_attr">&lt;set_attr&gt;</a></p>
+    <p>
+      &nbsp;&nbsp;&nbsp;&nbsp; &lt;attrs&gt;<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#promote">&lt;promote&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#discard_">&lt;discard&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#split">&lt;split&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+        href="#discard_annot_if_null">&lt;discard_annot_if_null&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#discard_annot">&lt;discard_annot&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#map_">&lt;map&gt;</a><br>
+    </p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp; &lt;values&gt;<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#promote_">&lt;promote&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#discard__">&lt;discard&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#map__">&lt;map&gt;</a><br>
+    </p>
+    <h2><a name="Global_scope"></a>Global scope</h2>
+    <p>Within the &lt;instructions&gt; element, there are only two
+      elements: the &lt;discard_untouched&gt; operator and the
+      &lt;labels&gt; selector.</p>
+    <h4></h4>
+    <h3>&lt;labels&gt;</h3>
+    <p></p>
+    <h4>Attributes</h4>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">source_re</td>
+          <td style="vertical-align: top;">a Python regular expression<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">A regular expression which
+            matches a full true label. Ignored if source is specified<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">source</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">The name of a true label<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">excluding_re</td>
+          <td style="vertical-align: top;">a Python regular expression<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">A regular expression which
+            matches a full true label. Ignored if "excluding" is
+            specified<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">excluding</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">The name of a true label<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>This selector identifies particular annotations for further
+      processing, and establishes an annotation scope. The annotation's
+      true label must match source or source_re (if specified) and not
+      match excluding or excluding_re (if specified). With no attributes
+      specified, this selector matches all annotations.<br>
+    </p>
+    <h3>&lt;discard_untouched&gt;</h3>
+    <p>This operator deletes all annotations which have not been
+      "touched" (i.e., modified by another operator).</p>
+    <h2><a name="Annotation_scope"></a>Annotation scope</h2>
+    <p>Within the annotation scope, there is one selector,
+      &lt;attrs&gt;; two operators which further restrict the
+      annotations processed, &lt;with_attrs&gt; and &lt;of_attr&gt;; and
+      numerous operations.<br>
+    </p>
+    <h3>&lt;attrs&gt;</h3>
+    <h4>Attributes</h4>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">source_re</td>
+          <td style="vertical-align: top;">a Python regular expression<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">A regular expression which
+            matches the full attribute name. Ignored if source is
+            specified<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">source</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">The name of an attribute<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">excluding_re</td>
+          <td style="vertical-align: top;">a Python regular expression
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">A regular expression which
+            matches the full attribute name. Ignored if source is
+            specified
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">excluding</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">The name of an attribute
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>This selector identifies particular attributes for further
+      processing, and establishes an attribute scope. The attribute name
+      must match source or source_re (if specified) and not match
+      excluding or excluding_re (if specified). With no attributes
+      specified, this selector matches all attributes of the annotation.<br>
+    </p>
+    <h3><a name="of_attr"></a>&lt;of_attr&gt;</h3>
+    <h4>Attributes</h4>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">attr_re</td>
+          <td style="vertical-align: top;">a Python regular expression<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">A regular expression which
+            matches the full attribute name. Ignored if attr is
+            specified.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">attr</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">The name of an attribute<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">label_re</td>
+          <td style="vertical-align: top;">a Python regular expression<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">A regular expression which
+            matches a true label name. Ignored if label is specified.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">label</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">A true label<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>This operator further restricts the annotations specified in
+      &lt;labels&gt;. An annotation which satisfies this restriction
+      must be the value of the specified attr within an annotation of
+      the specified label. For example:<br>
+    </p>
+    <pre>&lt;labels source="PERSON"&gt;<br>  &lt;of_attr attr_re="arg[12]" label="LOCATED"/&gt;<br>  ...<br>&lt;/labels&gt;<br></pre>
+    <p>selects those PERSON annotations which are the value of either
+      the arg1 or arg2 attribute of a LOCATED annotation.<br>
+    </p>
+    <p>If repeated, any annotation which matches one of the
+      &lt;of_attr&gt; declarations satisfies the restriction.<br>
+    </p>
+    <h3><a name="with_attrs"></a>&lt;with_attrs&gt;</h3>
+    <h4>Attributes</h4>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;attr&gt;</td>
+          <td style="vertical-align: top;">a string</td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">the &lt;with_attrs&gt;
+            element supports arbitrary attribute-value pairs</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>This operator further restricts the annotations specified in
+      &lt;labels&gt;. Each attribute-value pair is matched to the
+      annotation under consideration, and only those annotations which
+      match all pairs satisfy the restriction. If the attribute is of
+      type string, int, or float, the value specified should be the
+      expected value; if the attribute is of type boolean, the
+      recognized values are "yes" and "no"; and if the attribute is of
+      type annotation, the value is the <b>label</b> of the attribute
+      value. For example, if the LOCATED annotation has a boolean
+      attribute "verbal", a string attribute "tense", and an annotation
+      attribute "arg1", this selector and operator:<br>
+    </p>
+    <pre>&lt;labels source="LOCATED"&gt;<br>  &lt;with_attrs verbal="yes" tense="PAST" arg1="PERSON"/&gt;<br>  ...<br>&lt;/labels&gt;<br></pre>
+    <p>selects those LOCATED annotations whose verbal value is true,
+      whose tense value is "PAST", and whose arg1 value is an annotation
+      with the "PERSON" label.<br>
+    </p>
+    <p>If repeated, any annotation which matches one of the
+      &lt;with_attrs&gt; declaration satisfies the restriction.<br>
+    </p>
+    <h3><a name="discard"></a>&lt;discard&gt;</h3>
+    <p>This operator discards the selected annotations.<br>
+    </p>
+    <h3><a name="discard_failed"></a>&lt;discard_failed&gt;<br>
+    </h3>
+    This operator marks all annotations with the selected labels (not
+    just the selected annotations) to be deleted if some restriction
+    fails at the end of the conversion (e.g., if the task into which the
+    annotation is read imposes an attribute restriction which the
+    conversion hasn't satisfied).<br>
+    <h3><a name="make_spanless"></a>&lt;make_spanless&gt;</h3>
+    <p></p>
+    <h4>Attributes</h4>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">demoted_label</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">A label name<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">demoted_attr</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">An attribute name<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p></p>
+    <p>This operator applies to all selected annotations which are
+      spanned, and makes them spanless. You can use the optional
+      attributes to specify an attribute and label to demote the span
+      to; i.e., the following specification:<br>
+    </p>
+    <pre>&lt;labels source="LOCATED"&gt;<br>  &lt;make_spanless demoted_label="span" demoted_attr="extent"/&gt;<br>&lt;/labels&gt;<br></pre>
+    <p>converts all LOCATED annotations to spanless, and introduces a
+      new spanned annotation "span", and creates an instance of that
+      annotation with the span of the original LOCATED annotation, and
+      inserts that annotation into the "extent" attribute of the LOCATED
+      annotation.<br>
+    </p>
+    <h3><a name="demote"></a>&lt;demote&gt;</h3>
+    <p></p>
+    <h4>Attributes</h4>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">target_attr</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">An attribute name<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">target_label</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">A label name<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>This operator takes the label of the current annotation, and
+      makes it the value of the attribute specified in target_attr, and
+      makes the label of the annotation the label specified in
+      target_label. For instance:<br>
+    </p>
+    <pre>&lt;labels source="PERSON"&gt;<br>  &lt;demote target_attr="TYPE" target_label="ENAMEX/&gt;<br>&lt;/labels&gt;<br></pre>
+    <p>converts PERSON annotations to ENAMEX annotations with the
+      TYPE=PERSON attribute-value pair.<br>
+    </p>
+    <h3><a name="apply"></a>&lt;apply&gt;</h3>
+    <p></p>
+    <h4>Attributes</h4>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">fn</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">A function name<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>This operation applies an arbitrary Python function to the
+      selected annotations. This capability has not been tested, and
+      documenting it further is beyond the scope of this documentation.<br>
+    </p>
+    <h3><a name="touch"></a>&lt;touch&gt;</h3>
+    <p>This operator "touches" the selected annotations, and blocks them
+      from being discarded by the global &lt;discard_untouched&gt;
+      operator.<br>
+    </p>
+    <h3><a name="untouch"></a>&lt;untouch&gt;</h3>
+    <p>This operator "untouches" the selected annotations, and makes
+      them eligible to be discarded by the global
+      &lt;discard_untouched&gt; operator.<br>
+    </p>
+    <h3><a name="discard_if_null"></a>&lt;discard_if_null&gt;</h3>
+    <p></p>
+    <h4>Attributes</h4>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">attrs</td>
+          <td style="vertical-align: top;">a comma-separated string<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">a sequence of attribute names<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>This operator discards the selected annotations if the named
+      attributes all have null values.<br>
+    </p>
+    <h3><a name="map"></a>&lt;map&gt;</h3>
+    <p></p>
+    <h4>Attributes</h4>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">target</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">A label name<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>This operator changes the name of the selected annotations to the
+      name specified in the target.<br>
+    </p>
+    <h3><a name="map_attr"></a>&lt;map_attr&gt;</h3>
+    <p></p>
+    <h4>Attributes</h4>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">source</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">An attribute name<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">target_aggregation</td>
+          <td style="vertical-align: top;">"singleton", "set", or "list"<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">An aggregation<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">target</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">An attribute name<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">target_type</td>
+          <td style="vertical-align: top;">"int", "float", "string",
+            "boolean"<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">A type name, other than
+            "annotation"<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>This operator converts the attribute named in source. You can
+      convert the aggregation (from singleton to set, for instance), or
+      the type (from int to string, or string to int), or map the name
+      to the specified target, or some combination of these actions.<br>
+    </p>
+    <h3><a name="promote_attr"></a>&lt;promote_attr&gt;</h3>
+    <p></p>
+    <h4>Attributes</h4>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">source</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">The name of an attribute<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>This operator changes the label of the selected annotations to
+      the value of the attribute specified by the source, and removes
+      the attribute. For example:<br>
+    </p>
+    <pre>&lt;labels source="ENAMEX"&gt;<br>  &lt;promote_attr source="TYPE"/&gt;<br>&lt;/labels&gt;<br></pre>
+    <p>converts all ENAMEX annotations and removes the TYPE attribute;
+      those with TYPE=PER become PER annotations, etc.<br>
+    </p>
+    <h3><a name="discard_attrs"></a>&lt;discard_attrs&gt;</h3>
+    <p></p>
+    <h4>Attributes</h4>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">attrs</td>
+          <td style="vertical-align: top;">a comma-separated string<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">a sequence of attribute names<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>This operator deletes the specified attributes for the selected
+      annotations.<br>
+    </p>
+    <h3><a name="split_attr"></a>&lt;split_attr&gt;</h3>
+    <p></p>
+    <h4>Attributes</h4>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">attr</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">An attribute name<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">target_attrs</td>
+          <td style="vertical-align: top;">a comma-separated string<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">a sequence of attribute names<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>This operator takes the value of the attribute specified in attr
+      and splits it among the attributes specified in target_attrs. This
+      is useful if, e.g., the original attribute is a list aggregation,
+      and you need those values in separate attributes.<br>
+    </p>
+    <h3><a name="join_attrs"></a>&lt;join_attrs&gt;</h3>
+    <p></p>
+    <h4>Attributes</h4>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">value_aggregation</td>
+          <td style="vertical-align: top;">"list" or "set"<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">an aggregation name<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">source_attrs</td>
+          <td style="vertical-align: top;">a comma-separated string<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">a sequence of attribute names<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">attr</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">an attribute name<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>This operator takes the values in the attributes specified in
+      source_attrs and unifies them in a single aggregation of the type
+      specified by the value_aggregation, and stores the value in the
+      attribute specified by attr. This is useful if, e.g., the original
+      values are spread among separate attributes, and you need those
+      values in a single list or set aggregation.<br>
+    </p>
+    <h3><a name="set_attr"></a>&lt;set_attr&gt;</h3>
+    <p></p>
+    <h4>Attributes</h4>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">attr</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">an attribute name<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">value</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">an attribute value<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">value_aggregation</td>
+          <td style="vertical-align: top;">"list" or "set"<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">an aggregation name<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">value_type</td>
+          <td style="vertical-align: top;">"int", "float", "boolean", or
+            "string"<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">a type name<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>This operation sets the attribute specified by attr to the value
+      specified by value, interpreted according to the value_aggregation
+      and value_type provided. The default is a singleton string.<br>
+    </p>
+    <h2><a name="Attribute_scope"></a>Attribute scope</h2>
+    <p>Within the attribute scope, there is one selector,
+      &lt;values&gt;; and numerous operators.<br>
+    </p>
+    <h3>&lt;values&gt;</h3>
+    <h4>Attributes</h4>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">source_re</td>
+          <td style="vertical-align: top;">a Python regular expression<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">a regular expression matching
+            the full attribute value. Ignored if source is specified.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">source</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">an attribute value<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">excluding_re</td>
+          <td style="vertical-align: top;">a Python regular expression<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">a regular expression matching
+            the full attribute value. Ignored if "excluding" is
+            specified<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">excluding</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">an attribute value<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>This selector identifies particular values for further
+      processing, and establishes a value scope. The value, when
+      converted to a string, must match source or source_re (if
+      specified) and not match excluding or excluding_re (if specified).
+      Annotation values cannot be selected; boolean values are converted
+      to "yes" or "no" before being compared. With no values specified,
+      this selector matches all values of the selected attributes.</p>
+    <h3><a name="promote"></a>&lt;promote&gt;</h3>
+    <p>This operator is the equivalent of the &lt;promote_attr&gt;
+      operator in the annotation scope. In other words, the following
+      two specifications are equivalent:<br>
+    </p>
+    <pre>&lt;labels source="ENAMEX"&gt;<br>  &lt;promote_attr source="TYPE"/&gt;<br>&lt;/labels&gt;<br><br>&lt;labels source="ENAMEX"&gt;<br>  &lt;attrs source="TYPE"&gt;<br>    &lt;promote/&gt;<br>  &lt;/attrs&gt;<br>&lt;/labels&gt;<br></pre>
+    <h3><a name="discard_"></a>&lt;discard&gt;</h3>
+    <p>This operator is the equivalent of the &lt;discard_attrs&gt;
+      operator in the annotation scope. In other words, the following
+      two specifications are equivalent:<br>
+    </p>
+    <pre>&lt;labels source="PERSON"&gt;<br>  &lt;discard_attrs attrs="nomtype"/&gt;<br>&lt;/labels&gt;<br><br>&lt;labels source="PERSON"&gt;<br>  &lt;attrs source="nomtype"&gt;<br>    &lt;discard/&gt;<br>  &lt;/attrs&gt;<br>&lt;/labels&gt;<br></pre>
+    <p>This operator is sometimes more convenient, since the selection
+      capabilities of the &lt;attrs&gt; selector are more flexible than
+      the attrs attribute of the &lt;discard_attrs&gt; operator.<br>
+    </p>
+    <h3><a name="split"></a>&lt;split&gt;</h3>
+    <p></p>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">target_attrs</td>
+          <td style="vertical-align: top;">a comma-separated string<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">a sequence of attribute names<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>This operator is essentially equivalent to the &lt;split_attr&gt;
+      operator in the annotation scope.<br>
+    </p>
+    <h3><a name="discard_annot_if_null"></a>&lt;discard_annot_if_null&gt;</h3>
+    <p>This operator discards the annotation that bears the selected
+      attributes if the value of all the selected attributes is null.<br>
+    </p>
+    <h3><a name="discard_annot"></a>&lt;discard_annot&gt;</h3>
+    <p>This operator discards the annotation that bears the selected
+      attributes.<br>
+    </p>
+    <h3><a name="map_"></a>&lt;map&gt;</h3>
+    <h4>Attributes</h4>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">target_aggregation</td>
+          <td style="vertical-align: top;">"singleton", "list', or "set"<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">an aggregation name<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">target</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">an attribute name<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">target_type</td>
+          <td style="vertical-align: top;">"int", "float", "boolean" or
+            "string"<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">a type name<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>This operation modifies the selected attributes in the specified
+      way: modifying their aggregation type, modifying their target
+      type, or changing the attribute name, or some combination of the
+      three.<br>
+    </p>
+    <h2><a name="Value_scope"></a>Value scope</h2>
+    <p>The value scope contains three operators.<br>
+    </p>
+    <h3><a name="promote_"></a>&lt;promote&gt;</h3>
+    <p>This operator is like the &lt;promote&gt; operator in attribute
+      scope, but applies to specific values. For instance:<br>
+    </p>
+    <pre>&lt;labels source="ENAMEX"&gt;<br>  &lt;attrs source="TYPE"&gt;<br>    &lt;values source="PER"&gt;<br>      &lt;promote/&gt;<br>    &lt;/values&gt;<br>  &lt;/attrs&gt;<br>&lt;/labels&gt;<br></pre>
+    <p>&nbsp;promotes only ENAMEX TYPE=PER to PER.<br>
+    </p>
+    <h3><a name="discard__"></a>&lt;discard&gt;</h3>
+    <p>This operator is like the &lt;discard&gt; operator in attribute
+      scope, but discards the only the attribute-value pairs which match
+      the selected values.<br>
+    </p>
+    <h3><a name="map__"></a>&lt;map&gt;</h3>
+    <p></p>
+    <h4>Attributes</h4>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">target_type</td>
+          <td style="vertical-align: top;">"int", "float", "boolean" or
+            "string"<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">a type name<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">target_aggregation</td>
+          <td style="vertical-align: top;">"singleton", "list" or "set"<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">an aggregation name<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">target</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">the name of an attribute<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">target_value</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">an attribute value<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>This operator is like the &lt;map&gt; operator in attribute
+      scope, except you also have the option of mapping the value itself
+      to something else (specified by target_value). For instance, if
+      you want to convert ENAMEX TYPE=PER annotations into PERSON
+      annotations, you can do it in one of a number of ways, for
+      instance:<br>
+    </p>
+    <pre>&lt;labels source="ENAMEX"&gt;<br>  &lt;attrs source="TYPE"&gt;<br>    &lt;values source="PER"&gt;<br>      &lt;map target_value="PERSON"/&gt;<br>      &lt;promote/&gt;<br>    &lt;/values&gt;<br>  &lt;/attrs&gt;<br>&lt;/labels&gt;<br><br>&lt;labels source="ENAMEX"&gt;<br>  &lt;with_attrs TYPE="PER"/&gt;<br>  &lt;promote_attr source="TYPE"/&gt;<br>  &lt;map target="PERSON"/&gt;<br>&lt;/labels&gt;<br></pre>
+  </body>
+</html>

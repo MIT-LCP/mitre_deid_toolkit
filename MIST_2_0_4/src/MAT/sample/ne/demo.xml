@@ -1,0 +1,18 @@
+<demo name="Named Entity Identification">
+  <description>
+<![CDATA[
+<p>This demo shows the simple named entity identification capability
+  provided in the MAT sample task.
+]]>
+  </description>
+  <activity name="Tag" enable_blank_document="yes">
+    <description>Automatically locate named entities in the document.</description>
+    <engine_settings task = "Named Entity" workflow="Demo" steps="zone,tokenize,tag"/>
+    <sample_document description="Sample news article #1"
+                     file_type = "raw"
+                     relative_location="resources/data/raw/voa1.txt"/>
+    <sample_document description="Sample news article #2"
+                     file_type = "raw"
+                     relative_location="resources/data/raw/voa2.txt"/>
+  </activity>
+</demo>

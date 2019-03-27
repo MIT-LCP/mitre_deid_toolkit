@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="Content-Type">
+  <title>Web server and other requirements</title>
+  <link href="../css/doc.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<h1>Web server and other requirements</h1>
+<p>The MAT UI requires that you be able to run a Web server. The Web
+server software is included with the MAT distribution. Instructions for
+starting and managing the Web server can be found <a
+ href="start_web.html">here</a>.&nbsp; The Web server may also start up
+a second server for the Java Carafe engine, so that large tagging
+models don't have to be loaded every time you request that a document
+be tagged via the MAT UI.<br>
+</p>
+<h2>What if I can't run a Web server?</h2>
+<p>We're aware that in some environments, you won't be able to run your
+own Web server. Unfortunately, the resources we have to devote to MAT
+do not permit us to create a server-free full version of MAT. Here's
+what you won't be able to do, and how you might work around it:<br>
+</p>
+<p><span style="font-weight: bold;">Without the Web server, </span>you
+won't be able to hand-annotate documents. Obviously, if you're building
+a corpus of annotated documents, and you don't have your own hand
+annotation tool, you'll be out of luck. If you <span
+ style="font-weight: bold;">do</span> have your own hand-annotation
+tool, you have two options: either ensure that the tool can read or
+write documents that MAT can understand, or augment MAT to understand
+the format of the documents your annotation tool creates. There's a
+Java API, for instance, that you can use to read and write MAT
+documents, and there's documentation on the MAT document format.
+However, your simplest option is most likely to read and write in-line
+XML, if possible, since MAT has a fairly sophisticated understanding of
+in-line XML. The documentation on <a href="readers_and_writers.html">readers
+and writers</a> will tell you more. (It's also possible to write a new
+reader/writer and add it to MAT, but explaining how to do that is
+beyond the scope of this documentation.)<br>
+</p>
+<p><span style="font-weight: bold;">Without the Web server,</span> you
+won't able to control the MAT engine via the MAT UI to perform any
+automated processing of documents. This is not a huge problem, since
+all the MAT engine operations are available via the command line using
+the <a href="MATEngine.html">MATEngine</a> tool.</p>
+<p><span style="font-weight: bold;">Without the Web server</span>, you
+won't be able to view or control <a href="files_and_workspaces.html">MAT
+workspaces</a> via the MAT UI. This is a bit more of a problem, since
+the UI manages access to the workspaces during hand annotation. You'll
+have to be sure you only annotate documents that reside in the relevant
+folders in the MAT workspace, and save those documents back to the
+workspace.<br>
+</p>
+<p>We can't guarantee that this is the extent of the consequences of
+not being able to run the MAT Web server. We encourage you, if at all
+possible, to find an environment, such as a virtual machine, where
+you're permitted to run the server.<br>
+</p>
+<br>
+</body>
+</html>

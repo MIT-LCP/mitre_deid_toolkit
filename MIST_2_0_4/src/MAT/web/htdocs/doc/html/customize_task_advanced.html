@@ -1,0 +1,314 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Customizing a Task: Advanced Topics</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Customizing a task: advanced topics</h1>
+    <ul>
+      <li><a href="#Using_a_different_annotation_tool">Using a different
+          annotation tool</a></li>
+      <li><a href="#Using_a_different_training_and_tagging">Using a
+          different training and tagging engine</a></li>
+      <li><a href="#Customizing_your_task_implementation">Customizing
+          your task implementation</a><br>
+      </li>
+      <li><a href="#Changing_the_default_zone_information">Changing the
+          default zone information</a><br>
+      </li>
+      <li><a href="#Adding_workspace_folders">Adding workspace folders</a></li>
+      <li><a href="#Using_task_settings">Using task settings</a></li>
+      <li><a href="#Creating_your_own_steps">Creating your own steps</a></li>
+      <li><a href="#Defining_your_own_readerwriter">Defining your own
+          reader/writer</a></li>
+      <li><a href="#Defining_your_own_experiment_engine_iterator">Defining
+your
+
+
+
+
+
+          own experiment engine iterator</a><br>
+      </li>
+    </ul>
+    <h2><a name="Using_a_different_annotation_tool"></a>Using a
+      different annotation tool</h2>
+    <p>Let's say that you have your own annotation tool, and you'd
+      rather use that tool than the MAT tool.<br>
+    </p>
+    <p>First, you should be aware that you'll probably only be able to
+      interact with MAT in <a href="files_and_workspaces.html">file
+        mode</a>; the MAT Web server provides crucial support for
+      editing files in workspaces which would require extensive
+      modifications to your annotation tool (and which we haven't
+      documented), and while it's possible to open and save workspace
+      files using <a href="MATWorkspaceEngine.html">MATWorkspaceEngine</a>
+      with the --debug option, it's exceptionally clumsy.<br>
+    </p>
+    <p>Second, you'll have to make accommodations for how your tool's
+      tokenization assumptions differ from those in MAT.<br>
+    </p>
+    <p>MAT's default Carafe tagging and training engine assumes tokens
+      as the basic atomic elements for the training and tagging. Most
+      hand annotation tools do not expect, respect, or enforce explicit
+      tokenization, and this frequently leads to tiny mismatches between
+      the explicit tokenization that a tool like Carafe can digest and
+      the implicit tokenization of the annotation tool. We address these
+      mismatches by supporting workflows which contain tokenization as
+      an explicit step, and the MAT hand annotation tool enforces the
+      generalization that spanned content annotations are synchronized
+      with token boundaries. That is, the only character indexes in a
+      document which are eligible to be the start index of a content
+      annotation are the start indexes of token annotations, and the
+      only character indexes which are eligible to be the end index are
+      the end indexes of token annotations.<br>
+    </p>
+    <p>So if you're using the MAT UI, and you're planning on using your
+      documents for training Carafe, you should configure your hand
+      annotation workflow to require tokenization; otherwise, your
+      training data may not align with the Carafe engine's notion of
+      atomic elements, which will render that portion of your data
+      unusable.<br>
+    </p>
+    <p>If your hand annotation tool respects explicit tokenization, and
+      you're willing to ensure that tokenization happens before hand
+      annotation, you can either set up your annotation tool to read and
+      write the <a href="mat_json_format.html">MAT document format</a>
+      (for which we provide <a href="python_api.html">Python</a> and <a
+        href="java_overview.html">Java</a> libraries), or <a
+        href="rw_create.html">produce a reader/writer</a> which can
+      understand your tools format.<br>
+    </p>
+    <p>If your hand annotation tool does not respect explicit
+      tokenization, you should try inserting the Align step into your
+      workflow after hand annotation applies. This step expands content
+      annotations to the boundary of whatever tokens the content
+      annotation overlaps at its edges.</p>
+    <h3>Make a special workflow for document preparation</h3>
+    <p>Under construction.<br>
+    </p>
+    <h3>Make a special workspace folder for these documents</h3>
+    <p>Under construction.<br>
+    </p>
+    <h2><a name="Using_a_different_training_and_tagging"></a>Using a
+      different training and tagging engine</h2>
+    <p>It is possible, in MAT, to use a different training and tagging
+      engine than the <a href="carafe_engine.html">default Carafe
+        engine</a>. When we get around to documenting how to do this, it
+      will be documented here.<br>
+    </p>
+    <h2><a name="Customizing_your_task_implementation"></a>Customizing
+      your task implementation</h2>
+    <p>Some of the following customizations require you to customize
+      your task implementation. In this section, we show you how to do
+      that, in preparation for some of the customizations to follow.<br>
+    </p>
+    <p>In order to do this, you'll have to specialize the core task
+      object, in Python. This documentation is not a Python tutorial,
+      and will not document the API of all the classes involved; in
+      order to proceed much further, you should know Python, and you
+      should be brave enough to wade through the MAT source code.</p>
+    <p>The way we customize the task implementation is to add a new
+      Python class, and then refer to it. In your task directory, create
+      a file named python/&lt;file&gt;.py, where &lt;file&gt; is a name
+      of your choice. Then, add the following code:<br>
+    </p>
+    <pre>from MAT.PluginMgr import PluginTaskDescriptor<br><br>class &lt;myclassname&gt;(PluginTaskDescriptor):<br>    pass<br></pre>
+    <p>where &lt;myclassname&gt; is a name of your choice. This creates
+      a Python subclass of the general task. ("pass" is a placeholder
+      for content in the class definition; we'll remove it when we have
+      something to put there).<br>
+    </p>
+    <p>Now, in your task.xml file, you must modify your task definition
+      to refer to this class using the "class" attribute, as follows:<br>
+    </p>
+    <pre>&lt;task name="&lt;yourtaskname&gt;" class="&lt;file&gt;.&lt;myclassname&gt;"&gt;<br>  ...<br>&lt;/task&gt;<br></pre>
+    <p>So let's say your task is named "My task", and you've named your
+      file python/MyModule.py, and in that file you have this
+      definition:<br>
+    </p>
+    <pre>class MyTask(PluginTaskDescriptor):<br>    ....<br></pre>
+    <p>In your task.xml file, you should now have this:<br>
+    </p>
+    <pre>&lt;task name="My task" class="MyModule.MyTask"&gt;<br>  ...<br>&lt;/task&gt;
+</pre>
+    <h2><a name="Changing_the_default_zone_information"></a>Changing the
+      default zone information</h2>
+    <p>MAT comes with a default <a
+        href="annotations_and_segments.html#Annotation_categories">zone</a>
+      annotation, which you'll typically inherit when you <a
+        href="create_task.html">define your task</a>. If you choose to
+      add or provide your own zone annotations, and you don't want the
+      default zone annotation to be used when MAT zones your document,
+      unfortunately the only way to change this at the moment requires
+      you to <a href="#Customizing_your_task_implementation">customize
+        your task implementation</a> and redefine the getTrueZoneInfo
+      method.<br>
+    </p>
+    <p>If your zone annotation has an attribute to distinguish between
+      types of regions, you can specify the attribute and its recognized
+      values (default value first):<br>
+    </p>
+    <pre>class MyTask(PluginTaskDescriptor):<br>    <br>    def getTrueZoneInfo(self):<br>        return "myzonetag", "myregionattr", ["myregionvalue", "mynondefaultregionvalue"]<br></pre>
+    <p>Or, if there's no such attribute, return None in those positions:<br>
+    </p>
+    <pre>class MyTask(PluginTaskDescriptor):<br>    <br>    def getTrueZoneInfo(self):<br>        return "myzonetag", None, None</pre>
+    <p> </p>
+    <h2><a name="Adding_workspace_folders"></a>Adding workspace folders</h2>
+    <p>MAT comes with a few predefined workspace folders, and a means
+      for moving documents between them. Under some circumstances, you
+      might want to add a folder. In this example, let's suppose that
+      your task includes a summarization capability that produces new,
+      summarized documents from documents that are already tagged, and
+      that you want to save these summarized documents in your
+      workspace.<br>
+    </p>
+    <p>First, <a href="#Customizing_your_task_implementation">customize
+        your task implementation</a>.<br>
+    </p>
+    <p>Now, to add a workspace folder, you'll add a workspaceCustomize
+      method to your task descriptor:<br>
+    </p>
+    <pre>class MyTask(PluginTaskDescriptor):<br>    <br>    def workspaceCustomize(self, workspace, create = False):<br>        workspace.addFolder("summarized", create = create,<br>                            description = "summarized versions of annotated documents",<br>                            importTarget = False)<br></pre>
+    <p>Here, we add a folder named "summarized", which we can't import
+      documents directly into.<br>
+    </p>
+    <p>Next, we need to add some behavior. In our example, we want to be
+      able to apply a summarize action to documents in the completed
+      folder in the workspace, and have the results land in the
+      summarized folder. So our Python really looks like this:<br>
+    </p>
+    <pre>from MAT.PluginMgr import PluginTaskDescriptor<br>from MAT.Workspace import WorkspaceOperation<br><br>class MyTask(PluginTaskDescriptor):<br>    <br>    def workspaceCustomize(self, workspace, create = False):<br>        workspace.addFolder("summarized", create = create,<br>                            description = "summarized versions of annotated documents",<br>                            importTarget = False)<br>        workspace.folders["completed"].addOperation("summarize", SummarizationOperation)<br><br>class SummarizationOperation(WorkspaceOperation):<br><br>    name = "summarize"<br>    ...<br></pre>
+    <p>We won't describe the full implementation of operations here; see
+      MAT_PKG_HOME/lib/mat/python/MAT/Workspace.py for examples.<br>
+    </p>
+    <h2><a name="Using_task_settings"></a>Using task settings</h2>
+    <p>Under construction.<br>
+    </p>
+    <h2><a name="Creating_your_own_steps"></a>Creating your own steps</h2>
+    <p>Steps in MAT are written in Python. This documentation is not a
+      Python tutorial, and will not document the API of all the classes
+      involved; in order to proceed much further, you should know
+      Python, and you should be brave enough to wade through the MAT
+      source code.<br>
+    </p>
+    <p>They should be defined in your task directory in
+      python/&lt;file&gt;.py, where &lt;file&gt; is a name of your
+      choice. When you refer to those steps in your task.xml file,
+      you'll refer to them as "&lt;file&gt;.&lt;stepname&gt;" .<br>
+    </p>
+    <p>Here's the skeleton of a step:<br>
+    </p>
+    <pre>from MAT.PluginMgr import PluginStep<br><br>class MyStep(PluginStep):<br><br>    def do(self, annotSet, **kw):<br>        # ... make modifications to annotSet<br>        return annotSet <br></pre>
+    <p>The annotSet is a rich document, defined in
+      MAT_PKG_HOME/lib/mat/python/MAT/Document.py. This class has
+      methods to add and modify annotations, which is mostly what steps
+      do. For examples of how steps use this API, see the class
+      descendants of PluginStep in
+      MAT_PKG_HOME/lib/mat/python/MAT/PluginMgr.py. <br>
+    </p>
+    <p>Most steps work by side effect, although it's possible to return
+      a different document than the one you were handed, and MAT will
+      recognize that as a new document. Most toolchains will not take
+      advantage of this capability.<br>
+    </p>
+    <p>Steps have three methods: undo(), do() and doBatch(). By default,
+      doBatch() calls do() for each document it's passed. You can define
+      a special doBatch() if you have batch-level operations (e.g., if
+      tagging every document in a directory is faster than calling the
+      tagger for each document). All three methods can have keyword
+      arguments, which are defined by an "argList" class variable (see
+      PluginMgr.py for examples). Every keyword argument passed to the
+      engine is passed to every step, so your function signature must
+      always end with **kw.<br>
+    </p>
+    <h3>Clean step</h3>
+    <p>A common action might be to ensure that all files are in ASCII
+      format with Unix line endings. Here's how you'd do that in your
+      task:<br>
+    </p>
+    <pre>from MAT.PluginMgr import CleanStep<br><br>class MyCleanStep(CleanStep):<br><br>    def do(self, annotSet, **kw):<br>        return self.truncateToUnixAscii(annotSet)<br></pre>
+    <p>The truncateToUnixAscii method is defined on CleanStep, so you
+      should inherit from there.<br>
+    </p>
+    <p><span style="font-weight: bold;">Note</span>: because this step
+      changes the signal of the document, it must be the first step in
+      any workflow, and it cannot be undone; undoing any step that
+      inherits from CleanStep will raise an error.<br>
+    </p>
+    <h3>Zone step</h3>
+    <p>You may want to establish a single zone in your document, in
+      between &lt;TXT&gt; and &lt;/TXT&gt;. Here's how you'd do that:<br>
+    </p>
+    <pre>from MAT.PluginMgr import ZoneStep<br><br>class MyZoneStep(ZoneStep):<br>        <br>    import re<br><br>    TXT_RE = re.compile("&lt;TXT&gt;(.*)&lt;/TXT&gt;", re.I | re.S)<br><br>    # AMS drops attribute values, not the attribute itself.<br>    # That should probably be fixed. In any case, I'll get<br>    # none of the n attribute values.<br><br>    def do(self, annotSet, **kw):<br>        # There's &lt;DOC&gt; and &lt;TXT&gt;, and<br>        # everything in between the &lt;TXT&gt; is fair game.<br>        m = self.TXT_RE.search(annotSet.signal)<br>        if m is not None:<br>            self.addZones(annotSet, [(m.start(1), m.end(1),  "body")])<br>        else:<br>            self.addZones(annotSet, [(0, len(annotSet.signal), "body")])<br>        <br>        return annotSet<br></pre>
+    <p>The addZones method is defined on the ZoneStep class, and makes
+      use of the getTrueZoneInfo method (which you have to <a
+        href="#Changing_the_default_zone_information">specialize</a> if
+      you're changing the default zone annotation). For its
+      implementation and more examples of its use, see PluginMgr.py.<br>
+    </p>
+    <h3>Tokenize step<br>
+    </h3>
+    <p>Under construction.<br>
+    </p>
+    <h2><a name="Defining_your_own_readerwriter"></a>Defining your own
+      reader/writer</h2>
+    See <a href="rw_create.html">here</a>.<br>
+    <h2><a name="Defining_your_own_experiment_engine_iterator"></a>Defining
+your
+
+
+
+
+
+      own experiment engine iterator</h2>
+    <p>In some cases, you might want to define your own experiment
+      engine iterator, if the default iterators we provide aren't
+      adequate. For instance, you may have two attributes in your
+      training engine which you want to iterate on in tandem, rather
+      than over the cross-product of those values. While providing a
+      guide to this is beyond the scope of this documentation, we can
+      provide some hints.<br>
+    </p>
+    <p>First, look in MAT_PKG_HOME/lib/mat/python/MAT/Bootstrap.py. This
+      is where the core iterator behavior is defined. Look at the
+      implementations of the CorpusSizeIterator, ValueIterator and
+      IncrementIterator classes. These classes each have a
+      __call__method which loops through the possible values for the
+      iterator. These methods are Python generators; they provide their
+      successive values using the "yield" statement. The __call__ method
+      is passed in a subdirectory name and a dictionary of keywords that
+      will be used to configure the TrainingRunInstance or
+      TestRunInstance, and it yields on each iteration an augmented
+      subdirectory name which encodes the iteration value, and a new,
+      modified dictionary of keywords. Note that the iterator has to
+      copy the relevant keyword dictionaries for each new iteration, so
+      that its iterative changes don't "bleed" from one iteration to the
+      next.<br>
+    </p>
+    <p>Next, look in MAT_PKG_HOME/lib/mat/python/MAT/CarafeTrain.py.
+      Again, look at the implementation of the CorpusSizeIterator,
+      ValueIterator and IncrementIterator classes. These are
+      specializations of the classes in Bootstrap.py, and the primary
+      purpose of the specialization is to make the iterator settings
+      available to the experiment XML. You'll see that each of these
+      classes has a class-level "argList" declaration which consists of
+      a list of Option objects. These Option objects are special
+      versions of the Option objects in Python's optparse library which
+      have been extended to work not only with command-line invocations
+      but also with XML invocations. The "dest" attribute of each Option
+      should match a keyword in the __init__ method for the class.<br>
+    </p>
+    <p>You'll want to place your customized iterator in a file in
+      &lt;your_task_directory&gt;/python. If you put it in
+      MyIterator.py, and you name the class MyIterator, you can refer to
+      it in the "type" attribute of the &lt;iterator&gt; element in your
+      experiment XML as "MyIterator.MyIterator".<br>
+    </p>
+  </body>
+</html>

@@ -1,0 +1,528 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Annotation Set Descriptor XML Reference</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Annotation set descriptor XML reference<br>
+    </h1>
+    <p>The XML format for the annotation set descriptors in the task
+      files (see <a
+href="file:///afs/rcf/project/anonymize/proj/users/sam/devel/MAT/web/htdocs/doc/html/create_task.html">"Creating
+
+
+
+
+
+
+        a New Task"</a>) is described in this document. Use cases can be
+      found <a href="asd_xml_use_cases.html">here</a>. Click <a
+        href="asd_xml_iframe.html">here</a> for a split-screen view.</p>
+    <h2>Element hierarchy</h2>
+    <p> &nbsp;&nbsp;&nbsp;<a href="#annotation_set_descriptor">&lt;annotation_set_descriptor&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a
+        href="#annotation_of_annotation_set_descriptor">&lt;annotation&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a
+        href="#attribute_of_annotation_set_descriptor">&lt;attribute&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a
+        href="#range_of_attribute">&lt;range&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a
+        href="#choice_of_attribute">&lt;choice&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a
+        href="#label_restriction_of_attribute">&lt;label_restriction&gt;</a><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a
+        href="#attributes_of_label_restriction">&lt;attributes&gt;</a><br>
+    </p>
+    <h2><a name="annotation_set_descriptor"></a>&lt;annotation_set_descriptor&gt;</h2>
+    <p>The toplevel element. Each annotation set descriptor corresponds
+      to a subset of the annotations used in your task. At the moment,
+      there's no reason to define more than one set of content
+      annotations, and we recommend that you define all your content
+      annotations in a single set.<br>
+    </p>
+    <h3>XML attributes</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">XML attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">name</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">The name of the annotation
+            set descriptor. For content annotations, this should be
+            "content". In a future release, there will be no
+            restrictions on this name.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3>Children</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Element<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Repeatable?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;annotation&gt;</td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">A possible annotation in the
+            descriptor.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;attribute&gt;</td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">An attribute for some
+            annotation(s) in the descriptor.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="annotation_of_annotation_set_descriptor"></a>&lt;annotation&gt;
+
+
+
+      (of &lt;annotation_set_descriptor&gt;)<br>
+    </h2>
+    <p>Each annotation type in the set descriptor is defined by one of
+      these elements. Note that the attributes for the annotation are
+      defined as sister elements, not children.<br>
+    </p>
+    <h3>XML attributes</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">XML attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">label</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">The label for the annotation
+            type.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">all_attributes_known</td>
+          <td style="vertical-align: top;">"yes"<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">Under normal circumstances,
+            MAT does not object to finding "undeclared" attributes of
+            annotations in the documents it reads. If this XML
+            attribute/value pair is present, the annotation type is
+            "locked"; in other words, when MAT reads in a document in
+            the context of a task corresponding to this annotation set
+            descriptor, it will object to any "stray" attributes which
+            appear on annotations of this type.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">span</td>
+          <td style="vertical-align: top;">"no"<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">By default, annotation types
+            define spanned annotations. If this XML attribute/value pair
+            is present, this type will be spanless.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="attribute_of_annotation_set_descriptor"></a>&lt;attribute&gt;
+
+
+
+      (of &lt;annotation_set_descriptor&gt;)<br>
+    </h2>
+    <p>Attributes are defined separately from the annotations that bear
+      them. The reason for this is that in a future release of MAT,
+      there will be a tight coupling between annotation set descriptors
+      and workflow steps, and there can be workflow steps which only add
+      an attribute to an existing annotation (e.g., part-of-speech
+      tagging implemented as adding a "POS" attribute to the "lex" tag).<br>
+    </p>
+    <p>The default value of every attribute is null unless otherwise
+      specified.<br>
+    </p>
+    <h3>XML attributes</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">XML attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">name</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">The name of the attribute.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">of_annotation</td>
+          <td style="vertical-align: top;">a comma-separated sequence of
+            strings<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">The annotation label or
+            labels which bear this attribute.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">type</td>
+          <td style="vertical-align: top;">one of "string", "int",
+            "float", "boolean", "annotation"<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">The type of the attribute
+            value. Default is "string".<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">aggregation</td>
+          <td style="vertical-align: top;">one of "set", "list"<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">By default, the values of
+            attributes are singletons. If you want the value to be a set
+            or list of the objects of the specified type, indicate it
+            with this XML attribute.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">distinguishing_attribute_for_equality</td>
+          <td style="vertical-align: top;">"yes"<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;"><b>Deprecated</b>. The
+            chances are that you'll never, ever need this XML attribute.<br>
+            <br>
+            The current reconciliation tool requires instructions about
+            which attributes to use when comparing annotations. By
+            default, MAT doesn't treat any attributes as discriminative;
+            only the label is examined. So a "PERSON" annotation in the
+            reference document and the hypothesis document count as
+            equal if and only if they span the same text; no additional
+            attributes are examined. <br>
+            <br>
+            The only automatic exception to this are attributes which
+            have &lt;choice&gt; children which define effective labels.
+            So if you define a task with a single "ENAMEX" annotation
+            label, with&nbsp; &lt;attr_set&gt; elements to mark the
+            properties of the values of a "TYPE" attribute, the "TYPE"
+            attribute will be treated as discriminative.<br>
+            <br>
+            If that's not enough - and it's enough for almost all
+            applications - you can use this XML attribute in your
+            annotation set descriptor to make further distinctions.<br>
+            <br>
+            This XML attribute is deprecated because the future
+            reconciliation tool will use the same <a
+              href="scoring_algorithm.html">pairing algorithm</a> used
+            by the scorer.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">default</td>
+          <td style="vertical-align: top;">various<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">If present, a default value
+            for this attribute. The value must be of the appropriate
+            type. For "boolean" attributes, use "yes" or "no". Defaults
+            are not available for "annotation" attributes. This
+            attribute can't be defined alongside the
+            "default_is_text_span" attribute. </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">default_is_text_span</td>
+          <td style="vertical-align: top;">"yes"<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">If present, the default value
+            for this attribute is digested from the span of the
+            annotation (so this option is only available for attributes
+            of spanned annotations). If the span can't be digested into
+            a value of the appropriate type, no default will be set.
+            This attribute can't be defined alongside the "default"
+            attribute.<br>
+            <br>
+            This attribute is available for "int", "string", and "float"
+            attributes.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3>Children</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Element<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Repeatable?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;range&gt;</td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">For "int" and "float"
+            attributes, the range of permitted values.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;choice&gt;</td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">For "string" and "int"
+            attributes, one of the possible choices for values. If the
+            attribute has at least one &lt;choice&gt; child, the choices
+            listed are the <b>only</b> permitted values.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;label_restriction&gt;</td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">For "annotation" attributes,
+            a restriction on attribute value. For any "annotation"
+            attribute, there must be at least one label restriction.
+            Every value must satisfy at least one of the restrictions.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="range_of_attribute"></a>&lt;range&gt; (of
+      &lt;attribute&gt;)<br>
+    </h2>
+    <p>For "int" and "float" attributes, you can define a range for the
+      possible attribute values. You can define both endpoints of the
+      range, or only one.<br>
+    </p>
+    <p>For "int" attributes, &lt;choice&gt; and &lt;range&gt; cannot
+      cooccur. </p>
+    <h3>XML attributes</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">XML attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">to</td>
+          <td style="vertical-align: top;">an int or float<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">The minimum (inclusive)
+            endpoint of the range. The required type of the value
+            depends on the type of the attribute that bears it.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">from</td>
+          <td style="vertical-align: top;">an int or float<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">The maximum (inclusive)
+            endpoint of the range. The required type of the value
+            depends on the type of the attribute that bears it. </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="choice_of_attribute"></a>&lt;choice&gt;</h2>
+    <p>For "string" and "int" attributes, you may provide a list of
+      explicit choices. If the attribute has at least one &lt;choice&gt;
+      child, the choices listed are the <b>only</b> permitted values.
+      You can further specify choices as "effective labels", which are
+      notional labels which are actually implemented as a label +
+      attribute/value pair, e.g., "PERSON" implemented as "ENAMEX" +
+      "type" = "PER". You can refer to these effective labels in various
+      places in the task and annotation set descriptor specifications,
+      as marked.</p>
+    <p> If one &lt;choice&gt; element has an effective label, they all
+      must; and no more than one attribute for a given annotation type
+      may define effective labels. The effective label must be distinct
+      from all other effective labels in the set, and all other
+      annotation labels.<br>
+    </p>
+    <p>For "int" attributes, &lt;choice&gt; and &lt;range&gt; cannot
+      cooccur.<br>
+    </p>
+    <h3>XML attributes</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">XML attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">effective_label</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">If present, the effective
+            label corresponding to the combination of this annotation
+            with this attribute value.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="label_restriction_of_attribute"></a>&lt;label_restriction&gt;
+
+
+
+      (of &lt;attribute&gt;)<br>
+    </h2>
+    <p>For "annotation" attributes, you must define at least one label
+      restriction. Every value of the attribute must satisfy at least
+      one of the restrictions. The restrictions can be a simple label or
+      effective label, or they can also bear attribute/value
+      restrictions.<br>
+    </p>
+    <h3>XML attributes</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">XML attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">label</td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">yes</td>
+          <td style="vertical-align: top;">A label or effective label
+            which the attribute value must match in order to satisfy
+            this restriction.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3>Children</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Element<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Repeatable?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;attributes&gt;</td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">Arbitrary attribute/value
+            pairs which must also be satisfied.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="attributes_of_label_restriction"></a>&lt;attributes&gt;
+      (of &lt;label_restriction&gt;)</h2>
+    <p>Label restrictions may also bear attribute/value pairs which must
+      be satisfied in order to satisfy the restriction.<br>
+    </p>
+    <h3>XML attributes</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">XML attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;attr&gt;</td>
+          <td style="vertical-align: top;">a string</td>
+          <td style="vertical-align: top;">no</td>
+          <td style="vertical-align: top;">the &lt;attributes&gt;
+            element supports arbitrary XML attribute-value pairs. Each
+            &lt;attr&gt; must be defined for the label restriction
+            label, and must be a choice attribute (i.e., either a string
+            or int attribute which has choices associated with it). <br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

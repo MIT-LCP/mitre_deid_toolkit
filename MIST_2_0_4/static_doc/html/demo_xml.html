@@ -1,0 +1,326 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Demo XML Reference</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Demo XML Reference</h1>
+    <p>The XML format for the demo files (see <a
+        href="create_demo.html">"Creating a new demo"</a>) <span
+        style="text-decoration: underline;"></span> is described in this
+      document.<br>
+    </p>
+    <h2>Element hierarchy</h2>
+    <p>&nbsp;&nbsp;&nbsp; <a href="#demo">&lt;demo&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &lt;description&gt;<br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a href="#activity_of_demo">&lt;activity&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#engine_settings_of_activity">&lt;engine_settings&gt;</a><br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#sample_document_of_activity">&lt;sample_document&gt;</a><br>
+    </p>
+    <h2><a name="demo"></a>&lt;demo&gt;</h2>
+    <p>The &lt;demo&gt; tag is the toplevel element.<br>
+    </p>
+    <p> </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">name </td>
+          <td style="vertical-align: top;"> string<br>
+          </td>
+          <td style="vertical-align: top;">yes </td>
+          <td style="vertical-align: top;"> The name of the demo. This
+            name will be used for the title and heading of the demo
+            page.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3>Children</h3>
+    <p>
+      <table style="text-align: left; width: 100%;" border="1"
+        cellpadding="2" cellspacing="2">
+        <tbody>
+          <tr>
+            <th style="vertical-align: top;">Element<br>
+            </th>
+            <th style="vertical-align: top;">Obligatory?<br>
+            </th>
+            <th style="vertical-align: top;">Repeatable?<br>
+            </th>
+            <th style="vertical-align: top;">Description<br>
+            </th>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;description&gt; </td>
+            <td style="vertical-align: top;">yes </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">The description of the
+              demo. This description can be arbitrary HTML. If you use
+              HTML tags, you should use the XML &lt;![CDATA[...]]&gt;
+              construction to block the interpretation of the contents
+              by the XML parser.<br>
+              <br>
+              This element has no attributes or element children; its
+              value is the text it delimits. </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;activity&gt; </td>
+            <td style="vertical-align: top;">yes </td>
+            <td style="vertical-align: top;">yes </td>
+            <td style="vertical-align: top;"> The activities the user
+              can undertake in the demo.<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </p>
+    <p> </p>
+    <h2><a name="activity_of_demo"></a>&lt;activity&gt; (of
+      &lt;demo&gt;)</h2>
+    <p>Each &lt;activity&gt; bundles together a common set of <a
+        href="MATEngine.html">MATEngine</a> settings with a set of
+      documents that those settings can be applied to.<br>
+    </p>
+    <p> </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">name </td>
+          <td style="vertical-align: top;"> a string<br>
+          </td>
+          <td style="vertical-align: top;">yes </td>
+          <td style="vertical-align: top;">The name of the activity. If
+            there is more than one activity defined, this name will be
+            used in the drop-down menu to select an activity.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">enable_blank_document </td>
+          <td style="vertical-align: top;"> "yes"<br>
+          </td>
+          <td style="vertical-align: top;">no </td>
+          <td style="vertical-align: top;"> By default, the demo will
+            not allow the user to type into a blank pane so that
+            arbitrary text can be processed. Use this attribute to
+            enable this option.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3>Children</h3>
+    <p>
+      <table style="text-align: left; width: 100%;" border="1"
+        cellpadding="2" cellspacing="2">
+        <tbody>
+          <tr>
+            <th style="vertical-align: top;">Element<br>
+            </th>
+            <th style="vertical-align: top;">Obligatory?<br>
+            </th>
+            <th style="vertical-align: top;">Repeatable?<br>
+            </th>
+            <th style="vertical-align: top;">Description<br>
+            </th>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;description&gt; </td>
+            <td style="vertical-align: top;">yes </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">The description of the
+              activity. This element has no attributes or element
+              children; its value is the text it delimits. </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;engine_settings&gt; </td>
+            <td style="vertical-align: top;">yes </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;"> The MATEngine settings
+              which are used to process the sample documents.<br>
+            </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;">&lt;sample_document&gt; </td>
+            <td style="vertical-align: top;">no </td>
+            <td style="vertical-align: top;">yes </td>
+            <td style="vertical-align: top;"> A sample document.<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </p>
+    <p> </p>
+    <h2><a name="engine_settings_of_activity"></a>&lt;engine_settings&gt;
+(of
+
+
+      &lt;activity&gt;)</h2>
+    <p>When a document is processed under a chosen activity, <a
+        href="MATEngine.html">MATEngine</a> is invoked. <br>
+    </p>
+    <p> </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">task </td>
+          <td style="vertical-align: top;"> a string<br>
+          </td>
+          <td style="vertical-align: top;">yes </td>
+          <td style="vertical-align: top;"> The name of a task.
+            Identical to the --task argument of MATEngine.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">steps </td>
+          <td style="vertical-align: top;"> a comma-separated string of
+            steps<br>
+          </td>
+          <td style="vertical-align: top;">yes </td>
+          <td style="vertical-align: top;"> The steps to apply.
+            Identical to the --steps argument of MATEngine.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">workflow </td>
+          <td style="vertical-align: top;"> a string<br>
+          </td>
+          <td style="vertical-align: top;">yes </td>
+          <td style="vertical-align: top;"> The name of a workflow.
+            Identical to the --workflow argument of MATEngine.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">&lt;attr&gt; </td>
+          <td style="vertical-align: top;"> <br>
+          </td>
+          <td style="vertical-align: top;">no </td>
+          <td style="vertical-align: top;"> In addition to the three
+            attributes above, the &lt;engine_settings&gt; attribute
+            supports passing most other MATEngine flags. You should not
+            specify flags for the type or location of the input or
+            output. In almost all cases, you won't need to specify
+            anything additional using this option, but it's available if
+            necessary (e.g., if you want to change the recall/precision
+            bias).<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="sample_document_of_activity"></a>&lt;sample_document&gt;
+(of
+
+
+      &lt;activity&gt;)</h2>
+    <p>A sample document that the user can choose to be processed for
+      this activity.<br>
+    </p>
+    <p> </p>
+    <h3>Attributes</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Obligatory?<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">relative_location </td>
+          <td style="vertical-align: top;"> a relative pathname<br>
+          </td>
+          <td style="vertical-align: top;">yes </td>
+          <td style="vertical-align: top;">The location of the sample
+            document inside the task directory.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">description </td>
+          <td style="vertical-align: top;"> a string<br>
+          </td>
+          <td style="vertical-align: top;">yes </td>
+          <td style="vertical-align: top;">A description of the sample
+            document, to be used in the drop-down menu to select the
+            document to process.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">file_type </td>
+          <td style="vertical-align: top;"> "raw" or "mat-json"<br>
+          </td>
+          <td style="vertical-align: top;">yes </td>
+          <td style="vertical-align: top;"> Identical to the
+            --input_file_type argument of MATEngine.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">encoding </td>
+          <td style="vertical-align: top;"> a string<br>
+          </td>
+          <td style="vertical-align: top;">no </td>
+          <td style="vertical-align: top;">A character encoding, if not
+            ASCII. Identical to the --input_encoding argument of
+            MATEngine.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">editable </td>
+          <td style="vertical-align: top;"> "yes"<br>
+          </td>
+          <td style="vertical-align: top;">no </td>
+          <td style="vertical-align: top;"> By default, the input pane
+            in the demo is not editable if the document isn't blank. If
+            you want the user to be able to edit the document before
+            processing it, use this attribute.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

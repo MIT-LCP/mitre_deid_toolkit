@@ -1,0 +1,42 @@
+<!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+     file LICENSE for license terms. -->
+<tasks>
+  <task name='Test task'>
+    <annotation_set_descriptors all_annotations_known='no'
+                                inherit='category:zone,category:token'>
+      <annotation_set_descriptor category='content' name='content'>
+        <annotation label='TAG'/>
+      </annotation_set_descriptor>
+    </annotation_set_descriptors>
+    <workflows>
+      <workflow name='Probe'>
+        <step name='probe'>
+          <run_settings probe_a='probe_value_a' probe_b='b_val_1' probe_c='yes'/>
+        </step>
+      </workflow>
+    </workflows>
+    <settings/>
+    <step_implementations>
+      <step name='probe' class='TestTask.ProbeStep'/>
+    </step_implementations>
+  </task>
+  <task name='Pure option test task'>
+    <annotation_set_descriptors all_annotations_known='no'
+                                inherit='category:zone,category:token'>
+      <annotation_set_descriptor category='content' name='content'>
+        <annotation label='TAG'/>
+      </annotation_set_descriptor>
+    </annotation_set_descriptors>
+    <workflows>
+      <workflow name='Probe'>
+        <step name='probe'>
+          <run_settings probe_a='probe_value_a' probe_b='b_val_1' probe_c='yes'/>
+        </step>
+      </workflow>
+    </workflows>
+    <settings/>
+    <step_implementations>
+      <step name='probe' class='TestTask.PureOptionProbeStep'/>
+    </step_implementations>
+  </task>
+</tasks>

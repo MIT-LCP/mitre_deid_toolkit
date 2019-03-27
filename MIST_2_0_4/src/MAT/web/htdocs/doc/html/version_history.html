@@ -1,0 +1,1844 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=windows-1252"
+      http-equiv="Content-Type">
+    <title>Version History</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Version history</h1>
+    <h2>2.0.4</h2>
+    <ul>
+      <li>Fixed an ordering bug MAT-JSON deserialization in Java,
+        Javascript and Python where annotations which both have
+        annotation-valued attributes and are values of other
+        annotation-valued attributes might not have their
+        non-annotation-valued attributes decoded in time to satisfy the
+        restrictions of the attribute they're a value of.</li>
+      <li>Updated build script to update version number in JAR manifest.</li>
+      <li>Fixed a couple small bugs in MATAnnotationInfoToJSON.</li>
+      <li>Fixed a bug where the incorrect content type was being
+        reported to the browser on UI document save, causing an
+        incorrect file extension to be added in Safari.</li>
+      <li>Fixed an suboptimal behavior where XML inline output was
+        producing extraneous (but harmless) toplevel XML tags to ensure
+        XML well-formedness.</li>
+      <li>Expanded the options available in the UI for the xml-inline
+        reader, and improved the associated documentation.<br>
+      </li>
+    </ul>
+    <h2>2.0.3</h2>
+    <ul>
+      <li>Fixed a bug in the Java core library where annotation IDs were
+        being processed incorrectly.<br>
+      </li>
+    </ul>
+    <h2>2.0.2</h2>
+    <ul>
+      <li>Fixed a bug where right-to-left languages were incorrectly
+        justified.</li>
+      <li>Compensated for a bug in YUI which caused buttons to be
+        attached at unreliable times, making it impossible to center the
+        editor popups vertically.</li>
+      <li>Fixed a small bug in the pairer where the similarity
+        comparison was returning incorrect values in one specific case.</li>
+      <li>Removed duplicate definitions of inChooseMode() in the
+        standalone viewer.</li>
+      <li>Compensated for a z-index bug in YUI which causes annotation
+        menu popups to appear behind annotation editor popups in some
+        cases, and for newer popups to appear behind older ones.</li>
+      <li>Compensated for a series of YUI bugs which caused menu
+        scrolling to behave strangely in annotation menu popups which
+        exceeded the height of the viewport.</li>
+      <li>Fixed a bug where menu scrolling in long annotation menu
+        popups was too slow.</li>
+      <li>Disabled the the "Unset" button in annotation editors for
+        attributes in choose mode, to avoid mischief.</li>
+      <li>Fixed a bug where pressing the close button on a tab while the
+        user is being asked whether to reload or close would cause an
+        error.</li>
+      <li>Fixed a bug where it was possible to close tabs while waiting
+        for a step result from the Web server.<br>
+      </li>
+      <li>Made all question dialogs modal.</li>
+      <li>Fixed bug in keypress handling where modern browsers were no
+        longer sending what we previously expected for
+        &lt;Enter&gt;/&lt;Return&gt;. Also changed &lt;Tab&gt; to "-"
+        for deleting annotations because of cross-browser
+        incompatibility issues.</li>
+      <li>Fixed a bug in the UI where annotations without any display
+        entry could be selected by clicking.</li>
+      <li>Fixed a bug where some of the gestures in annotation context
+        menus in annotation editors were not bound correctly.</li>
+      <li>Fixed a number of bugs relating to how assigned files are
+        processed from the UI.</li>
+      <li>Fixed a bug where setting MAT_PKG_HOME as an environment
+        variable possibly caused MAT to use the wrong value internally.</li>
+      <li>It is no longer possible to open the same file more than once
+        in the workspace UI. Previously, it was possible, but the older
+        buffers couldn't be saved or operated on.</li>
+      <li>Enabled busy wait image for workspace folder refresh in UI.</li>
+      <li>Minor additional improvements to workspace panel file
+        information display in UI.</li>
+      <li>Fixed a bug where the UI panel which displayed unexpected
+        errors from the backend was not draggable.</li>
+      <li>Fixed a bug in the standalone viewer where overlapping
+        annotations weren't being stacked on initial display when hand
+        annotation was enabled.</li>
+      <li>Fixed a bug where tokenized documents containing annotations
+        whose indices aren't aligned with the tokens caused a failure in
+        collecting corpus statistics during model building.</li>
+      <li>Added version information to Java JAR manifest.</li>
+      <li>Fixed a small bug in UI autotagging involving matching a
+        pattern which doesn't fall on token boundaries.</li>
+      <li>Fixed a bug with error handling in toolchain execution in
+        workspaces.<br>
+      </li>
+      <li>Minor documentation updates.<br>
+      </li>
+    </ul>
+    <h2>2.0.1</h2>
+    <ul>
+      <li>Fixed a bug in the pairer which was failing to deal with
+        spanless annotations when there was no task.</li>
+      <li>Removed an outdated reference to
+        --mark_gold_standard_reference in the MATWorkspace
+        documentation.</li>
+      <li>Fixed a typo in the toolchain which would cause an error in
+        the case where the task has exactly one workflow.</li>
+      <li>Fixed a typo in a Windows command in the MATEngine
+        documentation.</li>
+      <li>Improved documentation about the --lexicon_dir option to
+        Carafe.</li>
+      <li>Fixed a bug where edit_immediately was not being respected for
+        effective labels.</li>
+      <li>Fixed a bug where true labels could not be used as a shorthand
+        for effective labels for adding annotations in choose mode.</li>
+      <li>Documented the MAT runtime environment variables and added a
+        common command-line option to report where they're read from.</li>
+      <li>Fixed a bug where the display properties of annotations with
+        effective labels were not consistently updated when the
+        effective label attribute value changes.</li>
+      <li>Fixed an error in the MAT UI in segmenting documents which
+        contain lines at the end which are wrapped.</li>
+      <li>Fixed a bug in the MAT UI where highlighting an annotation's
+        parents or children was mispositioning the attribute name
+        tooltip.</li>
+      <li>Fixed a bug in the MAT UI where the attribute name tooltips
+        were mistakenly permitted to scroll off the right side of the
+        annotation pane.</li>
+      <li>Fixed a bug in the MAT UI where the annotation editor popup
+        max size was not being computed correctly.</li>
+      <li>Fixed a bug in the MAT UI where annotation editor popups, if
+        moved, would jump back to the center of the viewport when the
+        viewport was resized.<br>
+      </li>
+    </ul>
+    <h2>2.0</h2>
+    <ul>
+      <li>Undid Java 1.7 requirement.</li>
+      <li>Fixed a small bug in the toolchain where jCarafe was being
+        executed even if there were no documents to tag.</li>
+      <li>Disabled copying annotation-valued attributes during
+        autotagging in the UI.</li>
+      <li>Removed some old code from the Java MAT engine client API.</li>
+      <li>Final documentation tweaks.</li>
+      <li>Fixed a series of Windows bugs relating to situations where
+        the workspace DB was not appropriately closed.</li>
+      <li>Added access to score and similarity profiles to experiment
+        XML.<br>
+      </li>
+    </ul>
+    <h2>2.0RC14</h2>
+    <ul>
+      <li>Upgraded to jCarafe 0.9.8.5b-06.</li>
+      <li>Raised Java requirement to 1.7.</li>
+      <li>Fixed a typo in MATReport.</li>
+      <li>Made the MAT-JSON Python reader a bit more forgiving.<br>
+      </li>
+    </ul>
+    <h2>2.0RC13</h2>
+    <ul>
+      <li>Fixed a bug in MATTransducer where the record of steps applied
+        to the document was not retained when a convertor was provided.</li>
+      <li>Fixed a comparable bug in the reader/writer subsystem.</li>
+      <li>Fixed a bug in the document reader where compound steps
+        weren't being consulted correctly when inferring the steps
+        applied to a document.</li>
+      <li>Fixed a bug where the tokenizer was not anticipating the
+        unlikely case where a document had been tokenized but the record
+        of steps applied did not mention the tokenization.</li>
+      <li>Fixed a bug where the scorer was failing to use the new
+        comparison mechanisms for tokens.</li>
+      <li>Fixed a bug where comparison sets in the scorer created
+        because of transitive overlaps could have resulted in pairing
+        annotations which don't overlap at all.<br>
+      </li>
+    </ul>
+    <h2>2.0RC12</h2>
+    <ul>
+      <li>Fixed a subtle bug in the experiment engine which arose when
+        labels which are present in the training corpus are not present
+        in the test corpus.</li>
+      <li>Documentation formatting tweaks.</li>
+      <li>Small enhancement of document mapping to preserve XML
+        formatting.</li>
+      <li>Partial updates for possible future support of Internet
+        Explorer.</li>
+    </ul>
+    <h2>2.0RC11</h2>
+    <ul>
+      <li>Ensured that annotation editor titles don't grow without
+        limit.</li>
+      <li>Ensured that annotations without CSS display instructions
+        aren't rendered in any way.</li>
+      <li>Fixed a bug where it was possible for documents in the
+        standalone viewer to lack a global annotation type repository.</li>
+    </ul>
+    <h2>2.0RC10</h2>
+    <ul>
+      <li>Added new functionality to the XML template digester to allow
+        tokenless_autotag_delimiters to be Unicode.</li>
+      <li>Fixed some tiny bugs in the Web UI templates.</li>
+      <li>Inserted some missing documentation pages.<br>
+      </li>
+    </ul>
+    <h2>2.0RC9</h2>
+    <ul>
+      <li>Fixed a subtle but dangerous bug in the document convertor
+        which was causing the wrong annotations to be converted.</li>
+      <li>Fixed a couple of tiny bugs in the scoring pairer.</li>
+      <li>Fixed a bug in the UI where documents which were identified as
+        reconciliation documents but were not were causing the UI to
+        break.<br>
+      </li>
+    </ul>
+    <h2>2.0RC8</h2>
+    <ul>
+      <li>Tightened the restrictions on int attributes: choice
+        restrictions and range restrictions cannot cooccur.<br>
+      </li>
+      <li>Documentation updates.<br>
+      </li>
+    </ul>
+    <h2>2.0RC7</h2>
+    <ul>
+      <li>Fixed a bug where the function that aligns annotations with
+        new tokens didn't work with overlapping annotations, and failed
+        to forcibly detach annotations it deleted.<br>
+      </li>
+    </ul>
+    <h2>2.0RC6</h2>
+    <ul>
+      <li>Fixed a bug where annotations without visible displays were
+        taking up space in the UI.<br>
+      </li>
+    </ul>
+    <h2>2.0RC5</h2>
+    <ul>
+      <li>Added a warning to notify users that MAT currently can't
+        distinguish in UI presentation between annotation labels which
+        differ only in case.</li>
+      <li>Documentation updates.<br>
+      </li>
+    </ul>
+    <h2>2.0RC4</h2>
+    <ul>
+      <li>Implemented a workaround for a limitation on numbers of query
+        parameters in sqlite3.</li>
+      <li>Enhanced the behavior of MATTransducer for reporting errors,
+        capturing transduction history.</li>
+      <li>Extended pair comparison to handle multi-attribute dimensions,
+        attribute equivalences.<br>
+      </li>
+    </ul>
+    <h2>2.0RC3</h2>
+    <ul>
+      <li>Fixed an insidious bug where the endpoints of swipes in the UI
+        during annotation were being misinterpreted in rare
+        circumstances.</li>
+      <li>Fixed a bug where annotation popups and informative dialogs
+        were not necessarily being removed when documents were
+        deselected (via tabs, e.g.) in the UI.</li>
+      <li>Added more operations to the document conversion.</li>
+      <li>Modified the workspace_configuration operation in workspaces
+        to print out the task.</li>
+      <li>Demoted the support level of Windows XP, which we no longer
+        have access to.</li>
+      <li>Fixed a bug where documents which had hand annotation
+        available when they were loaded into the UI were not being
+        displayed in stacked mode.</li>
+      <li>Fixed a bug where it was not possible to modify the extent an
+        annotation in the UI if the swipe overlapped with multiple
+        annotations on the same layer.&nbsp;</li>
+      <li>Fixed a bug where closing dialogs that ask a question left the
+        UI in a strange state.<br>
+      </li>
+    </ul>
+    <h2>2.0RC2</h2>
+    <ul>
+      <li>Fixed a rare bug where HTML characters in the annotation
+        tables were not displayed correctly.</li>
+      <li>Updated to jCarafe 0.9.8.4.RC14 to fix an off-by-one error.</li>
+      <li>Documentation updates.<br>
+      </li>
+    </ul>
+    <h2>2.0RC1</h2>
+    <ul>
+      <li>Minor bug fixes.</li>
+      <li>Documentation updates, including Java docs.<br>
+      </li>
+    </ul>
+    <h2>2.0pre29</h2>
+    <ul>
+      <li>Minor extension to document conversion.</li>
+      <li>Added more customization options to attribute entries in UI
+        tables and editor/viewers: custom editor label customization,
+        URL links.<br>
+      </li>
+      <li>Minor bug fix.<br>
+      </li>
+    </ul>
+    <h2>2.0pre28</h2>
+    <ul>
+      <li>Minor updates to score configurability.</li>
+      <li>Fixed bug in UI where workspace listing was not retaining its
+        scroll location.</li>
+      <li>Added the ability to designate an attribute as read-only for
+        UI editing purposes.</li>
+      <li>Ensured that sidebar redisplay happens appropriately for
+        standalone viewers.<br>
+      </li>
+      <li>Minor bug fixes.<br>
+      </li>
+    </ul>
+    <h2>2.0pre27</h2>
+    <ul>
+      <li>Documentation updates.<br>
+      </li>
+    </ul>
+    <h2>2.0pre26</h2>
+    <ul>
+      <li>Implemented case-insensitive autotagging UI option.</li>
+      <li>Expanded the score profile options.</li>
+      <li>Fixed a bug in workspace logging from the UI.</li>
+      <li>Added highlighting and scrolling improvements to the
+        comparison view.</li>
+      <li>More documentation updates.</li>
+      <li>Other minor bug fixes.<br>
+      </li>
+    </ul>
+    <h2>2.0pre25</h2>
+    <ul>
+      <li>Updated Java Carafe bindings for latest version.</li>
+      <li>More documentation updates.</li>
+      <li>Updated standalone viewer to support new comparison paradigm.<br>
+      </li>
+    </ul>
+    <h2>2.0pre24</h2>
+    <ul>
+      <li>More documentation updates.</li>
+      <li>Minor bug fixes.<br>
+      </li>
+    </ul>
+    <h2>2.0pre23</h2>
+    <ul>
+      <li>More documentation updates.</li>
+      <li>Added description columns to the detail spreadsheet output of
+        the scorer.</li>
+      <li>A variety of tiny bug fixes.</li>
+      <li>Ensured compatibility with, and upgraded to, jCarafe
+        0.9.8.4.RC10.<br>
+      </li>
+    </ul>
+    <h2>2.0pre22</h2>
+    <ul>
+      <li>More documentation updates.</li>
+      <li>Updates to Java bindings to deal with annotation attribute
+        value restrictions.</li>
+      <li>Added an (undocumented) capability to add Web operations to
+        tasks.</li>
+      <li>Workspace dialog in the UI now focuses on the next input
+        element when you tab.</li>
+      <li>Fixed a number of small bugs.<br>
+      </li>
+    </ul>
+    <h2>2.0pre21</h2>
+    <ul>
+      <li>Lots of documentation updates.</li>
+      <li>Modified the way effective labels are declared.<br>
+      </li>
+      <li>Fixed a number of small bugs.</li>
+    </ul>
+    <h2>2.0pre20</h2>
+    <ul>
+      <li>Imported document mapping XML capability (not yet documented).</li>
+      <li>Scrubbed the current state of the UI for logging updates.</li>
+      <li>Fixed a bug where double-clicking on a word at the end of a
+        line in non-tokenized hand annotation was selecting the wrong
+        text.</li>
+      <li>Extended MATManagePluginDirs to list the task names in the
+        task directories.</li>
+      <li>Enhanced MATTransducer with the document mapping capability,
+        along with a reporting capability based on the same tools as
+        those used in MATReport.</li>
+      <li>Fixed a bug in the distribution code related to Mac
+        configuration of Terminator.</li>
+      <li>Added utility to create comparison documents.</li>
+      <li>Extended hand annotation tool to cover complex label
+        restrictions.</li>
+      <li>Implemented workspace logging awareness in UI.</li>
+      <li>Made all annotation capabilities work in standalone UI.</li>
+      <li>Improved scoring algorithm to do a better job of pairing
+        spanless annotations.</li>
+      <li>Removed obsolete default_tag_window_size and
+        default_tag_window_position.</li>
+      <li>Improved tagging feedback in the UI.<br>
+      </li>
+      <li>Initial documentation updates.</li>
+    </ul>
+    <h2>2.0pre19</h2>
+    <ul>
+      <li>Small UI bug fix.<br>
+      </li>
+    </ul>
+    <h2>2.0pre18</h2>
+    <ul>
+      <li>Small UI bug fixes.<br>
+      </li>
+    </ul>
+    <h2>2.0pre17</h2>
+    <ul>
+      <li>Hand annotation now supports adding overlapping annotations.</li>
+      <li>Reorganized annotation pane to force span breaks at line wrap
+        boundaries, in order to have the display behave properly with
+        annotations which are longer than a single line and to line up
+        annotations properly with spanless annotation icons.</li>
+      <li>Cleaned up implementation of resize in annotation panes.<br>
+      </li>
+      <li>MATReport now supports per-label reports.</li>
+      <li>Introduced new document comparison pane, using output from the
+        pairing algorithm, including relation comparison.</li>
+      <li>Implemented read-only appropriately across the UI for
+        annotation editor popups.<br>
+      </li>
+      <li>Fixed a variety of small bugs.<br>
+      </li>
+    </ul>
+    <h2>2.0pre16</h2>
+    <ul>
+      <li>Added ability to report spanless annotations in MATReport.</li>
+      <li>Added ability to register convertors for tasks in
+        readers/writers.</li>
+      <li>Added "scroll to" action in UI.</li>
+      <li>Added annotation highlighting to annotation table mouse hover.</li>
+      <li>Fixed a couple of small bugs.<br>
+      </li>
+    </ul>
+    <h2>2.0pre15</h2>
+    <ul>
+      <li>Imported workspace logger and reconciliation workflows from
+        custom task.</li>
+      <li>Added ability to treat all annotations as content annotations
+        in MATReport.</li>
+      <li>Initial implementation of expanded annotation ontology in
+        Java.</li>
+      <li>Added stubs for new comparison window.</li>
+      <li>Added --version option to common command-line options, and
+        documented common options separately.</li>
+      <li>Added "About MAT" option to UI, with version number.</li>
+      <li>Implemented defaults in annotation task descriptors.</li>
+      <li>Implemented new comparison documents based on similarity
+        profiles.</li>
+      <li>Added spanless sidebar and annotation highlighting in UI.</li>
+      <li>Introduced improvements to feedback for hand annotation and
+        choose mode in UI.</li>
+      <li>Improved plumbing for presenting results of document and
+        annotation modifications in UI.<br>
+      </li>
+      <li>Fixed a variety of small errors.</li>
+    </ul>
+    <h2>2.0pre14</h2>
+    <ul>
+      <li>Implemented similarity profiles for Kuhn-Munkres-based
+        scoring. Enabled scoring of annotation-valued attributes and
+        spanless annotations.</li>
+      <li>Added similarity and scoring profiles to the scorer, including
+        tag aggregations and tag decompositions in the scoring profiles.<br>
+      </li>
+      <li>Enhanced MATTransducer to work on files one at a time.</li>
+      <li>Implemented default annotation values in Python and Javascript
+        libraries, including the ability to use the text span as the
+        default value for spanned annotations.<br>
+      </li>
+      <li>Fixed two small bugs in the MAT UI.<br>
+      </li>
+    </ul>
+    <h2>2.0pre13</h2>
+    <ul>
+      <li>Added <a href="MATAnnotationInfoToJSON.html">MATAnnotationInfoToJSON</a>
+        to support standalone viewers.</li>
+      <li>Fixed a small bug in computing tag orders for the UI in the
+        new annotation specification regime.</li>
+      <li>Initial implementation of the capability of stratified scoring
+        of annotations with annotation-valued attributes (not yet
+        tested).</li>
+      <li>Separated the annotation pairing capability from the scorer.</li>
+      <li>Added the ability to create custom attribute editors in the
+        UI.<br>
+      </li>
+    </ul>
+    <h2>2.0pre12</h2>
+    <ul>
+      <li>Re-enabled popup annotation editors in standalone viewer.</li>
+      <li>Fixed some minor bugs in how the string-valued attributes
+        appear in the annotation editor.</li>
+      <li>Incorporated Kuhn-Munkres alignment algorithm for scoring
+        (initially disabled).<br>
+      </li>
+    </ul>
+    <h2>2.0pre11</h2>
+    <ul>
+      <li>Fixed bug with deleting annotations in the UI.<br>
+      </li>
+    </ul>
+    <h2>2.0pre10</h2>
+    <ul>
+      <li>Fixed a couple minor UI bugs.</li>
+      <li>Re-introduced the overlay manager to handle popup
+        backgrounding and foregrounding.</li>
+      <li>Reworked the UI annotation manipulation plumbing to provide
+        more general support for redisplay.</li>
+      <li>Fixed a bug where the annotation table was always being shown,
+        even when it wasn't needed.</li>
+      <li>Disabled the "Show annotation tables" menu item when a
+        document shows tables regardless (because it has spanless
+        annotations).</li>
+      <li>Added the ability to delete annotations from various context
+        menus.</li>
+      <li>Added the ability to choose an annotation in "choose mode"
+        from the annotation editor action menu.</li>
+      <li>Discovered and corrected inconsistencies in how the annotation
+        editors were invoked in the standalone viewer.</li>
+    </ul>
+    <h2>2.0pre9</h2>
+    <ul>
+      <li>Fixed a Safari bug relating to the menu update for the
+        annotation tables.</li>
+      <li>Fixed bugs in the standalone viewer relating to the upgrade to
+        the new annotation set descriptors.<br>
+      </li>
+    </ul>
+    <h2>2.0pre8</h2>
+    <ul>
+      <li>Numerous tiny UI bug fixes.</li>
+      <li>Expanded UI support for annotation-valued attributes,
+        including actions to add annotations to parents.</li>
+      <li>Added annotation tables and the ability to create spanless
+        annotations.<br>
+      </li>
+      <li>Added support for a global "choose mode" in the UI.</li>
+      <li>Expanded range of editable attribute types in annotation
+        editors.<br>
+      </li>
+    </ul>
+    <h2>2.0pre7</h2>
+    <ul>
+      <li>Removed old desktop UI.</li>
+      <li>Migrated all tasks and plugin manager to new well-formedness
+        conditions.</li>
+      <li>Implemented global and local annotation type managers for
+        well-formedness condition support.</li>
+      <li>Added utility to update task.xml files.</li>
+      <li>Improvements to initial well-formedness condition checking in
+        Python and Javascript.</li>
+      <li>Implemented initial UI support for annotation-valued
+        attributes.&nbsp;</li>
+      <li>Enhanced presentation of annotations and synchronization
+        between annotation views in UI.</li>
+      <li>Improved global management of view settings in UI.</li>
+      <li>Added ability to edit annotations in tabs.<br>
+      </li>
+    </ul>
+    <h2>2.0pre6</h2>
+    <ul>
+      <li>Migrated to new workbench UI.</li>
+      <li>Added Javascript support for new attribute types and
+        well-formedness conditions.</li>
+      <li>Added annotation capability to standalone document viewer.<br>
+      </li>
+    </ul>
+    <h2>2.0pre5</h2>
+    <ul>
+      <li>Added support for lists and sets of attribute values in
+        MAT-JSON and Python, as well as float, string, int, and boolean
+        attribute values.</li>
+      <li>Initial Python implementation of well-formedness conditions
+        for annotation attribute values.<br>
+      </li>
+    </ul>
+    <h2>2.0pre4</h2>
+    <ul>
+      <li>Fixed a tiny bug in the UI where unzoned documents couldn't do
+        autotag because no content intervals were found.<br>
+      </li>
+      <li>Updated the workspace documentation with troubleshooting tips.</li>
+      <li>Other minor doc updates.</li>
+      <li>Fixed bugs in Java bindings where annotation IDs were being
+        incremented incorrectly, and spanless Asets were being created
+        incorrectly.</li>
+      <li>Fixed a couple small bugs in the build script related to
+        missing executables on MacOS X.</li>
+      <li>Fixed a bug in CherryPyService where images from task
+        documentation had the wrong MIME type.<br>
+      </li>
+    </ul>
+    <p>Version 2.0pre4 is the current frozen version for the
+      Callisto-compatible version of TooCAAn.<br>
+    </p>
+    <h2>2.0pre3</h2>
+    <ul>
+      <li>Added confidence capturing to the jCarafe wrapper.</li>
+      <li>Added MATTransducer.</li>
+      <li>Added the --xml_translate_all option to the XML inline reader.<br>
+      </li>
+    </ul>
+    <h2>2.0pre2</h2>
+    <ul>
+      <li>Transitioned to new workspace structure. Introduced conversion
+        tool.</li>
+      <li>Initial reorganization of extensible command-line arguments.</li>
+      <li>Removed Cygwin support.</li>
+      <li>Imposed requirement of Python 2.6 or later.</li>
+      <li>Introduced reconciliation capability in UI.</li>
+      <li>Removed the legacy "operate" keyword in workspace commands.</li>
+      <li>Fixed bug 21049: XML inline rendering and reading should skip
+        the untaggable tags, which typically cause crossing dependency
+        problems. Fixed by removing untaggables except in the UI.</li>
+      <li>Added overlap handling to the scorer.</li>
+      <li>Fixed a bug in ordering annotations in the UI by making it
+        impossible to reuse annotation names as attribute set names in
+        task.xml.</li>
+      <li>Made it possible to restrict scoring to gold segments in
+        either the hypothesis or the reference.</li>
+      <li>Made the confusability matrix in the scorer more well-behaved
+        and well-conceived.</li>
+      <li>Changed recall, precision, and f-measure in the scorer to
+        return scores between 0 and 1, rather than 0 and 100.</li>
+      <li>Fixed a set of interrelated bugs that was blocking Carafe from
+        acting as a partial tagger.</li>
+      <li>Extended scorer to make use of all recorded distinguishing
+        attributes in annotations.</li>
+      <li>Added global management of debug flags, subprocess
+        information, temporary directories.</li>
+      <li>Modified scorer and experiment engine to generate multiple
+        spreadsheet types in the same run.</li>
+      <li>Enhanced fake XML reader to recognize zero-length tags, nested
+        tags, recover properly from "misformed" tags.</li>
+      <li>Removed mat_controller.sh and accoutrements. Refactored MATWeb
+        to take responsibility for starting up the tabbed terminal.</li>
+      <li>Updated to new version of jCarafe.</li>
+      <li>Added support for running experiments against workspaces to
+        both MATExperimentEngine and MATWorkspaceEngine.</li>
+      <li>Added closing checks for the MAT UI to warn about unsaved
+        document and log changes, and to free workspace locks.</li>
+      <li>Added initial support for adding hooks to present annotation
+        editors.<br>
+      </li>
+      <li>Added indication of when a document is modified to the
+        document pane title.</li>
+      <li>Fixed a subtle bug involving figuring out whether a document
+        is dirty or not.<br>
+      </li>
+    </ul>
+    <h2>2.0pre1</h2>
+    <ul>
+      <li>Extended mat-json format.</li>
+      <li>Provided new comparison window in UI.<br>
+      </li>
+    </ul>
+    <h2>1.3</h2>
+    <ul>
+      <li>Provided some final documentation updates to stress the lack
+        of security in the MATWeb server.</li>
+      <li>Fixed a final bug in the demo UI.</li>
+      <li>Backported standalone document viewer wrapper from MAT 2.0
+        development branch.</li>
+    </ul>
+    <h2>1.3RC10</h2>
+    <ul>
+      <li>Fixed a tiny CSS bug.</li>
+      <li>Updated MATScore documentation to clarify that only documents
+        with nonoverlapping content annotations can be scored.<br>
+      </li>
+    </ul>
+    <span style="font-weight: bold;"></span>
+    <h2>1.3RC9</h2>
+    <ul>
+      <li>Fixed a conceptual bug in the detail spreadsheet in the
+        scorer.</li>
+      <li>Fixed a bug in MATWeb where the server wasn't enforcing that
+        the workspace directory appear beneath the workspace container
+        directory.<br>
+      </li>
+    </ul>
+    <h2>1.3RC8</h2>
+    <ul>
+      <li>Fixed a bug in the confusability matrices in the scorer.</li>
+      <li>Fixed a bug in handling forced recomputation in the experiment
+        engine.</li>
+    </ul>
+    <h2>1.3RC7</h2>
+    <ul>
+      <li>Fixed a bug in the UI where workspace document windows were
+        not being tiled appropriately.</li>
+      <li>Added a plugin hook for tasks to modify the UI metadata.<br>
+      </li>
+    </ul>
+    <h2>1.3RC6</h2>
+    <ul>
+      <li> Fixed a small bug in handling autotagging in the UI.</li>
+    </ul>
+    <h2>1.3RC5</h2>
+    <ul>
+      <li>Introduced further granularity into the scorer to describe
+        various subtypes of span clashes. Introduced an option to enable
+        this granularity (disabled by default).</li>
+      <li>Fixed a small scorer bug which arose when reference documents
+        contained no annotations.<br>
+      </li>
+    </ul>
+    <h2>1.3RC4</h2>
+    <ul>
+      <li>Fixed a tiny but important bug in counting characters in XML
+        inline input where the background signal is itself XML.</li>
+      <li>Improved debug handling in the model trainer.<br>
+      </li>
+    </ul>
+    <h2>1.3RC3</h2>
+    <ul>
+      <li>Added --preserve_tempfiles to preserve tempfiles during model
+        building.</li>
+      <li>Improved error checking for color interpretation for Java
+        clients.</li>
+    </ul>
+    <h2>1.3RC2</h2>
+    <ul>
+      <li>Added the ability to ignore labels to the scorer.</li>
+      <li>Provided a workaround for managing zones to compensate for a
+        jCarafe bug in tokenization.<br>
+      </li>
+    </ul>
+    <h2>1.3RC1</h2>
+    <ul>
+      <li>Fixed small bug in scorer which raised an error when tokens
+        were present in one, but not both, of the reference and
+        hypothesis documents.</li>
+      <li>Added equivalence classes and confusability matrix generation
+        to the scorer.</li>
+      <li>Expanded the core scorer columns to reflect the various
+        subtypes of clashes directly.<br>
+      </li>
+    </ul>
+    <h2>1.3pre16</h2>
+    <ul>
+      <li>Small documentation tweak.</li>
+      <li>Internal API modifications to the document writer.<br>
+      </li>
+    </ul>
+    <h2>1.3pre15</h2>
+    <ul>
+      <li>Improved the handling of command line help messages for
+        document readers.<br>
+      </li>
+    </ul>
+    <h2>1.3pre14</h2>
+    <ul>
+      <li>Added character and pseudo-token scoring to the MAT scorer.<br>
+      </li>
+    </ul>
+    <h2>1.3pre13</h2>
+    <ul>
+      <li>Fixed a bug in managing the Web service headers which caused
+        spurious errors to be generated when running the demos.</li>
+    </ul>
+    <h2>1.3pre12<br>
+    </h2>
+    <ul>
+      <li>Modified remove operation in workspaces not to remove all
+        basenames by default.<br>
+      </li>
+    </ul>
+    <h2>1.3pre11</h2>
+    <ul>
+      <li>Added the fake-xml-inline reader.<br>
+      </li>
+    </ul>
+    <h2>1.3pre10</h2>
+    <ul>
+      <li>Fixed two security issues in workspace access. First, if
+        workspace container directories are specified to MATWeb, they <span
+          style="font-weight: bold;">must</span> be used; no absolute
+        pathnames are permitted. Second, workspace keys are no longer
+        passed on the command line when MATWeb restarts.</li>
+      <li>Fixed a tiny typo in the document reader.<br>
+      </li>
+    </ul>
+    <h2>1.3pre9</h2>
+    <ul>
+      <li>Fixed a small bug in the MAT toolchain where it was not
+        possible to access errors from the document reader.<br>
+      </li>
+    </ul>
+    <h2>1.3pre8</h2>
+    <ul>
+      <li>Fixed a small bug in the MAT UI which arose while implementing
+        autotagging.<br>
+      </li>
+    </ul>
+    <h2>1.3pre7</h2>
+    <ul>
+      <li>Added the ability to specify character encodings to MATScore.<br>
+      </li>
+    </ul>
+    <h2>1.3pre6</h2>
+    <ul>
+      <li>Fixed a bug where input-only or output-only document formats
+        were not being treated appropriately in the MAT UI.</li>
+      <li>Added the ability to insert document convertors for reading
+        and writing in the document IO subsystem, to, e.g., convert from
+        PERSON to ENAMEX TYPE=PERSON when reading or writing.<br>
+      </li>
+    </ul>
+    <h2>1.3pre5</h2>
+    <ul>
+      <li>Added capability to autotag similar text strings in the MAT
+        UI.</li>
+      <li>Moved the text_right_to_left property from the workflows to
+        the Web customization, since it's essentially task-global.<br>
+      </li>
+    </ul>
+    <h2>1.3pre4</h2>
+    <ul>
+      <li>Fixed a bug in the new redistribute.py utility which prevented
+        it from working with file paths with spaces in them.</li>
+      <li>Added to the redistribute.py utility the ability to remove
+        tasks from the target distribution.</li>
+      <li>Enhanced MATWeb with the ability to supersede existing MAT Web
+        servers, to capture random output and error, and to bundle a
+        number of related features under the new --as_service option.</li>
+      <li>Added more restrictive color format recognition in the Java
+        bindings to support Callisto color interpretation.</li>
+      <li>Improved the encapsulation of the Web frontend core pieces to
+        facilitate reuse.</li>
+      <li>Fixed incorrect and overly literal MIME type in Web server
+        responses.<br>
+      </li>
+    </ul>
+    <h2>1.3pre3</h2>
+    <ul>
+      <li>Removed all attempts to access annotation category information
+        via the document. All such accesses now happen via the task.</li>
+      <li>Added the redistribute.py utility.</li>
+      <li>Fixed a bug in the MAT UI where annotation attributes and
+        values were not being shown when the mouse hovers over an
+        annotation.</li>
+      <li>Fixed a bug in the experiment engine where the order of
+        documents in training corpora was not preserved across restarts
+        of the experiment engine (important when corpus size iterators
+        are used).<br>
+      </li>
+    </ul>
+    <h2>1.3pre2</h2>
+    <ul>
+      <li>Bug fixes for Java API improvements.<br>
+      </li>
+    </ul>
+    <h2>1.3pre1</h2>
+    <ul>
+      <li>Introduced notion of iterators to experiment engine.</li>
+      <li>Extended experiment score summary files to include more
+        information about runs and models.</li>
+      <li>Enhanced Java API slightly to support better introspection
+        about task information.<br>
+      </li>
+    </ul>
+    <h2>1.2</h2>
+    <ul>
+      <li>Fixed a bug which corrupted line endings in CSV files on
+        Windows.</li>
+      <li>Upgraded to Java Carafe 0.9.7RC4 to address a problem with
+        serializing mat-json files in the tokenizer.<br>
+      </li>
+    </ul>
+    <h2>1.2RC23</h2>
+    <ul>
+      <li>Introduced a check to ensure that MAT 1.2 fails intelligently
+        when presented with future versions of the mat-json
+        serialization.<br>
+      </li>
+      <li>Minor documentation updates.</li>
+    </ul>
+    <h2>1.2RC22</h2>
+    <ul>
+      <li>Upgraded to Java Carafe 0.9.7RC3. This version of Carafe is
+        not compatible with models built with previous versions of Java
+        Carafe.</li>
+    </ul>
+    <h2>1.2RC21</h2>
+    <ul>
+      <li>Fixed two small bugs where ENAMEX-style tags were not being
+        ordered correctly when labels were not being alphabetized in the
+        UI.</li>
+      <li>Fixed a small bug in the scorer where documents with no zones
+        (e.g., XML documents which contain only annotations) were not
+        being scored correctly when a task was specified.</li>
+    </ul>
+    <h2>1.2RC20</h2>
+    <ul>
+      <li>Fixed a small bug in setting up the tabbed terminal in
+        Windows.</li>
+    </ul>
+    <h2>1.2RC19</h2>
+    <ul>
+      <li>Fixed a small bug where Java Carafe model training might do
+        the wrong thing with duplicate file names.</li>
+    </ul>
+    <h2>1.2RC18</h2>
+    <ul>
+      <li>Reorganized documentation links to create a better initial
+        experience when unpacking the distribution.</li>
+      <li>Fixed a small bug in the initialization sequence when
+        interacting with the Java Carafe tagger server.</li>
+      <li>Fixed a small bug in CSS displays of annotations with labels
+        whose name contain a dash. </li>
+    </ul>
+    <h2>1.2RC17</h2>
+    <ul>
+      <li>Small documentation updates.</li>
+      <li>Bumped Java requirement to 1.6 update 4 due to issues with
+        Java XML-RPC.</li>
+    </ul>
+    <h2>1.2RC16</h2>
+    <ul>
+      <li>Bumped Java requirement to 1.6.</li>
+      <li>Extended the capabilities of the property caches in the
+        experiment engine to handle a wider range of data types.</li>
+      <li>Removed the option to make smaller zones for PSA training
+        because it's no longer needed. Removed the no_random_segments
+        configuration option as part of this change.<br>
+      </li>
+      <li>Removed option for SGD training because it's being removed
+        from Carafe.</li>
+      <li>Insulated the MAT Web server against stray ill-formed cookies
+        that the browser might deliver to the server by accident.</li>
+      <li>Retokenized sample data and updated Java Carafe bindings for
+        0.9.6 version.<br>
+      </li>
+    </ul>
+    <h2>1.2RC15</h2>
+    <ul>
+      <li>Fixed a bug where MATReport and MATScore spreadsheets were
+        being created as ASCII rather than UTF-8.</li>
+      <li>Expanded optional subprocess monitoring to include children
+        and remote children of subprocesses.</li>
+      <li>Fixed a bug with restart in MATExperimentEngine.<br>
+      </li>
+      <li>Small documentation updates.<br>
+      </li>
+    </ul>
+    <h2>1.2RC14</h2>
+    <ul>
+      <li>Updated to Java Carafe 0.9.5. All previous models will have to
+        be rebuilt.</li>
+      <li>Clarified a few error messages, updated some comments.</li>
+      <li>Fixed an obscure bug in Windows 7 which was resulting in a
+        Windows memory error.</li>
+      <li>Added the optional ability to monitor subprocess memory image
+        sizes via the open-source psutil package. Enabled MATEngine,
+        MATModelBuilder, MATExperimentEngine and MATWorkspaceEngine with
+        this capability.<br>
+      </li>
+      <li>Fixed a bug in the test suite which limited its ability to run
+        on Windows.<br>
+      </li>
+    </ul>
+    <h2>1.2RC13</h2>
+    <ul>
+      <li>Bug 19392: Ensured that scorer doesn't include annotations
+        outside zones in the reference document, if zones are known to
+        be present.</li>
+      <li>Extended MATReport to provide file-level statistics.<br>
+      </li>
+    </ul>
+    <h2>1.2RC12</h2>
+    <ul>
+      <li>Improved error message when character encoding is wrong.</li>
+      <li>Added the "default_tag_window_size" and
+        "default_tag_window_position" attribute in task.xml to provide
+        the ability to control the annotation windows in the MAT UI.</li>
+      <li>Add the MATReport tool to generate concordance-style
+        annotation reports in CSV and text formats.</li>
+      <li>Fixed a small installer bug which arose when Java could not be
+        found.</li>
+      <li>Fixed a bug where deleting annotations in workspace mode in
+        the UI wasn't enough by itself to mark a document as needing to
+        be saved.</li>
+      <li>Fixed a bug where the new keyboard accelerator for repeating
+        the last annotation wasn't working on Windows.</li>
+      <li>Extended the (undocumented) mechanism for task-specific
+        Javascript customizations in the UI to include the ability to
+        customize the presentation of untaggable regions.</li>
+      <li>Added the ability to add a diff file against a previous
+        distribution to a distribution tarball.<br>
+      </li>
+      <li>Documentation updates.<br>
+      </li>
+    </ul>
+    <h2>1.2RC11</h2>
+    <ul>
+      <li>Tiny bug fix in error reporting from Java Carafe.</li>
+    </ul>
+    <h2>1.2RC10</h2>
+    <ul>
+      <li>Enhanced Java Carafe wrapper with control for Java stack size.</li>
+      <li>Fixed some small bugs in error reporting from Java Carafe.</li>
+      <li>Improved the description of corpora in CVS output files in the
+        experiment engine.</li>
+      <li>Added the error text description to the logging CVS files in
+        the MAT UI.</li>
+      <li>Enhanced task.xml files with defaults for the Java subprocess
+        parameters.</li>
+      <li>Improved documentation and record-keeping for MAT builds.<br>
+      </li>
+      <li>Minor documentation improvements.<br>
+      </li>
+    </ul>
+    <h2>1.2RC9</h2>
+    <ul>
+      <li>Added the "alphabetize_labels" attribute in task.xml to
+        provide the ability to control how the annotations are ordered
+        in the UI legend and popup. <br>
+      </li>
+    </ul>
+    <h2>1.2RC8</h2>
+    <ul>
+      <li>Fixed a typo bug in the tagging service.</li>
+      <li>Updated some documentation as a result of user feedback.</li>
+      <li>Added the ability to add last tag in the UI, with a consistent
+        keyboard accelerator.<br>
+      </li>
+    </ul>
+    <h2>1.2RC7</h2>
+    <ul>
+      <li>Fixed two more small command-line argument processing bugs,
+        one in MATModelBuilder and one in MATRetokenize.<br>
+      </li>
+    </ul>
+    <h2>1.2RC6</h2>
+    <ul>
+      <li>Fixed a bug in the scorer, where the task was not being used
+        as a fallback source of tag label metadata.</li>
+      <li>Modified MATScore to allow the user to provide lists of
+        content annotations and token annotations directly, in case
+        neither task nor tag label metadata is available.</li>
+      <li>Fixed a bug in the processing of command line arguments in
+        MATModelBuilder.</li>
+      <li>Fixed a bug in MATRetokenize that arose when only a single
+        task was defined.<br>
+      </li>
+      <li>Added internal APIs to make it easier to make use of taggers
+        and tokenizers other than Carafe.</li>
+    </ul>
+    <h2>1.2RC5</h2>
+    <ul>
+      <li>Fixed a lurking bug where CRLF was not being handled correctly
+        when XML inline was being read.<br>
+      </li>
+    </ul>
+    <h2>1.2RC4</h2>
+    <ul>
+      <li>Further cleanup of documentation for Windows port.<br>
+      </li>
+    </ul>
+    <h2>1.2RC3</h2>
+    <ul>
+      <li>Improvements and simplifications to the distribution and
+        plugin installation code.<br>
+      </li>
+    </ul>
+    <h2>1.2RC2</h2>
+    <ul>
+      <li>Fixed minor bugs in constructing cascaded annotation menu
+        hierarchy.</li>
+      <li>Whitespace in tag labels is now supported correctly in the MAT
+        UI.</li>
+      <li>The annotation window in the MAT UI now displays the content
+        annotations under the mouse.<br>
+      </li>
+    </ul>
+    <h2>1.2RC1</h2>
+    <ul>
+      <li>The MAT UI now supports cascaded annotation menus, via the
+        &lt;tag_group&gt; element in the task.xml file.</li>
+      <li>The task.xml file now provides a means to control text
+        direction for individual workflows, using the text_right_to_left
+        attribute.</li>
+      <li>The task.xml file syntax has been modified to clarify how
+        attributes are handled by MAT. For advanced users, this
+        necessitates a number of changes in the task.xml file (see the <a
+href="../../../../../branches/version_1_2_pre1_jcarafe_branch/MAT/web/htdocs/doc/html/upgrade_notes.html">upgrade
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          notes</a>).</li>
+    </ul>
+    <h2>1.2pre2</h2>
+    <ul>
+      <li>Fixed a bug where the scorer was breaking if files had no tags
+        to score.</li>
+      <li>It is now possible to use workspace operations directly on the
+        command-line, without the "operate" operation.</li>
+      <li>Replaced the OCaml tokenizer and Carafe tagger with the Java
+        reimplementation. This necessitates a number of changes,
+        including retokenizing your documents and rebuilding your models
+        (see the <a
+href="../../../../../branches/version_1_2_pre1_jcarafe_branch/MAT/web/htdocs/doc/html/upgrade_notes.html">upgrade
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          notes</a>).</li>
+      <li>Command-line options for steps which are used in more than one
+        step are now appropriately cross-referenced in the help string.</li>
+      <li>Workspace operations which don't affect any pathnames now
+        raise an error.</li>
+      <li>The system now appears to work in Python 2.6 and in MacOS X
+        10.6.</li>
+      <li>The experiment engine XML file now allows you to define
+        bindings for commonly repeated values, and also supports
+        explicitly referring to the experiment directory and pattern
+        directory.</li>
+      <li>The system now works in native Windows, without Cygwin.</li>
+      <li>The system is now distributed in a single zip file for all
+        platforms.</li>
+      <li>The MAT UI has been improved to support hand annotation
+        without tokens (although this is not recommended).<br>
+      </li>
+      <li>MacOS X no longer requires a special installation of Python,
+        even though select.poll is still missing on that platform.</li>
+      <li>Bug 24205: due to a bug in the experiment engine, non-default
+        model configurations weren't being handled correctly. Fixed.</li>
+      <li>Bugs 15815, 19669: Make sure that the whole system does the
+        right thing with spaces in filenames. Fixed.</li>
+    </ul>
+    <h2>1.2pre1</h2>
+    <ul>
+      <li>Extended and modified how corpora are specified in experiment
+        XML, introducing considerably greater flexibility. It's now
+        possible to specify n-way corpus splits, and group them
+        arbitrarily in training and test runs.</li>
+    </ul>
+    <h2>1.1RC2</h2>
+    <ul>
+      <li>Fixed an obscure bug where child tasks of visible tasks
+        weren't being reported appropriately to the UI.</li>
+      <li>Fixed a minor bug in formatting XML output.</li>
+      <li>Fixed a bug in workspace locking.</li>
+      <li>Minor documentation updates.<br>
+      </li>
+    </ul>
+    <h2>1.1RC1</h2>
+    <ul>
+      <li>Enabled confidence interval reporting. Added reporting of
+        standard deviation.<br>
+      </li>
+      <li>Added general workspace locking for operations, importing and
+        removing basenames, opening a workspace file in the UI, and
+        listing the contents of the workspace folders.<br>
+      </li>
+      <li>Initial support for Python 2.6.</li>
+      <li>Upgraded to CherryPy 3.1.2.<br>
+      </li>
+      <li>Added XML reader to MATWorkspaceEngine import; expanded
+        documentation on MATExperimentEngine to describe how to prepare
+        corpora with XML documents.<br>
+      </li>
+      <li>Added support for multiple model build settings in task.xml.</li>
+      <li>Added PluginMgr.AlignStep to the core to support alignment of
+        externally-generated content tags with token boundaries.</li>
+      <li>Converted calls to MATEngine command-line tool in the
+        experiment engine to invocations of the MATEngine object.</li>
+      <li>Expanded Java service API to cover checking for the existence
+        of a workspace, listing the contents of a workspace folder, and
+        opening a workspace file.<br>
+      </li>
+      <li>Bug 24020: due to a bug in the demo infrastructure, it was not
+        possible to reprocess a document reliably. Fixed.</li>
+      <li>Bug 23988: proxies for multiple steps in task.xml weren't
+        doing the right thing when the proxy set didn't exactly match
+        between proxies. You shouldn't do this, and the UI still
+        exhibits some unusual behavior, but it's fixed in the engine.</li>
+      <li>Bug 21112: the experiment engine insisted on converting test
+        documents to raw form before processing for the test run phase.
+        It's now possible to specify other default preprocessing (e.g.,
+        just undo tagging).</li>
+      <li>Bug 20835: global maintenance of annotation type objects was
+        not thread-safe. Fixed by making annotation type objects local
+        to a document.<br>
+      </li>
+    </ul>
+    <h2>1.1pre1</h2>
+    <ul>
+      <li>Added XML reader and writer to MATEngine, MATModelBuilder,
+        MATScore, UI.<br>
+      </li>
+      <li>Added ability to define arbitrary readers and writers.</li>
+      <li>Added the ability to use your own training engine in your own
+        task.<br>
+      </li>
+      <li>Added feedback for workspace import.</li>
+      <li>Added option to enable workspace access from remote clients
+        via the Web server.</li>
+      <li>Added splash screen to UI.</li>
+      <li>Enhanced scorer to provide file-level count data to support
+        computing confidence intervals (not enabled yet).</li>
+      <li>Enhanced load and save in workspace mode in UI by adding the
+        document basename to the Web service result.</li>
+      <li>Added the "rich, incoming"&nbsp; folder to the core workspace,
+        for importing files which are in rich format but not yet
+        prepared for hand tagging.</li>
+      <li>Enabled rich document readers to infer the processing state of
+        documents which lack the appropriate metadata.</li>
+      <li>Added "remove" operation to MATWorkspaceEngine.</li>
+      <li>Fixed a subtle bug where tagging engines which fail on startup
+        were not notifying the UI client properly about the failure.<br>
+      </li>
+    </ul>
+    <h2>1.0</h2>
+    <ul>
+      <li>Fixed an obscure bug where MAT JSON documents which share the
+        same annotation label but have different attribute orders were
+        being digested inconsistently.</li>
+      <li>Fixed a small bug in MATWeb which prevented logs from rotating
+        appropriately.</li>
+      <li>Fixed a small bug in the Java library which didn't correspond
+        to the (correct) documentation.</li>
+      <li>Bug 18427: in some situations where the UI viewport is small,
+        the menu bar would disappear. Fixed.</li>
+      <li>Bug 20757: ENAMEX-style tags and attributes didn't work with
+        Carafe training on JSON documents. Fixed.</li>
+      <li>Bug 23672: the MIME type of log spreadsheets was incorrect
+        when saved from the MAT UI, causing Excel to fail to digest the
+        logs properly on Windows. Fixed.</li>
+      <li>Bug 23668: "Update workspace key" in the UI was failing to
+        percolate appropriately to "Open workspace...". Fixed.</li>
+      <li>Minor documentation updates.<br>
+      </li>
+    </ul>
+    <h2>1.0RC4</h2>
+    <ul>
+      <li>Fixed a bug where command-line arguments of MATEngine weren't
+        overriding step attributes in the task.xml file. Added
+        appropriate tests.</li>
+      <li>Fixed a bug where step attribute defaults weren't being
+        postprocessed appropriately.</li>
+      <li>Fixed a bug in the Java bindings where it was possible to
+        create an annotation type with null attributes.</li>
+      <li>Fixed an infelicity in the initial README when users first
+        unpack the distribution.</li>
+      <li>Minor documentation updates.<br>
+      </li>
+    </ul>
+    <h2>1.0RC3</h2>
+    <ul>
+      <li>Fixed minor omission in experiment infrastructure.</li>
+      <li>Fixed a bug where extra task paths were not being
+        canonicalized when task directories were being computed.<br>
+      </li>
+      <li>Added a temporary fix, to be backed out in 1.1, to use the
+        Carafe engine for the anonymization task in the core
+        distribution.</li>
+      <li>Fixed a bug in branding in the UI.</li>
+      <li>Minor documentation updates.</li>
+    </ul>
+    <h2>1.0RC2</h2>
+    <ul>
+      <li>Minor documentation updates.</li>
+    </ul>
+    <h2>1.0RC1</h2>
+    <ul>
+      <li>Vast tracts of documentation updates.</li>
+      <li>Minor modifications of the UI log action names to improve
+        consistency.</li>
+      <li>Bug 19970: because of a deep bug in the interaction between
+        Firefox and the UI toolkit when the backend server was down, no
+        feedback was being provided to the user about the failure.
+        Fixed.</li>
+      <li>Bug 17989: the experiment engine was saving its raw gold files
+        as ASCII, rather than a Unicode-compatible encoding like UTF-8.
+        Fixed.<br>
+      </li>
+      <li>Bug 17867: HTML and HTTP escapes were not being inserted
+        appropriately in the routines that generate task-specific
+        documentation. Fixed.<br>
+      </li>
+      <li>Bug 17778: various operations that could be performed in the
+        UI weren't blocking out rerequests while the operation was being
+        performed. Fixed.<br>
+      </li>
+      <li>Bug 16039: left click (not swipe) on an annotation while hand
+        annotating selected just that token, not the entire annotation.
+        Fixed.<br>
+      </li>
+      <li>Extended branding to documentation.<br>
+      </li>
+    </ul>
+    <h2>1.0pre14</h2>
+    <ul>
+      <li>Yet more documentation updates, including Java client library
+        documentation.<br>
+      </li>
+      <li>Changed the "inherit_actions" attribute of workspace
+        operations in task.xml to "inherit_operations", for consistency.<br>
+      </li>
+      <li>Fixed a bug in the plugin manager which was making demo files
+        inaccessible for tasks without Python customizations.<br>
+      </li>
+    </ul>
+    <h2>1.0pre13</h2>
+    <ul>
+      <li>Even more documentation updates.</li>
+      <li>Corrected terminology for the deidentification task.</li>
+      <li>Fixed MATWeb so that it preserves its workspace key across
+        restarts.</li>
+      <li>Expanded the Java client library to support workspace
+        operations.</li>
+      <li>Added branding capability to UI and tasks.<br>
+      </li>
+    </ul>
+    <h2>1.0pre12</h2>
+    <ul>
+      <li>Vast documentation updates.</li>
+      <li>Added a Java client library (not documented yet).</li>
+      <li>Bug 19772: install.bat was failing with links in Cygwin
+        installation. Fixed.<br>
+      </li>
+    </ul>
+    <h2>1.0pre11</h2>
+    <ul>
+      <li>The settings for the Carafe model builder are now specified in
+        the task.xml file, and can be overridden in the experiment XML
+        or in the workspace settings. As part of this change, the "task"
+        attribute to &lt;build_settings&gt; in the experiment XML file
+        is no longer recognized.</li>
+      <li>Added the MATModelBuilder tool.</li>
+      <li>Added the MATManagePluginDirs tool.</li>
+      <li>Expanded the documentation.<br>
+      </li>
+    </ul>
+    <h2>1.0pre10</h2>
+    <ul>
+      <li>The tabbed terminal is now optional. Build, install and
+        runtime have been appropriately updated.<br>
+      </li>
+    </ul>
+    <h2>1.0pre9</h2>
+    <ul>
+      <li>The visible name of the rich JSON format in the UI, command
+        line, and all configuration and experiment files has been
+        changed to "mat-json". This change is in support of future
+        additions of other readers and writers for the MAT system.</li>
+      <li>The URL with which MAT can be accessed in the Web UI has been
+        changed to 'http://&lt;host&gt;:&lt;port&gt;/MAT/desktop".</li>
+      <li>For any task directory ending with basename &lt;name&gt;, you
+        can now access a desktop restricted to that task at
+        "http://&lt;host&gt;:&lt;port&gt;/tasks/&lt;name&gt;/desktop".</li>
+      <li>Initial support for user-friendly demos has been introduced.
+        The configuration file for this capability will be documented
+        when the capability matures a little more.</li>
+      <li>All XML configuration file layouts are now defined by a
+        simple, user-readable templating system.</li>
+      <li>It is now possible to define user-visible workflow steps which
+        consist of sequences of implementations of other steps (e.g.,
+        "prep" might implement "zone,tokenize").</li>
+      <li>The Web UI is no longer tied as closely to the names of the
+        steps in the MAT engine.</li>
+      <li>Tasks now support the option of defining "attribute sets" for
+        annotations, so that, e.g., an ENAMEX tag with different values
+        for the "type" attribute can map to different CSS
+        configurations, and be treated differently in the scorer.</li>
+      <li>Bug 19240: if a core task was installed using
+        MATInstallApplication after a dependent task, and both had
+        documentation, the documentation rendering was broken. This has
+        been fixed by moving to live, on-line generation of the
+        customized documentation.<br>
+      </li>
+      <li>Bugs 14466, 16090: The tarball distribution contained multiple
+        copies of the MAT executables, only one of which was configured
+        correctly. All duplications have now been eliminated. As a
+        result, all MAT executables in the tarball distribution should
+        be accessed from src/MAT instead of build/MAT.</li>
+      <li>Bugs 14507, 19391: Previously, there was a separate step to
+        install the Web documents in a separate location. That step has
+        now been eliminated.<br>
+      </li>
+    </ul>
+    <h2>1.0pre8</h2>
+    <ul>
+      <li>MATServer has been removed from the system, and replaced by a
+        thread in the CherryPy Web application.</li>
+      <li>The underlying version of Carafe has been upgraded, and old
+        training models are not forward-compatible with the new engine.
+        Models will have to be rebuilt.<br>
+      </li>
+      <li>Bug 14508: The Web server could not be limited to localhost.
+        Now it can be.<br>
+      </li>
+    </ul>
+    <h2>1.0pre7</h2>
+    <ul>
+      <li>Apache has been removed from the system, and replaced by the
+        Python-based CherryPy Web application infrastructure.<br>
+      </li>
+    </ul>
+    <h2>1.0pre6</h2>
+    <ul>
+      <li>The MAT scoring engine now defaults to writing CSV files with
+        spreadsheet-interpretable equations for computed values. This
+        behavior can be controlled on the command line for both the
+        scorer and the experiment engine.<br>
+      </li>
+    </ul>
+    <h2>1.0pre5</h2>
+    <ul>
+      <li>Conversion of ad-hoc mechanisms for Carafe customization to
+        consistent command-line updates. <span style="font-weight:
+          bold;">Note</span>: due to this change, the way to add a
+        permanent Carafe model to a task file has changed.<br>
+      </li>
+      <li>Bug 16450: the -prior-adjst argument of Carafe was not
+        available for customization in any useful way, even though it
+        controls recall/precision bias. Fixed.<br>
+      </li>
+      <li>Bug 16225: the random zoning option to optimize PSA training
+        was available only to resynthesized documents, because it was
+        part of the de-identification task. It is now a feature of the
+        trainer itself, and the zone tags are temporarily inserted into
+        the document immediately before training if PSA training is
+        requested.</li>
+    </ul>
+    <h2>1.0pre4</h2>
+    <ul>
+      <li>Major refactor of internal management of steps to support step
+        rollback in the backend and address a large number of bugs.</li>
+      <li>Bug 18960: switching between workflows wasn't undoing all the
+        appropriate UI configuration steps. Fixed.<br>
+      </li>
+      <li>Bug 18898: After cleaning up the way transformation and
+        nomination should work in the de-identification task, changing
+        the replacer between the two steps could screw up the
+        application of the transformation. Fixed by cleaning up the way
+        metadata is handled in the UI and transported to the backend.</li>
+      <li>Bug 18849: experiment directory is created incorrectly if it
+        doesn't exist when the experiment is started. Fixed.<br>
+      </li>
+      <li>Bug 18848: Transforming a document in the de-identification
+        task would strip all the tags if tokenization had been skipped.
+        Fixed by doing a smarter job of figuring out how to postprocess
+        transformed documents.</li>
+      <li>Bug 18534: hand annotations were not showing up when hand
+        annotated documents were reloaded, because of a logic error in
+        the relationship between steps done and steps visible. Fixed.</li>
+      <li>Bug 18430: hand annotation was erroneously available during
+        resynthesis. No longer.</li>
+      <li>Bug 18426: the clean step can't be undone, but nothing was
+        preventing this. Now raises an error.<br>
+      </li>
+      <li>Bug 18425: the clean step was not a core step. It is now.</li>
+      <li>Bug 17680: the psaTransform step was not being rolled back
+        appropriately in one implementation of the de-identification
+        task, because it wasn't "really" a transform step. Refactoring
+        the step management fixed this.</li>
+      <li>Bug 17610: rollback was not supported in the backend engine.
+        Fixed. Engine now accepts an --undo_through argument.<br>
+      </li>
+      <li>Bug 16603, 16604: newlines are preserved during transformation
+        in the de-identification task, but the extent of the tags needed
+        to be adjusted. In non-clear replacement, the right thing was
+        happening by accident, because those documents were being
+        tokenized when they shouldn't have been. These documents are now
+        (properly) not tokenized, and the extent adjustment is now done
+        correctly.</li>
+      <li>Bug 14512: if there's only a single task or a single workflow,
+        they should not need to be provided. Fixed.<br>
+      </li>
+    </ul>
+    <h2>1.0pre2</h2>
+    <ul>
+      <li>Major new capability to manage workspaces of documents,
+        including support for iterative model creation.<br>
+      </li>
+      <li>New "Save/Hide" menu to allow better UI desktop management, as
+        well as a hide widget in the window panes.</li>
+      <li>Bug 17687: the UI was showing steps which weren't in the
+        current workflow, because they were in the document. Fixed.<br>
+      </li>
+      <li>Bug 16747: New windows appear directly on top of each other in
+        the new UI. This has been fixed.<br>
+      </li>
+    </ul>
+    <h2>0.9p4</h2>
+    <ul>
+      <li>Bug 18457: a number of closely related bugs in the
+        de-identification task conspired to cause document-level
+        cacheing of names and name components to fail.<br>
+      </li>
+    </ul>
+    <h2>0.9p1</h2>
+    <ul>
+      <li>Added Windows batch scripts to run the various MAT tools
+        outside of the MAT controller.<br>
+      </li>
+    </ul>
+    <h2>0.9</h2>
+    <ul>
+      <li>A tiny bug fix to address a problem managing absent Carafe
+        models in tasks in delivered tarballs.<br>
+      </li>
+    </ul>
+    <h2>0.9pre13</h2>
+    <ul>
+      <li>Made entire system Unicode-aware. Added guard to ensure that
+        Carafe does not currently see non-ASCII-compatible files. Added
+        option to pass character encodings to the engine in the UI and
+        on the command line.<br>
+      </li>
+      <li>Improved error reporting in MATEngine.<br>
+      </li>
+    </ul>
+    <h2>0.9pre12</h2>
+    <ul>
+      <li>Upgraded to Yahoo UI Toolkit version 2.6.0.</li>
+      <li>Added ability to customize scorer to some degree for various
+        tasks.</li>
+      <li>Added --debug flag to experiment engine for debugging support.</li>
+      <li>Fixed an unreported bug where rerunning the experiment engine
+        to regenerate scores when source_corpus_dir was present was
+        failing.<br>
+      </li>
+      <li>Bug 17863: errors in the command line tool weren't reporting
+        the file that caused the error for tokenization. Fixing this in
+        all cases isn't really possible at the moment, because of the
+        way batch processing works, but it's possible in non-batch, and
+        should be now fixed.</li>
+      <li>Corrected a subtle error in rich document encoding in Python
+        where the sequence "\/" wasn't getting decoded correctly by the
+        python-cjson library. Migrated to simplejson.</li>
+      <li>In the de-identification task, added a simple Java client
+        example for the MAT CGI script.</li>
+    </ul>
+    This version was not released due to subtle Unicode bugs introduced
+    by the migration to simplejson.<br>
+    <h2>0.9pre11</h2>
+    <ul>
+      <li>Enabled chains of source corpora dependencies in experiment
+        engine. This corrected an error where the engine would fail if a
+        corpus pointed to a source corpus which itself pointed to a
+        source corpus. The only visible consequence of this change is
+        that &lt;prep&gt; instructions in these chains are layered; if a
+        corpus has a &lt;prep&gt; instruction and a source_corpus_dir
+        attribute, the input to the &lt;prep&gt; instruction will be the
+        output of any &lt;prep&gt; instructions in the source corpus,
+        rather than ignoring the &lt;prep&gt; instruction in the source
+        corpus as the system previously did. We know of no system
+        deployments which exploited this previous configuration.<br>
+      </li>
+      <li>Bug 17681: the psaTransform step was being recorded by mistake
+        in the transformed document in the de-identification task. The
+        system now imposes a more general requirement that steps are
+        only recorded on documents modified by side effect, rather than
+        freshly produced documents.</li>
+      <li>Added the ability to pass a lexicon to the training engine.</li>
+      <li>Added the ability to pass an experiment directory to the
+        experiment engine.</li>
+      <li>Relaxed the requirement that the source_corpus_dir attribute
+        in the experiment configuration be an absolute pathname. Now,
+        like other paths in the experiment configuration, if it is not
+        absolute, the experiment directory will be prepended.</li>
+      <li>The experiment engine now copies the experiment XML file into
+        the experiment directory, if a file by that name is not already
+        present.<br>
+      </li>
+    </ul>
+    <h2>0.9pre10</h2>
+    <ul>
+      <li>Bug 17613: in the de-identification task, a small bug in the
+        training engine was causing the training to fail if annotations
+        already contained a replacement nomination. Fixed.<br>
+      </li>
+      <li>Bug 17612: a repeat of bug 16099, where trailing newlines
+        aligned tokens with tags incorrectly after replacement. The
+        previous fix was slightly incorrect. Fixed.<br>
+      </li>
+      <li>Fixed an element of inflexibility in the Carafe trainer, which
+        didn't permit the command line in the &lt;prep&gt; experiment
+        XML tag to support input documents which were rich documents.
+        This command line no longer supplies the --input_file_type
+        argument automatically, and it must now be provided explicitly
+        in the experiment XML file.</li>
+      <li>Added the beginnings of an improved test suite (not yet
+        documented).<br>
+      </li>
+    </ul>
+    <h2>0.9pre9</h2>
+    <ul>
+      <li>Bug 16095: Carafe trainer couldn't handle empty lines in the
+        file specifying the available tags. Fixed in the experiment
+        engine by automatically generating the tag file. As a result,
+        the --task arguments are no longer supported in the &lt;prep&gt;
+        and &lt;run_settings&gt; command lines in the experiment XML;
+        the toplevel &lt;experiment&gt; tag now requires a "task"
+        attribute; and the &lt;build_settings&gt; tag no longer accepts
+        the "tag_set" attribute.</li>
+      <li>Bug 16749: deleting a document window while the document was
+        being tagged caused a Javascript error. Fixed.</li>
+      <li>Bug 17027: in the UI, it was possible to include trailing or
+        leading whitespace in an annotation during hand tagging. Fixed.</li>
+      <li>Bug 17028: in the UI, it was possible to swipe from a taggable
+        point across an untaggable point to another taggable point. This
+        now generates an error to the user.</li>
+      <li>Bug 17029: bug 16096 was not completely fixed in 0.9pre6;
+        trying to repeat some errorful calls caused the system to hang.
+        Fixed.<br>
+      </li>
+    </ul>
+    <h2>0.9pre8</h2>
+    <ul>
+      <li>Fixed minor score accumulation bugs in experiment engine.<br>
+      </li>
+    </ul>
+    <h2>0.9pre7</h2>
+    <ul>
+      <li>Fixed bug where distributions with only a single task defined
+        caused an error in the UI.<br>
+      </li>
+    </ul>
+    <h2>0.9pre6</h2>
+    <ul>
+      <li>Cleaned up computation of file save paths so the application
+        never adds more than one pathname suffix.<br>
+      </li>
+      <li>Bug 14509: to simplify task descriptions, display
+        configuration, Javascript, and CSS files should be automatically
+        inherited from their parent tasks. Fixed.</li>
+      <li>Bug 14393: modification check was not performed when the task
+        changed. This bug was mostly applicable to the old interface,
+        but in the new interface, all client changes are tracked, and
+        rollback confirmation is presented when any change is undone, or
+        when document is closed. Fixed.</li>
+      <li>Bug 15856: modification check was not performed when steps
+        were undone. Same issue as bug 14393 above. Fixed.</li>
+      <li>Bug 16096: various Carafe errors were not being percolated
+        back to the client appropriately. Fixed many, many tiny bugs.<br>
+      </li>
+    </ul>
+    <h2>0.9pre5</h2>
+    <ul>
+      <li>Added functionality to support customization of core
+        documentation to allow incorporation of application-specific
+        documentation and application-specific branding.</li>
+      <li>Bug 14650: mat_controller.sh was starting up even if the ports
+        that its servers needed were taken. Fixed.<br>
+      </li>
+    </ul>
+    <h2>0.9pre4</h2>
+    <ul>
+      <li>Experiment engine now does the right thing when corpora are
+        reused and modified in the consuming experiment.<br>
+      </li>
+    </ul>
+    <h2>0.9pre3</h2>
+    <ul>
+      <li>Bug 16099: bracket redaction spans were mistakenly expanded
+        over subsequent tokens in some cases. Fixed.</li>
+      <li>Bug 16478: zone step in interface was not rolled back
+        correctly. Fixed.</li>
+      <li>Bug 16098: drop-down menus were obscured by document windows.
+        Partially fixed; menu bar can still be partially obscured.<br>
+      </li>
+    </ul>
+    <h2>0.9pre2</h2>
+    <ul>
+      <li>Feature request 16097: Added token-level scoring, better
+        alignment for error detail to the scoring engine.<br>
+      </li>
+      <li>Bug 16255: the experiment engine should switch to
+        noninterleaved mode when it detects that some models have
+        already been built. Fixed.</li>
+      <li>Bug 16256: documentation for training_increment in experiment
+        XML documentation was incomplete. Fixed.<br>
+      </li>
+    </ul>
+    <h2>0.9pre1</h2>
+    <ul>
+      <li>New user interface, based on the Yahoo! UI toolkit, featuring
+        a desktop-style interaction with a top menubar and multiple
+        moveable, resizeable document panes.</li>
+      <li>Bug 15870: annotation popups in Firefox 3 were popping up in
+        the lower left corner. Fixed in the new UI.<br>
+      </li>
+    </ul>
+    <h2>0.8RC6</h2>
+    <ul>
+      <li>Expanded UI log facility to record seconds since log start,
+        more details about UI annotation popup interaction.</li>
+    </ul>
+    <h2>0.8RC5</h2>
+    <ul>
+      <li>Feature request 15803: Initial support for keyboard
+        accelerators in UI annotation popup.<br>
+      </li>
+      <li>Bug 15826: the UI was mistakenly recording some steps that it
+        shouldn't be recording. Fixed.</li>
+      <li>Bug 15810: steps in the UI were not changing when the user
+        changed the workflow. Fixed.</li>
+      <li>Bug 15809: hand annotation was available before zoning was
+        applied. In the current system, this could result in
+        undigestible data. Fixed.</li>
+      <li>Bug 15808: the "Save raw" button for raw documents made no
+        sense, and was misleading. Now disabled.</li>
+      <li>Bug 15806: tag names were not alphabetized in the annotation
+        popup. Fixed.</li>
+      <li>Bug 15807: some annotation names should be white foreground
+        text. Easily supported through task specification; tasks
+        updated.</li>
+      <li>Bug 15814: annotations weren't visible when reloading saved
+        rich documents. This bug revealed a number of issues with
+        handling the global order of steps across workflows, which have
+        hopefully all been addressed.</li>
+      <li>Bug 14394: steps update wasn't working when workflow changed.
+        Fixed.</li>
+      <li>Bug 15815: Unix installation path cannot contain spaces.
+        Temporarily fixed by aborting installation, with warning, if
+        spaces are in the path.<br>
+      </li>
+    </ul>
+  </body>
+</html>

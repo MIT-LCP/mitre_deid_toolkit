@@ -1,0 +1,154 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Creating a New Task</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Creating a New Task</h1>
+    <p>If you haven't received an already-customized version of MAT, and
+      you want to do something besides the default named entity task,
+      you're going to want to define your own task. This document
+      describes how to do that for simple tasks.<br>
+    </p>
+    <h2>Step 1: Set up your directory</h2>
+    <p>Create a directory. This directory might ultimately have various
+      subdirectories; for instance, custom Python code must live in
+      files in a python/ subdirectory, and custom Javascript code should
+      live in files in a js/ subdirectory. But you don't need to know
+      about those right now.<br>
+    </p>
+    <h2>Step 2: Create a task.xml file</h2>
+    <p>Most of what we're going to talk about in this document is the
+      task.xml file. You can get a better idea of what this file
+      consists of by looking at the <a href="tasks_and_workflows.html">task
+
+
+
+
+
+
+        documentation</a>, the documentation on the <a
+        href="sample_task.html">sample 'Named Entity' task</a>, and the
+      documentation on the <a href="task_xml.html">task XML</a> and <a
+        href="asd_reference.html">annotation set descriptor XML</a>
+      itself.<br>
+    </p>
+    <p>For now, just open an empty file named task.xml and save the
+      empty file in your directory created in step 1.<br>
+    </p>
+    <h2>Step 3: Name your task and set up your template </h2>
+    <p>Create a top-level &lt;task&gt; element, and give your task a
+      name:<br>
+    </p>
+    <pre>&lt;task name="Widget Annotation"&gt;<br>  &lt;annotation_set_descriptors&gt;<br>    &lt;annotation_set_descriptor name="content" category="content"&gt;<br>    &lt;/annotation_set_descriptor&gt;<br>  &lt;/annotation_set_descriptors&gt;<br>  &lt;annotation_display&gt;<br>  &lt;/annotation_display&gt;<br>  &lt;workflows&gt;<br>  &lt;/workflows&gt;<br>&lt;/task&gt;<br></pre>
+    <p>If you had a need for customizing the task class, you'd add a
+      class attribute to the task; one reason you might do this is to
+      add a new folder to a workspace. See the <a
+        href="customize_task_advanced.html">advanced documentation</a>
+      for a hint.<br>
+    </p>
+    <p>For historical reasons, the &lt;workflows&gt; element shown here
+      is obligatory. We've added &lt;annotation_set_descriptors&gt;
+      because you're definitely going to be defining them. Notice that
+      the descriptor has the name and category attributes both set to
+      "content"; at the moment, these are the only settings you should
+      use when declaring your annotations. We've also added
+      &lt;annotation_display&gt;, because you're going to want that too.<br>
+    </p>
+    <h2>Step 4: Declare your annotations</h2>
+    <p>Let's assume that you're going to use the default MAT automated
+      tools (tagger, trainer, tokenizer). Then you'll want to inherit
+      the <a href="annotation_ref.html#Annotation_categories">zone and
+        token annotations</a> from the core task:<br>
+    </p>
+    <pre>  &lt;annotation_set_descriptors inherit="category:zone,category:token"&gt;<br>    ...<br>  &lt;/annotation_set_descriptors&gt;<br></pre>
+    <p>Next, you should define your labels:<br>
+    </p>
+    <pre>  &lt;annotation_set_descriptors inherit="category:zone,category:token"&gt;<br>    &lt;annotation_set_descriptor name="content" category="content"&gt;<br>      &lt;annotation label="TAG1"/&gt;<br>      &lt;annotation label="TAG2"/&gt;<br>    &lt;/annotation_set_descriptor&gt;<br>  &lt;/annotation_set_descriptors&gt;</pre>
+    <p>You can customize your annotation declaration in a number of
+      ways. See the <a href="asd_xml_use_cases.html">annotation set
+        descriptor XML use cases</a> for examples.<br>
+    </p>
+    <p>Next, you'll want to associate display behavior with your
+      annotations, for the UI using &lt;annotation_display&gt;:<br>
+    </p>
+    <pre>  &lt;annotation_display&gt;<br>    &lt;label name="TAG1" accelerator="1" css="background-color: blue"/&gt;<br>    &lt;label name="TAG2" accelerator="2" css="background-color: green"/&gt;<br>  &lt;/annotation_display&gt;<br></pre>
+    <p>Examples of customizing your annotation display can be found in
+      the <a href="task_xml_use_cases.html">task XML use cases</a>. <br>
+    </p>
+    <h2>Step 5: declare your model build settings</h2>
+    <p>Another toplevel element in the &lt;task&gt; is the settings to
+      specify how the model is built.<br>
+    </p>
+    <pre>  &lt;model_config class="MAT.JavaCarafe.CarafeModelBuilder"/&gt; <br>  &lt;default_model&gt;default_model&lt;/default_model&gt;<br></pre>
+    <p>This uses the <a href="carafe_engine.html">Carafe engine</a>,
+      with the default feature specification which Carafe provides, and
+      instructions to save default models to the file "default_model" in
+      your task directory. If you want to use the faster, but possibly
+      less-well-performing (and slightly less reliable) periodic
+      stepsize adjustment training method, use this model_build_settings
+      specification:<br>
+    </p>
+    <pre>  &lt;model_config class="MAT.JavaCarafe.CarafeModelBuilder"&gt;<br>    &lt;build_settings training_method="psa" max_iterations="6"/&gt;<br>  &lt;/model_config&gt;<br></pre>
+    <p>This specifies 6 iterations of periodic stepsize adjustment. <br>
+    </p>
+    <p>There are lots of ways of customizing the Carafe model builder.
+      See <a href="MATModelBuilder.html">MATModelBuilder</a> and the <a
+        href="carafe_engine.html">Carafe engine</a> documentation for
+      more details about these settings.<br>
+    </p>
+    <p>There are some circumstances under which you don't need to
+      configure model building; e.g., if you only intend to use the MAT
+      tool for hand annotation or to score documents.</p>
+    <h2>Step 6: define your steps and workflows</h2>
+    <p>Other toplevel elements in the &lt;task&gt; are the descriptions
+      of the workflows and steps you'll use. Right now, MAT is somewhat
+      limited in its default steps and flexibility; without
+      customization, a limited number of steps are available, and these
+      steps can be organized into only a limited range of workflows. You
+      can find a summary of the available steps and workflows <a
+        href="tasks_and_workflows.html">here</a>, and additional details
+      <a href="task_workflow_ref.html">here</a>. We believe that these
+      steps and workflows are sufficient for the most common tasks a
+      user might have; and, unfortunately, at the moment it's quite
+      difficult to describe how to extend these options in any great
+      detail. See the <a href="customize_task_advanced.html">advanced
+        customization notes</a> for what's available.<br>
+    </p>
+    <p>We recommend the following workflow and step blocks, as described
+      in the <a href="sample_task.html">sample 'Named Entity' task</a>.<br>
+    </p>
+    <pre>  &lt;workflows&gt;<br>    &lt;workflow name="Hand annotation"&gt;<br>      &lt;step name="zone"/&gt;<br>      &lt;step name="tokenize"/&gt;<br>      &lt;step name="tag" pretty_name="hand tag" by_hand="yes"/&gt;<br>    &lt;/workflow&gt;<br>    &lt;workflow name="Review/repair" hand_annotation_available_at_end="yes"/&gt;<br>    &lt;workflow name="Demo" hand_annotation_available_at_end="yes"&gt;<br>      &lt;step name="zone"/&gt;<br>      &lt;step name="tokenize"/&gt;<br>      &lt;step name="tag"/&gt;<br>    &lt;/workflow&gt;<br>    &lt;workflow name="Align"&gt;<br>      &lt;step name="zone"/&gt;<br>      &lt;step name="tokenize"/&gt;<br>      &lt;step name="align"/&gt;<br>    &lt;/workflow&gt;<br>  &lt;/workflows&gt;<br>  &lt;step_implementations&gt;<br>    &lt;step name="tokenize" class="MAT.JavaCarafe.CarafeTokenizationStep"/&gt;<br>    &lt;step name="zone" class="MAT.PluginMgr.WholeZoneStep"/&gt;<br>    &lt;step name="align" class="MAT.PluginMgr.AlignStep"/&gt;<br>    &lt;step name="tag" workflows="Demo" class="MAT.JavaCarafe.CarafeTagStep"/&gt;<br>    &lt;!-- for undo --&gt;<br>    &lt;step name="tag" class="MAT.PluginMgr.TagStep"/&gt;<br>  &lt;/step_implementations&gt;<br></pre>
+    <h2>Step 7 (optional): define your workspace implementations</h2>
+    <p>If you intend to use <a href="files_and_workspaces.html">workspace
+
+
+
+
+
+
+        mode</a>, you should also define your workspace implementations.
+      The workspace block that corresponds to the workflows and steps
+      described immediately above looks like this:<br>
+    </p>
+    <pre>  &lt;workspace&gt;<br>    &lt;operation name="autotag"&gt;<br>      &lt;settings workflow="Demo" steps="tag"/&gt;<br>    &lt;/operation&gt;<br>    &lt;operation name="modelbuild"&gt;<br>      &lt;settings/&gt;<br>    &lt;/operation&gt;<br>    &lt;operation name="import"&gt;<br>      &lt;settings workflow="Hand annotation" steps="zone,tokenize"/&gt;<br>    &lt;/operation&gt;<br>  &lt;/workspace&gt;<br></pre>
+    <h2>Step 8: Install the task</h2>
+    <p>Use the MATManagePluginDirs tool to ensure that MAT knows about
+      your task directory. If &lt;dir&gt; is your task directory:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATManagePluginDirs install &lt;dir&gt;</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATManagePluginDirs.cmd install &lt;dir&gt;</span><br></pre>
+    <p> </p>
+    <h2>Further reading</h2>
+    <p>Tasks are highly customizable, in ways that we'll never have
+      enough time to document. See the <a
+        href="customize_task_advanced.html">advanced documentation</a>
+      for what we've been able to write down about these other
+      customizations, or work your way through the source code.<br>
+    </p>
+  </body>
+</html>

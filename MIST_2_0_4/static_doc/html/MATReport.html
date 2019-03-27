@@ -1,0 +1,287 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Annotation Reporter</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Annotation Reporter<br>
+    </h1>
+    <h2>Description</h2>
+    <p>The annotation reporter produces concordance-style reports on the
+      content annotations in a given set of documents, either in CSV or
+      text form. The CSV file contains the following columns:<br>
+    </p>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <td style="vertical-align: top;">file<br>
+          </td>
+          <td style="vertical-align: top;">the name of the document from
+            which the entry is drawn<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">start<br>
+          </td>
+          <td style="vertical-align: top;">the start index, in
+            characters, of the span in the document<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">end<br>
+          </td>
+          <td style="vertical-align: top;">the end index, in characters,
+            of the span in the document<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">left context<br>
+          </td>
+          <td style="vertical-align: top;">the context to the left of
+            the start index<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">text<br>
+          </td>
+          <td style="vertical-align: top;">the text in between the start
+            and end indices<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">label<br>
+          </td>
+          <td style="vertical-align: top;">the label on the span in the
+            document. If the annotation contains attributes and values,
+            these will be represented in the label.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">right context<br>
+          </td>
+          <td style="vertical-align: top;">the context to the right of
+            the end index<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>It's also possible to omit the left and right contexts, if you
+      prefer. The text file contains the same columns, except that file,
+      start, and end are collapsed into a single location column.<br>
+    </p>
+    <p>This tool also allows you, via the --partition_by_label option,
+      to generate CSV and text files for each content annotation label
+      in the document set. In these versions, the annotation ID is
+      reported in a column after the "end" column, and instead of the
+      "label" column, the file contains a column for each known
+      attribute of the annotation type.<br>
+    </p>
+    <p>It's also possible to interpolate document-level statistics such
+      as file length and number of annotations per label into these
+      reports.<br>
+    </p>
+    <p>Because the CSV files contain language data, please consult this
+      <a href="view_text_in_csv.html">special note</a> on how to view
+      them. <br>
+    </p>
+    <h2>Usage</h2>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATReport</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATReport.cmd</span><br><br>Usage: MATReport [options]<br></pre>
+    <h2>Core options</h2>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <td style="vertical-align: top;">--task &lt;task&gt;<br>
+          </td>
+          <td style="vertical-align: top;">Name of the task to use.
+            Obligatory if neither --content_annotations nor
+            --content_annotations_all are provided, and more than one
+            task is registered.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--content_annotations
+            ann,ann,ann...<br>
+          </td>
+          <td style="vertical-align: top;">Optional. If --task is not
+            provided, the reporter requires additional, external
+            information to determine which annotations are content
+            annotations. Use this flag to provide a comma-separated
+            sequence of annotation labels which should be treated as
+            content annotations.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--content_annotations_all<br>
+          </td>
+          <td style="vertical-align: top;">Optional. If neither --task
+            nor --content_annotations are provided, this flag will cause
+            all labels in the document to be treated as content
+            annotations.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">--verbose<br>
+          </td>
+          <td valign="top">If present, the tool will provide detailed
+            information on its progress.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2>Input options</h2>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <td style="vertical-align: top;">--input_files &lt;file&gt;<br>
+          </td>
+          <td style="vertical-align: top;">A glob-style pattern
+            describing full pathnames to be reported on. May be
+            specified with --input_dir. Can be repeated.</td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--input_dir &lt;dir&gt;<br>
+          </td>
+          <td style="vertical-align: top;">A directory, all of whose
+            files will be reported on. Can be repeated. May be specified
+            with --input_files.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--file_type &lt;t&gt;<br>
+          </td>
+          <td style="vertical-align: top;">The file type of the
+            document(s). One of the <a href="readers_and_writers.html">readers</a>.
+            Default is mat-json.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--encoding &lt;e&gt;<br>
+          </td>
+          <td style="vertical-align: top;">The encoding of the input.
+            The default is the appropriate default for the file type.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><span style="font-weight: bold;"></span>Output options</h2>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <td style="vertical-align: top;">--output_dir &lt;dir&gt;<br>
+          </td>
+          <td style="vertical-align: top;">The output directory for the
+            reports. Will be created if it doesn't exist. Required.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--csv<br>
+          </td>
+          <td style="vertical-align: top;">Generate a CSV file in the
+            output directory, with concordance-style data: file,
+            location, content, left and right context, annotation label.
+            At least one of this option or --txt must be provided. The
+            CSV file will be in UTF-8 encoding. See this <a
+              href="view_text_in_csv.html">special note</a> on viewing
+            CSV files containing natural language text. </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--txt<br>
+          </td>
+          <td style="vertical-align: top;">Generate a text file in the
+            output directory, with concordance-style data, sorted first
+            by annotation label and then by content. At least one of
+            this option or --csv must be provided. The output file will
+            be in UTF-8 encoding.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--concordance_window
+            &lt;i&gt;<br>
+          </td>
+          <td style="vertical-align: top;">Use the specified value as
+            the window size on each side of the concordance. Default is
+            32.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--omit_concordance_context<br>
+          </td>
+          <td style="vertical-align: top;">Omit the left and right
+            concordance context from the output.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--file_csv<br>
+          </td>
+          <td style="vertical-align: top;">Generate a separate CSV file
+            consisting of file-level statistics such as file size in
+            characters and number of annotations of each type.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--interpolate_file_info<br>
+          </td>
+          <td style="vertical-align: top;">Instead of a separate CSV
+            file for the file-level statistics, interpolate them into
+            the concordance.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">--include_spanless<br>
+          </td>
+          <td valign="top">By default, only spanned content annotations
+            are produced. If this flag is present, spanless annotations
+            (without position or left or right context, of course) will
+            be included. If the spanless annotations refer to spanned
+            annotations, the text context of the referred annotations
+            will be inserted in the 'text' column.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">--partition_by_label<br>
+          </td>
+          <td valign="top">If present, in addition to the standard
+            output file report.csv and/or report.txt, the tool will
+            generate a separate spreadsheet for each label, with a
+            column for each attribute.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2>Other options</h2>
+    <p>The readers referenced in the --file_type option may introduce
+      additional options, which are described <a
+        href="readers_and_writers.html">here</a>. These additional
+      options must follow the --file_type option.<br>
+    </p>
+    <h2>Examples</h2>
+    <h3>Example 1</h3>
+    <p>Let's say you have a file, /path/to/file, whose annotations you
+      want to view in a spreadsheet. You want the results to be written
+      to /path/to/output.<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATReport --input_files /path/to/file --csv --output_dir /path/to/output</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATReport.cmd --input_files c:\path\to\file --csv --output_dir c:\path\to\output</span><br></pre>
+    <h3>Example 2</h3>
+    <p>Let's say that you only want textual output, and you don't want
+      the concordance columns:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATReport --input_files /path/to/file --txt \<br>--output_dir /path/to/output --omit_concordance_context</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATReport.cmd --input_files c:\path\to\file --txt \<br>--output_dir c:\path\to\output --omit_concordance_context</span></pre>
+    <h3>Example 3</h3>
+    <p>Let's say you have a directory full of files. /path/to/files
+      contains files of the form file&lt;n&gt;.json. You want to view
+      them both in CSV and in text, and you want a smaller concordance
+      window of 10 characters.<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATReport --input_files '/path/to/files/*.json' \<br>--csv --txt --output_dir /path/to/output --concordance_window 10<br><br></span>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATReport.cmd --input_files 'c:\path\to\files\*.json' \<br>-csv --txt --output_dir c:\path\to\output --concordance_window 10</span><br></pre>
+    <p></p>
+  </body>
+</html>

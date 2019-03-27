@@ -1,0 +1,315 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=windows-1252"
+      http-equiv="Content-Type">
+    <title>Viewing and Editing Annotation Details</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Viewing and editing annotation details<br>
+    </h1>
+    <p>The MAT UI provides a full range of functionality for editing
+      (and viewing) annotation details.<br>
+    </p>
+    <ul>
+      <li><a href="#Which_annotations_have_annotation_detail">Which
+          annotations have annotation detail views?</a></li>
+      <li><a href="#Launching_an_annotation_editor">Launching an
+          annotation editor</a></li>
+      <li><a href="#The_annotation_editor">The annotation editor</a></li>
+      <li><a href="#Annotation-valued_attributes_and_choose">Annotation-valued
+
+
+
+
+          attributes and choose mode</a></li>
+      <li><a href="#The_Actions_menu_in_the_annotation">The "Actions"
+          menu in the annotation editor</a><br>
+      </li>
+      <li><a href="#Highlighting_and_scrolling">Highlighting and
+          scrolling</a><br>
+      </li>
+    </ul>
+    <h2><a name="Which_annotations_have_annotation_detail"></a>Which
+      annotations have annotation detail views?</h2>
+    <p>An annotation has a detail view if<br>
+    </p>
+    <ul>
+      <li>it has any attributes (including attributes which define
+        effective labels); or<br>
+      </li>
+      <li>it can serve as the value of another annotation's
+        annotation-valued attribute.</li>
+    </ul>
+    <p>If the document is editable, these details will be editable in
+      the detail view.<br>
+    </p>
+    <p>We refer to these views as <b>annotation editors</b>, and we
+      refer (perhaps confusingly) to summoning these views as "editing
+      (or viewing) an annotation".<br>
+    </p>
+    <ul>
+    </ul>
+    <h2><a name="Launching_an_annotation_editor"></a>Launching an
+      annotation editor</h2>
+    <p>If an annotation has a detail view, you'll be able to access the
+      annotation editor by clicking on the annotation, either in the
+      annotation text or in the annotation table:<br>
+    </p>
+    <img alt="[menu in text]" src="../img/voa1_annot_text_menu_edit.jpg"
+      height="462" width="721"><br>
+    <br>
+    <img alt="[menu in table]"
+      src="../img/voa1_annot_table_menu_edit.jpg" height="201"
+      width="639"><br>
+    <p>By default, the menu gives you the option of editing the
+      annotation in a popup, or in a tab. You can provide a default via
+      the "View -&gt; Edit/view annotations in tabs" or "View -&gt;
+      Edit/view annotations in popups" option from the top menubar. If
+      you choose one or the other of these, the popup menu will have a
+      single "Edit annotation" entry, which will open an annotation
+      editor in your preferred mode.</p>
+    <p>The editor popup appears as a dialog in the center of your
+      window:</p>
+    <img alt="[editor popup]" src="../img/voa1_complex_editor_popup.jpg"
+      height="430" width="717"><br>
+    <p>The editor tab appears in the detail tab area at the bottom,
+      where the annotation tables appear:</p>
+    <img alt="[editor in tab]" src="../img/voa1_complex_editor_tab.jpg"
+      height="661" width="1019"><br>
+    <p>If the document can't currently be edited (if, e.g., it was
+      opened read-only, or the current step doesn't make hand annotation
+      available), the entry in the annotation popup menu will read
+      "View..." instead of "Edit...", and the resulting view will not
+      allow you to edit the elements:</p>
+    <img alt="[readonly popup]"
+      src="../img/voa1_complex_editor_readonly.jpg" height="428"
+      width="718"><br>
+    <h2><a name="The_annotation_editor"></a>The annotation editor</h2>
+    <p>The annotation editor contains a brief description of the
+      annotation, either in the title bar (if editing in a popup) or the
+      tab itself (if editing in a tab). This description supplements the
+      attribute details in the editor itself. <br>
+    </p>
+    <p>At the top of the editor is a two-column table, with the
+      attributes and their types on the left and the value editor
+      elements on the right. Each attribute type has a different type of
+      value editor:<br>
+    </p>
+    <table border="1" cellpadding="2" cellspacing="2" width="100%">
+      <tbody>
+        <tr>
+          <th valign="top">type<br>
+          </th>
+          <th valign="top">editor<br>
+          </th>
+          <th valign="top">aggregation support<br>
+          </th>
+        </tr>
+        <tr>
+          <td valign="top">string<br>
+          </td>
+          <td valign="top">either a long or short type-in with "Use
+            zero-length string" and "Unset" buttons (if no choices are
+            available for the attribute), or a drop-down menu (if
+            choices are available), or a value with an "Edit" button (if
+            a custom editor is assigned)<br>
+          </td>
+          <td valign="top">If the attribute is a "set" aggregation and
+            has choices, the menu will be a multi-choice menu; in all
+            other cases, editing aggregations is not supported yet.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">int<br>
+          </td>
+          <td valign="top">a short type-in window (if no choices are
+            available for the attribute), or a drop-down menu (if
+            choices are available), or a value with an "Edit" button (if
+            a custom editor is assigned)<br>
+          </td>
+          <td valign="top">If the attribute is a "set" aggregation and
+            has choices, the menu will be a multi-choice menu; in all
+            other cases, editing aggregations is not supported yet.</td>
+        </tr>
+        <tr>
+          <td valign="top">float<br>
+          </td>
+          <td valign="top">a short type-in window, or a value with an
+            "Edit" button (if a custom editor is assigned)<br>
+          </td>
+          <td valign="top">Editing aggregations is not supported yet.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">boolean<br>
+          </td>
+          <td valign="top">a pair of radio buttons ("yes"/"no") and an
+            "Unset" button<br>
+          </td>
+          <td valign="top">Editing aggregations is not supported yet.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top"><a
+              href="#Annotation-valued_attributes_and_choose">annotation</a><br>
+          </td>
+          <td valign="top">a mouseable value with an "Add" or "Choose"
+            button and an "Unset" button<br>
+          </td>
+          <td valign="top">Editing aggregations is supported.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Below this table is an optional "References" section, which we'll
+      see exemplified <a
+href="file:///afs/rcf/project/anonymize/proj/users/sam/devel/MAT/web/htdocs/doc/html/ui_annotation_edit.html#Annotation-valued_attributes_and_choose">below</a>,
+      and then an <a
+href="file:///afs/rcf/project/anonymize/proj/users/sam/devel/MAT/web/htdocs/doc/html/ui_annotation_edit.html#The_Actions_menu_in_the_annotation">"Actions"
+
+
+
+
+        menu</a>.<br>
+    </p>
+    <p>You can dismiss an editor a popup by pressing "Done" or pressing
+      the "x" in the title bar, and you can dismiss an editor in a tab
+      by pressing the "x" in the tab label.</p>
+    <h2><a name="Annotation-valued_attributes_and_choose"></a>Annotation-valued
+
+
+
+
+      attributes and choose mode</h2>
+    <p>Annotation-valued attributes, when unfilled, present the string
+      "(null)" and two buttons: "Choose" (if the attribute has no
+      aggregation) or "Add" (if the attribute is a set or list
+      attribute), and "Unset", which clears the value.<br>
+    </p>
+    <img alt="[editor popup]" src="../img/editor_popup.jpg" height="245"
+      width="465"><br>
+    <p>Pressing "Choose" or "Add" causes the document to enter <b>choose
+
+
+
+
+        mode</b>. Choose mode allows you to create or select an
+      annotation which can be the value of this attribute. In choose
+      mode, the "Choose" button now reads "Choosing (press to cancel)",
+      and the status line above the document text now reads "Choose
+      mode: active", along with an option to cancel: </p>
+    <img alt="[choose mode]" src="../img/choose_mode.jpg" height="667"
+      width="1019"><br>
+    <p>In choose mode, you can either swipe text, to create a new
+      annotation to serve as the attribute value, or select an existing
+      annotation, to choose it as the value. If you're creating a new
+      annotation, the annotation will be created immediately (if there's
+      only one kind of annotation that can fill the attribute) or you'll
+      get a popup menu corresponding to your choices (if there are
+      multiple kinds).<br>
+    </p>
+    <p>One difference between choose mode and normal annotation mode is
+      that clicking on a token will not create a swipe spanning that
+      token; you must actually swipe the text.<br>
+    </p>
+    <p>Unfortunately, the UI doesn't provide immediate feedback, when
+      hovering over an annotation, whether it's an acceptable value for
+      the attribute in choose mode. You'll see the annotation details,
+      as usual, in the status line immediately below the annotation
+      text, but it's up to you to determine whether the annotation
+      you're about to select is appropriate. If it's not (e.g., if it's
+      a LOCATION, but the attribute is limited to PERSON), you'll get a
+      popup dialog informing you that the choice is incorrect, and
+      giving you the option to try again, or cancel.<br>
+    </p>
+    <p>When an annotation is selected as an attribute value, the
+      annotation and attribute which point to it are listed in the
+      "References" column in the annotation tables, and in the
+      "References" section of the annotation popup editor for the value:<br>
+    </p>
+    <img alt="[editor popup with reference]"
+      src="../img/editor_popup_w_reference.jpg" height="265" width="351">
+    <p>These references are mouseable, and will present a popup menu:<br>
+    </p>
+    <img alt="[reference menu]"
+      src="../img/voa1_editor_reference_menu.jpg" height="267"
+      width="351">
+    <p>The important menu item here is "Detach from this location". If
+      you select this item, the annotation will be removed from the
+      specified attribute value. The parallel situation arises with the
+      attribute values themselves; they too are mouseable, and you can
+      detach the values via the popup menu:<br>
+    </p>
+    <img alt="[annot menu]" src="../img/voa1_editor_annot_menu.jpg"
+      height="263" width="472">
+    <p>We'll discuss <a href="#Highlighting_and_scrolling">scrolling</a>
+      below.<br>
+    </p>
+    <p>If the annotation attribute is a set or list attribute, the
+      presentation will be slightly different. The value(s) will be
+      enclosed in curly brackets ({...}), and each value will be
+      separately mouseable. If you detach all the annotation values,
+      your result will be an empty list or set, which is not equivalent
+      to a null value; to clear the value entirely, use the "Unset"
+      button.<br>
+    </p>
+    <h2><a name="The_Actions_menu_in_the_annotation"></a>The "Actions"
+      menu in the annotation editor</h2>
+    <p>The "Actions" menu in the annotation editor allows you to delete
+      annotations, but also to attach annotations to other annotation
+      attribute values, if the task allows:<br>
+    </p>
+    <img alt="[actions menu]" src="../img/voa1_editor_actions_menu.jpg"
+      height="249" width="346"><br>
+    <p>If you select one of the "Add..." items, you'll enter choose mode
+      again, but this time, you'll be selecting or creating the
+      annotation to attach this annotation to, rather than the
+      annotation to attach to this annotation. Note that each "Add..."
+      entry specifies an attribute into which this attribute will be
+      inserted. In choose mode, the annotation editor will make
+      available, immediately under the "Actions" button, a button
+      allowing you to cancel, and the annotation status line above the
+      document text will be updated as you saw in the previous choose
+      mode example.<br>
+    </p>
+    <h2><a name="Highlighting_and_scrolling"></a>Highlighting and
+      scrolling</h2>
+    <p>The various annotation popup menus give you the option to "Scroll
+      to annotation". If you select this action, the UI will do its best
+      to vertically center the selected annotation in the main editor
+      window. <br>
+    </p>
+    <p>In conjunction with scrolling, the UI provides highlighting so
+      you can find the annotation you're looking for. When you hover
+      over an annotation just about anywhere other than the main
+      document window - in the title of an annotation editor, or over a
+      row in the annotation table, or in the "References" section of the
+      annotation editor, or the "References" column of the annotation
+      table, or the value of an annotation-valued attribute in the
+      annotation editor - the annotation itself will be highlighted in
+      the main annotation window:<br>
+    </p>
+    <img alt="[highlight annotation]" src="../img/voa1_highlight.jpg"
+      height="668" width="1018"><br>
+    <p>Notice here that "he" in the third paragraph is surrounded by a
+      box as the mouse hovers over the annotation attribute value.<br>
+    </p>
+    <p>You can also examine links between annotations using
+      highlighting. When you highlight an annotation in the document
+      window which has annotation attribute values, its attribute values
+      will be highlighted, along with the attribute that the value
+      fills:<br>
+    </p>
+    <img alt="[attribute highlighting]"
+      src="../img/voa1_attr_highlight.jpg" height="458" width="721"><br>
+    <p>Similarly, if you hover over an annotation which is the value of
+      another annotation attribute, the annotation it's linked to will
+      be highlighted, along with the attribute it fills in that other
+      annotation.<br>
+    </p>
+  </body>
+</html>

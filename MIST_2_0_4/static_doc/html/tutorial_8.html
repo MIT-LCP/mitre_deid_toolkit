@@ -1,0 +1,398 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Tutorial 8: Hand Annotation of Complex Annotation Sets</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Tutorial 8: Hand annotation of complex annotation sets</h1>
+    <p>In <a href="tutorial_1.html">Tutorial 1</a>, we learned how to
+      do hand annotation for simple span annotations - tasks which
+      involve only labels and text spans. But MAT supports hand
+      annotation for much more complex annotation schemas, where
+      annotations have additional attributes; and some of those
+      attribute values can be other annotations. In this tutorial, we'll
+      learn about additional capabilities in the UI that you'll
+      encounter when you annotate documents according to these more
+      complex schemas. (For details about the impact on other MAT
+      capabilities, see <a
+        href="annotation_ref.html#Simple_span_annotations_vs._complex">here</a>.)<br>
+    </p>
+    <p>So like tutorial 1, we're going to do this tutorial in <a
+        href="files_and_workspaces.html">file mode</a>. We're going to
+      assume that the sample task is installed (see <a
+        href="tutorial_1.html#Install_the_task">step 1 in Tutorial 1</a>
+      if it isn't).</p>
+    <h2>Step 1: Start up the Web server and UI<br>
+    </h2>
+    <p>See the section on <a href="tutorial_1.html#Start_the_UI">starting
+
+
+
+
+
+
+        the UI</a> in Tutorial 1.</p>
+    <h2>Step 2: Learn about a more complex task</h2>
+    <p>In Tutorial 1 (in fact, in all the tutorials so far), we've been
+      using a task called "Named Entity". This is a simple span task
+      which was original defined for a public evaluation connected to
+      the third Message Understanding Conference (MUC-3). The labels and
+      their (approximate) intended meanings are:<br>
+    </p>
+    <ul>
+      <li>PERSON: the name of a person (e.g., "Hilary Clinton")<br>
+      </li>
+      <li>LOCATION: the name of politically or geographically defined
+        location (e.g., "Poland", "Asia")<br>
+      </li>
+      <li>ORGANIZATION: the name of a corporate, governmental, or other
+        organizational entity (e.g., "Yankees", "Microsoft", "Department
+        of Justice")</li>
+    </ul>
+    <p>This is the sample task you installed in Tutorial 1.<br>
+    </p>
+    <p>You also installed a second task at the same time (we didn't tell
+      you that in Tutorial 1). This second task is called "Enhanced
+      Named Entity", and it's intended only to illustrate the
+      enhancements we're about to show you. This task contains six
+      labels, rather than three, and is modeled on a selection of tasks
+      you might encounter.<br>
+    </p>
+    <p>First, we have the same three labels as above, but with expanded
+      intended meanings:<br>
+    </p>
+    <ul>
+      <li>PERSON: a name, noun phrase, or pronoun designating a person
+        (e.g., "Hilary Clinton", "the secretary", "she")</li>
+      <li>LOCATION: a name, noun phrase, or pronoun designating a
+        politically or geographically defined location (e.g., "Asia",
+        "the continent", "it")</li>
+      <li>ORGANIZATION: a name, noun phrase, or pronoun designating a
+        corporate, governmental, or other organizational entity (e.g.,
+        "Microsoft", "the largest corporation", "it")</li>
+    </ul>
+    <p>Each of these labels has an attribute named "nomtype", which can
+      have one of three values: "Proper name" (e.g., "Hilary Clinton"),
+      "noun" (e.g., "the secretary"), or "pronoun" (e.g., "she"). We're
+      going to call this set of labels <b>mentions</b>, because they
+      mention the individual they refer to. This term is common in
+      language annotation. For illustration, we've also added a Boolean
+      (i.e., true/false) attribute to the LOCATION label,
+      "is_political_entity", which should be true for things like
+      "Poland" and false for things like "Asia".<br>
+    </p>
+    <p>Second, we have a label named "PERSON_COREF". The intention of
+      PERSON_COREF is to encode the fact that a set of annotations all
+      refer to the same individual. So if you have two PERSON
+      annotations, one on "Hilary Clinton" and one on "she", and they
+      refer to the same person, you'd represent this by creating a
+      PERSON_COREF annotation, and adding each of the PERSON annotations
+      to the value of its "mention" attribute, which must be a set of
+      annotations. The intended interpretation is that all the
+      annotations in the "mentions" attribute value refer to the same
+      individual.<br>
+    </p>
+    <p>Because the PERSON_COREF annotation doesn't correspond to a
+      specific chunk of text, it is <b>spanless</b>. (You'll learn how
+      to manipulate spanless annotations in a minute.)<br>
+    </p>
+    <p>Finally, we have two other annotations:<br>
+    </p>
+    <ul>
+      <li>LOCATED_EVENT: a spanned annotation whose span should be a
+        verb which designates an event which happens at a mentioned
+        place (i.e., "Hilary boarded the plane at Heathrow" but not
+        "Hilary boarded the plane"). This label has two
+        annotation-valued attributes: "actor" (a PERSON who performs the
+        event) and "location" (a LOCATION or ORGANIZATION where the
+        event happened).</li>
+      <li>LOCATION_RELATION: a spanless annotation which represents the
+        location (a LOCATION in the "location" attribute) of a PERSON or
+        ORGANIZATION (in the "located" attribute).</li>
+    </ul>
+    <p>We don't intend these definitions to be precise; these two labels
+      represent two ways of representing events and relations which you
+      might encounter.<br>
+    </p>
+    <p>Let's see how to add these annotations.<br>
+    </p>
+    <h2>Step 3: Load a document</h2>
+    <p>Let's go ahead and load a document.<br>
+    </p>
+    <ul>
+      <li>In the UI, select File -&gt; Open file... . You'll see a popup
+        window.</li>
+      <li>Set the task dropdown menu to "Enhanced Named Entity", if it
+        isn't already set.</li>
+      <li>Select "Hand annotation" as your workflow.</li>
+      <li>Press the "Browse" button next to "Input", and navigate to
+        MAT_PKG_HOME/sample/ne/resources/data/json. Select
+        voa1.txt.json.</li>
+      <li>Select "mat-json", as your document type; the encoding will
+        automatically be switched to utf8.</li>
+      <li>Press the "Open" button, which should be active as soon as you
+        select the input file.</li>
+    </ul>
+    <p>Your window will look like this:<br>
+    </p>
+    <img alt="[complex doc]" src="../img/voa1_complex_open.jpg"
+      height="662" width="1018"><br>
+    <p>You should notice three important differences from the document
+      view you found in Tutorial 1:<br>
+    </p>
+    <ul>
+      <li>In the hand annotation status line at the top of the
+        annotation tab, in addition to status for hand annotation, it
+        shows status for something called "Choose mode". We'll learn
+        about choose mode below.</li>
+      <li>The annotation tab is split, and there's a blank region to the
+        left of the text.</li>
+      <li>The detail region at the bottom of the window finally has some
+        content: a tabular inventory of annotations.</li>
+    </ul>
+    <p>We'll learn how to use all these features in this tutorial.<br>
+    </p>
+    <p>You'll also notice, in the panel on the right, that this document
+      has passed through the "mark gold" step, and the annotation status
+      line shows that hand annotation is not available. Back up through
+      this step by pressing the left arrow immediately below the status
+      row. Now, hand annotation should be available.<br>
+    </p>
+    <h2>Step 4: Annotation editing</h2>
+    <p>The document we just loaded was annotated for the "Named Entity"
+      task. So the annotations it contains aren't all the annotations
+      we'd add, and those annotations don't yet have values for the
+      attributes those labels have in this task. <br>
+    </p>
+    <p>Click on the annotation for "North Korea" in the second line.
+      You'll notice that in the popup menu, in addition to the usual
+      actions, there are two new actions: "Edit annotation in popup" and
+      "Edit annotation in tab". Select "Edit annotation in popup", and
+      you'll get an annotation editor popup:<br>
+    </p>
+    <img alt="[editor popup]" src="../img/voa1_complex_editor_popup.jpg"
+      height="428" width="719"><br>
+    <p>You can set values for the nomtype and is_political_entity
+      attributes here. Choose "Proper name" for nomtype, and "yes" for
+      is_political_entity, and then press "OK". Now, if you hover your
+      mouse over the annotation for "North Korea", you'll see a
+      description of the annotation with its attribute values in the
+      line immediately below the document text.<br>
+    </p>
+    <p>Next, let's create a new annotation. In the second paragraph,
+      create a PERSON annotation for "it" in the sentence "It has about
+      800 missiles...". An annotation editor will pop up immediately
+      (we've configured this task to do that). Select "Pronoun" for
+      nomtype, "yes" for is_political_entity, and then click "OK".<br>
+    </p>
+    <h2>Step 5: Annotation tables</h2>
+    <p>In the detail pane at the bottom, you have a tab named
+      "Annotation tables for voa1.txt.json". These tables can be
+      displayed for any document, via "View -&gt; Show annotation
+      tables", but if the task contains spanless annotations (e.g.,
+      PERSON_COREF), this tab is enabled automatically. The drop-down
+      menu at the top of this pane allows you to access tables for each
+      annotation separately. The numbers in parentheses indicate how
+      many of the elements are present. <br>
+    </p>
+    <p>Select "LOCATION" in the drop-down menu. You'll see that that
+      first element listed, "North Korea", has the attribute values you
+      set a moment ago. Click on that row. You should see a popup menu,
+      which again gives you the opportunity (among other things) to edit
+      the annotation in a popup editor. Select this option. Now change
+      is_political_entity from "yes" to "no". You should see the value
+      of that attribute change in the annotation table as you modify it
+      in the editor popup. Change the value back to "yes", and click
+      "OK".<br>
+    </p>
+    <p>Most of the columns in the annotation tables are sortable. The
+      default order (for spanned annotation) is ascending by start
+      index. Select the "Text" column header, which shows the text span
+      for the annotation. You'll see the rows reorder themselves by
+      ascending order of the alphabet. Press the "Text" header again,
+      and the order will invert.<br>
+    </p>
+    <p>Select the "Start" header to return the table to its original
+      order.<br>
+    </p>
+    <h2>Step 6: Annotations as attribute values</h2>
+    <p>In paragraph 3, select the text "said" and label it as a
+      LOCATED_EVENT. You'll immediately get a popup editor which looks
+      like this:<br>
+    </p>
+    <img alt="[editor popup]" src="../img/editor_popup.jpg" height="246"
+      width="464"><br>
+    <p>Now, press "Choose" next to "actor" to enter <b>choose mode</b>.
+      Choose mode allows you to create or select an annotation which can
+      be the value of this attribute. Your window will look like this:<br>
+    </p>
+    <img alt="[choose mode]" src="../img/choose_mode.jpg" height="661"
+      width="1018"><br>
+    <p>You'll notice that the "Choose" button now reads "Choosing (press
+      to cancel)", and the status line above the document text now reads
+      "Choose mode: active", along with an option to cancel. <br>
+    </p>
+    <p>You can now either swipe text, to create a new annotation to
+      serve as the attribute value, or select an existing annotation, to
+      choose it as the value. If you're creating a new annotation, the
+      annotation will be created immediately (if there's only one kind
+      of annotation that can fill the attribute) or you'll get a popup
+      menu corresponding to your choices (if there are multiple kinds).
+      In this case, we have only the option of choosing or creating a
+      PERSON annotation. <br>
+    </p>
+    <p>Move the popup editor down and to the right, until you can see
+      all of the third paragraph. Swipe the word "he" immediately to the
+      left of the "said" that you swiped to create the LOCATED_EVENT
+      (make sure to swipe, rather than click - normally, you can click
+      on an unannotated word to swipe it, but not in choose mode). A
+      PERSON annotation will be created immediately, and you'll
+      automatically exit choose mode. You'll get a second popup editor
+      to edit the PERSON, where you can set the nomtype (which you
+      should set to "Pronoun"). You'll see also that the popup editor
+      also has a new "References" section which shows you where the
+      annotation is attached:<br>
+    </p>
+    <img alt="[editor popup with reference]"
+      src="../img/editor_popup_w_reference.jpg" height="266" width="351">
+    <p>If you click "OK" and dismiss this popup editor, you'll see in
+      the popup editor for "said" that the "actor" attribute is now
+      filled with the annotation you just created.<br>
+    </p>
+    <p>Next, press "Choose" next to "location" to enter choose mode for
+      this attribute. Click on "Seoul" in this paragraph. It's already a
+      LOCATION annotation, which is an appropriate type for the
+      "location" attribute, so the attribute will be filled with this
+      annotation. <br>
+    </p>
+    <p>Next, notice the hover behavior. Now that these annotations are
+      linked, when you hover over one, the other will be highlighted,
+      along with the relationship it has to the element you're hovering
+      over. So if you hover over "said" in the annotation text, "he" and
+      "Seoul" will be highlighted, along with an indication that "he" is
+      the "actor" and "Seoul" is the "location. Similarly, if you hover
+      over "he" or "Seoul" in the annotation editor popup, they will be
+      highlighted in the annotation text. </p>
+    <p>Finally, dismiss the popup editor for "said" by clicking "OK",
+      and in the annotation tables, select "LOCATED_EVENT" from the
+      drop-down menu. You'll see that the values you inserted are shown.
+      And if you select "PERSON", you'll see that there's now an entry
+      for "he" (which you just created), which shows its references, in
+      the same way that they're shown in the popup editor.<br>
+    </p>
+    <h2>Step 7: Spanless annotations</h2>
+    <p>Up to this point, all the annotations we've worked with are
+      spanned annotations - that is, they correspond to a region of
+      text. MAT also supports spanless annotations, which aren't
+      anchored directly to the text in this way.<br>
+    </p>
+    <p>The region to the left of the annotation text is the <b>spanless
+        sidebar</b>. Icons for spanless annotations will appear in this
+      sidebar, aligned (as closely as possible) with the midpoint of the
+      annotations they point to. We can create spanless annotations by
+      clicking in this sidebar.<br>
+    </p>
+    <p>Click in the spanless sidebar. You should get an annotation popup
+      menu which gives you the opportunity to create either a
+      LOCATION_RELATION or a PERSON_COREF annotation. Choose
+      LOCATION_RELATION. You'll get an annotation editor popup, and an
+      icon will appear in the spanless sidebar, at the very top of the
+      document (because it has no annotations it points to yet). We're
+      going to use this relation to mark the location relation expressed
+      by "South Korea's Dongseo University" in the paragraph about
+      two-thirds of the way through the document, in the paragraph that
+      begins "Brian Myers specializes in...". Scroll down to this
+      paragraph.<br>
+    </p>
+    <p>First, press "Choose" next to "location" and select "South Korea"
+      as the attribute value. The relation icon will now be aligned with
+      "South Korea", rather than at the top of the window as it was when
+      it was created. Complete the relation by selecting "Dongseo
+      University" to fill the "located" attribute. Your window should
+      look like this:<br>
+    </p>
+    <p><img alt="[spanless annotation completed]"
+        src="../img/voa1_spanless_annotation_completed.jpg" height="667"
+        width="1017"></p>
+    <p>Click "Done" to dismiss the editor popup.<br>
+    </p>
+    <h2>Step 8: Sets as attribute values</h2>
+    <p>As our final hand annotation activity, we're going to use the
+      PERSON_COREF annotation to represent coreference between mentions.<br>
+    </p>
+    <p>Return to the third paragraph, which begins "David Asher is...".
+      Pop up an editor for the PERSON annotation on "David Asher". In
+      the "Actions" menu, select "Add to mentions in PERSON_COREF...".
+      This action will shift us into choose mode; in this case, rather
+      than selecting an annotation that fills an attribute value, we're
+      going to select or create the annotation which this annotation
+      fills. (We could also have initiated this process from the
+      spanless sidebar, but in some cases, this is a more natural way to
+      do it.)<br>
+    </p>
+    <p>Click in an empty region of the spanless sidebar. This has the
+      same effect, in choose mode, as swiping the annotation text,
+      except it works for spanless annotations instead of spanned
+      annotations. Because there's only one possible annotation type
+      that can be created (namely, PERSON_COREF), this annotation will
+      be created immediately, and the annotation for "David Asher" will
+      be inserted into the "mentions" attribute. At this point, your
+      window will look like this:<br>
+    </p>
+    <p><img alt="[coref annotation]"
+        src="../img/voa1_coref_annotation.jpg" height="667" width="1018"></p>
+    <p>You'll see a spanless icon to the left of "David Asher", and two
+      popup editors: one for "David Asher", and a new one for the
+      PERSON_COREF annotation, showing the mention as an element of the
+      "mentions" attribute. Note the curly brackets, indicating a set
+      (so far, with one member).<br>
+    </p>
+    <p>Click "Done" in each popup editor to dismiss them.<br>
+    </p>
+    <p>Now, bring up a popup editor for "he" in the next line. Under
+      "Actions", select "Add to mentions in PERSON_COREF...", and click
+      on the PERSON_COREF icon in the spanless sidebar next to "David
+      Asher". Your popup editor should now show that "he" is referenced
+      in two places: as the "actor" of the "said" event, and in the
+      "mentions" of the PERSON_COREF. Click "OK" to dismiss your editor
+      popup.<br>
+    </p>
+    <p>Next, hover over the PERSON_COREF icon in the spanless sidebar.
+      Note that the mentions are shown as part of the annotation
+      description in the status line immediately below the document
+      text. Click on the PERSON_COREF icon, and pop up its editor. Hover
+      your mouse over the descriptions of the annotations in the
+      "mentions" slot. You'll notice that they change color, and that
+      those annotations are highlighted with a box in the document text.
+      Click on the description of "he". You'll get a popup menu which
+      allows you to, among other things, detach the annotation from this
+      location. Choose that option, and dismiss the popup editor. If you
+      hover over the spanless icon again, you'll see that it now only
+      has one mention.<br>
+    </p>
+    <p>For more details on editing annotations, see <a
+        href="ui_annotation_edit.html">here</a>. For more details about
+      spanless annotations, see <a href="ui_spanless.html">here</a>.<br>
+    </p>
+    <h2>Step 9: Save your file</h2>
+    <p>Now, you can save your file if you want. This is identical to
+      step 6 in <a href="tutorial_1.html">Tutorial 1</a>.<br>
+    </p>
+    <h2>Step 10: Shut down the Web server</h2>
+    <p>Shut down your Web server by typing "exit" in the window where
+      you started the Web server. More details <a href="start_web.html">here</a>.<br>
+    </p>
+    <h2>Step 11: Clean up (optional)</h2>
+    <p>If you're not planning on doing any other tutorials, and you
+      don't want the "Enhanced Named Entity" task hanging around, remove
+      it as follows:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">cd $MAT_PKG_HOME</span><br>% <span style="font-weight: bold;">bin/MATManagePluginDirs remove $PWD/sample/ne<br></span><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">cd %MAT_PKG_HOME%</span>%<br>&gt; <span style="font-weight: bold;">bin\MATManagePluginDirs.cmd remove %CD%\sample\ne</span><span style="font-family: sans-serif;"></span></pre>
+    This concludes Tutorial 8.
+  </body>
+</html>

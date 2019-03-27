@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Retokenizer</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Retokenizer </h1>
+    <h2>Description</h2>
+    <p>Version 1.2 of MAT introduced a new tokenizer, which did not
+      produce exactly the same tokenization as the original OCaml
+      tokenizer from MAT 1.0. We created this tool to support
+      retokenization of documents to conform to this new tokenizer, but
+      this utility can be used to retokenize any existing document using
+      the current MAT tokenizer.<br>
+    </p>
+    <p>This tool operates either on files, in which case they're all
+      processed according to the same task, or on workspaces, in which
+      case the task is inferred from the workspace. When operating on
+      files, you must specify an --output_dir argument for the location
+      of the converted files. When operating on workspaces, the old
+      files will be copied to &lt;filename&gt;.oldtok before the new
+      files are written to the workspace.<br>
+    </p>
+    <p><b>Note</b>: this tool always applies the default MAT tokenizer.
+      If your task has a custom tokenizer, this tool will not work for
+      you. A future release of MAT will provide a more general and
+      flexible solution. </p>
+    <h2>Usage</h2>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATRetokenize</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATRetokenize.cmd</span><br><br>Usage: MATRetokenize [core_options] files [file_options]<br>       MATRetokenize [core_options] workspaces &lt;workspace&gt;...<br></pre>
+    <h2>Core options</h2>
+    <p>MATRetokenize makes the <a href="common_cmdline_options.html">common
+
+
+
+
+        options</a> available.</p>
+    <h2>File options</h2>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <td style="vertical-align: top;">--task &lt;task&gt;<br>
+          </td>
+          <td style="vertical-align: top;">Name of the task to use.
+            Obligatory if the system knows of more than one task.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--input_dir &lt;dir&gt;<br>
+          </td>
+          <td style="vertical-align: top;">A directory, all of whose
+            files will be retokenized. Can be repeated. The
+            --input_files option may simultaneously be used to specify
+            additional files.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--input_files &lt;re&gt;<br>
+          </td>
+          <td style="vertical-align: top;">A glob-style pattern
+            describing the files to be retokenized. Can be repeated. The
+            --input_dir option may be simultaneously used to specify
+            additional directories of files. </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--output_dir<br>
+          </td>
+          <td style="vertical-align: top;">A directory in which to place
+            the retokenized documents.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><span style="font-weight: bold;"></span>Examples</h2>
+    <h3>Example 1<br>
+    </h3>
+    <p>Let's say you have a set of files in /data/myfiles, all of which
+      are MAT JSON files that need to be updated, your task is named 'My
+      Task', and you want to store the results in
+      /data/myconvertedfiles:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATRetokenize files --task 'My Task' \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_dir /data/myfiles --output_dir /data/myconvertedfiles</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATRetokenize.cmd files --task "My Task" \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_dir c:\data\myfiles --output_dir c:\data\myconvertedfiles</span><br></pre>
+    <h3>Example 2</h3>
+    <p>Let's say you're feeling brave, and instead of saving the files
+      to a new location, you decide to overwrite the old ones:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATRetokenize files --task 'My Task' \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_dir /data/myfiles --output_dir /data/myfiles<br><br></span>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATRetokenize.cmd files --task "My Task" \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_dir c:\data\myfiles --output_dir c:\data\myfiles</span><br><span style="font-weight: bold;"></span></pre>
+    <h3>Example 3</h3>
+    <p>Let's say that only some of the files in the directory are MAT
+      JSON files: all the ones that end in .json, and all the ones that
+      end in .mat.<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATRetokenize files --task 'My Task' \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_files '/data/myfiles/*.json' --input_files '/data/myfiles/*.mat' \<br>--output_dir /data/myconvertedfiles<br><br></span>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATRetokenize.cmd files --task "My Task" \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_files "c:\data\myfiles\*.json" --input_files "c:\data\myfiles\*.mat" \<br>--output_dir c:\data\myconvertedfiles</span><br></pre>
+    <h3>Example 4</h3>
+    <p>Let's stay that you want to process your files as in example 3,
+      but you also have a directory /data/myotherfiles which contains
+      only MAT JSON files which you want to process at the same time:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATRetokenize files --task 'My Task' \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_files '/data/myfiles/*.json' --input_files '/data/myfiles/*.mat' \<br>--input_dir /data/myotherfiles --output_dir /data/myconvertedfiles<br><br></span>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATRetokenize.cmd files --task "My Task" \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_files "c:\data\myfiles\*.json" --input_files "c:\data\myfiles\*.mat" \<br>--input_files c:\data\myotherfiles --output_dir c:\data\myconvertedfiles</span></pre>
+    <h3>Example 5<br>
+    </h3>
+    <p>Let's say you have workspaces in /data/myworkspace and
+      /data/myworkspace2:</p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATRetokenize workspaces /data/myworkspace /data/myworkspace2</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATRetokenize.cmd workspaces c:\data\myworkspace c:\data\myworkspace2</span><br></pre>
+    <p>The MAT JSON files in each workspace will be converted, and
+      copies of the original will be placed in &lt;filename&gt;.oldtok.
+      It doesn't matter if the two workspaces have different tasks; the
+      task will be inferred from the workspace.<br>
+    </p>
+  </body>
+</html>

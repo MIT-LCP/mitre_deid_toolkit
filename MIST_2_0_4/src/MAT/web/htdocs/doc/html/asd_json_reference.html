@@ -1,0 +1,185 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Annotation Set Descriptor JSON Reference</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Annotation set descriptor JSON reference<br>
+    </h1>
+    <p>The purpose of the JSON format described below is slightly
+      different than the purpose of the <a href="asd_reference.html">XML</a>
+      format. <br>
+    </p>
+    <p>The XML format for the annotation set descriptors is intended to
+      be segmented into sets which map onto steps in each MAT task. When
+      MAT reads this XML, it digests these descriptors, along with other
+      information from the task relating to how the annotations might be
+      defined, and aggregates this information for internal use. The MAT
+      Web server provides a JSON encoding of this aggregated
+      annotation-related information to the MAT UI when the UI starts
+      up. It is this JSON format, rather than the XML format, that the
+      Java and JavaScript libraries understand.<br>
+    </p>
+    <p>The <a href="MATAnnotationInfoToJSON.html">MATAnnotationInfoToJSON</a>
+      tool will generate this JSON encoding for any known task.<br>
+    </p>
+    <p>There are two versions of this encoding. Either of them can be
+      used with the <a href="standalone_viewer.html">standalone
+        JavaScript viewer</a>.<br>
+    </p>
+    <ul>
+      <li><a href="#The_expanded_JSON">The expanded JSON</a></li>
+      <li><a href="#The_simplified_JSON">The simplified JSON</a></li>
+      <li><a href="#The_JSON_annotation_set_descriptor">The JSON
+          annotation set descriptor</a></li>
+      <li><a href="#Examples">Examples</a><br>
+      </li>
+    </ul>
+    <h2><a name="The_expanded_JSON"></a>The expanded JSON<br>
+    </h2>
+    <p>The expanded version is the default format provided by the
+      MATAnnotationInfoToJSON tool. It has the following structure:<br>
+    </p>
+    <pre>{<br> "alphabetizeLabels": &lt;boolean&gt;, <br> "annotationSetRepository": {<br>   "allAnnotationsKnown": &lt;boolean&gt;,<br>   "types": {<br>      &lt;true_label&gt;: &lt;asd&gt;, ...<br>    }<br>  },<br>  "tagHierarchy": &lt;tag_hierarchy&gt;, <br>  "tagOrder": [&lt;true_or_effective_label&gt;, ...]<br>}<br></pre>
+    <p>where<br>
+    </p>
+    <ul>
+      <li>&lt;true_label&gt; is a JavaScript string corresponding to the
+        true label of an annotation type (that is, the value of the
+        "label" attribute of the <a
+          href="asd_reference.html#annotation_of_annotation_set_descriptor">&lt;annotation&gt;</a>
+        element).</li>
+      <li>&lt;true_or_effective_label&gt; is a JavaScript string
+        corresponding to a true or <a
+          href="asd_reference.html#choice_of_attribute">effective</a>
+        label.</li>
+      <li>&lt;boolean&gt; is a JavaScript boolean ("true", "false"). The
+        value for alphabetizeLabels is computed from the
+        alphabetize_labels attribute of the <a
+          href="task_xml.html#web_customization_of_task">&lt;web_customization&gt;</a>
+        element in your task. The value for allAnnotationsKnown is
+        computed from the all_annotations_known attribute of the <a
+          href="task_xml.html#annotation_set_descriptors_of_task">&lt;annotation_set_descriptors&gt;</a>
+        element in your task.<br>
+      </li>
+      <li>&lt;tag_hierarchy_dict&gt; is JavaScript null, or a JSON
+        representation of the tag hierarchy (which we won't describe
+        here). It is computed from the &lt;label_group&gt; elements of
+        the <a href="task_xml.html#annotation_display_of_task">&lt;annotation_display&gt;</a>
+        in your task.<br>
+      </li>
+      <li>&lt;asd&gt; is a JSON annotation set descriptor, described <a
+          href="#The_JSON_annotation_set_descriptor">below</a>.</li>
+    </ul>
+    <p>This JSON is an appropriate value of the taskATRFragment
+      parameter when you configure your JavaScript standalone viewer.<br>
+    </p>
+    <h2><a name="The_simplified_JSON"></a>The simplified JSON<br>
+    </h2>
+    <p>The simplified version is generated when you use the --simplified
+      option for MATAnnotationInfoToJSON. It has the following
+      structure:<br>
+    </p>
+    <pre>[ &lt;asd&gt;, ... ]<br></pre>
+    <p>This JSON is an appropriate value for the atr parameter of the <a
+        href="standalone_viewer.html">JavaScript standalone viewer</a>.<br>
+    </p>
+    <h2><a name="The_JSON_annotation_set_descriptor"></a>The JSON
+      annotation set descriptor</h2>
+    <p>The JSON annotation set descriptor is an amalgamation of the <a
+        href="asd_reference.html">annotation set descriptor</a>
+      information itself, and the display information found in the
+      &lt;label&gt; and &lt;attribute&gt; children of the <a
+        href="task_xml.html#annotation_display_of_task">&lt;annotation_display&gt;</a>
+      element in your task. Please consult those two references for
+      details about the structure and values below.<br>
+    </p>
+    <p>The descriptor has the following structure:<br>
+    </p>
+    <pre>&lt;asd&gt;: {<br>  "type": &lt;string&gt;<br>  (, "hasSpan": &lt;boolean&gt; )?<br>  (, "attrs": &lt;attr_desc&gt; )?<br>  (, "allAttributesKnown": &lt;boolean&gt; )?<br>  (, "display": &lt;display_desc&gt; )?<br>  (, "effective_labels": &lt;el_desc&gt; )?<br>}<br><br>&lt;attr_desc&gt;: {<br>  "name": &lt;string&gt;<br>  (, "type": "string" | "int" | "float" | "boolean" | "annotation" )?<br>  (, "aggregation": "set" | "list" )?<br>  (, "default": &lt;val&gt; )?<br>  (, "default_is_text_span": true )?<br>  (, "choices": [ &lt;val&gt;+ ] )?<br>  (, "maxval": &lt;int&gt; | &lt;float&gt; )?<br>  (, "minval": &lt;int&gt; | &lt;float&gt; )?<br>  (, "label_restrictions": [ &lt;label_restr_desc&gt;+ ] )?<br>  (, "display": &lt;attr_display_desc&gt; )?<br>}<br><br>&lt;display_desc&gt;: {<br>  ( "accelerator": &lt;string&gt; )?<br>  (, "css": &lt;string&gt; )?<br>  (, "edit_immediately": true )?<br>  (, "presented_name": &lt;string&gt; )?<br>}<br><br>&lt;el_desc&gt;: {<br>  ( &lt;string&gt; : { "attr": &lt;string&gt;, "val": &lt;val&gt;, "display": &lt;display_desc&gt; } )+<br>}<br><br>&lt;label_restr_desc&gt;: [ ( &lt;string&gt; | &lt;complex_label_restr_desc&gt; )+ ]<br><br>&lt;complex_label_restr_desc&gt;: [ &lt;string&gt;, [ [ &lt;string&gt;, &lt;val&gt; ]+ ] ]<br></pre>
+    <p>The "type" corresponds to the "label" attribute of the
+      corresponding &lt;annotation&gt; element.<br>
+    </p>
+    <p>"hasSpan" indicates whether the annotation has a span. It is
+      optional, and defaults to true.<br>
+    </p>
+    <p>"allAttributesKnown" indicates where the annotation type should
+      block creation of attributes that aren't listed in the "attrs"
+      list. It is optional, and defaults to false.<br>
+    </p>
+    <p>"attrs", "display", and "effective_labels" are all optional.
+      "effective_labels" is limited to descriptors with exactly one
+      attribute which has a "choices" list, and the keys in
+      &lt;el_desc&gt; and the elements of the "choices" list must be
+      identical.<br>
+    </p>
+    <p>The "type" of the attribute descriptor is optional, and defaults
+      to "string".<br>
+    </p>
+    <p>"default" must be a value appropriate for the type of the
+      attribute descriptor. It and "default_is_text_span" cannot
+      cooccur.<br>
+    </p>
+    <p>"choices" is limited to attribute descriptors with "type" of
+      "string" or "int". The values in the list must be appropriate for
+      the type.<br>
+    </p>
+    <p>"maxval" and "minval" are limited to attribute descriptors with
+      "type" of "int" or "float".<br>
+    </p>
+    <p>"label_restrictions" is limited to attribute descriptors with
+      "type" of "annotation".<br>
+    </p>
+    <p>The &lt;label_restr_desc&gt; requires some comment. The elements
+      of this list will be either a true label (<b>not</b> an effective
+      label), or a 2-element list consisting of a true label and a list
+      of 2-element attribute-value pair lists. The attribute must be a
+      choice attribute, and the &lt;val&gt; must be appropriate for the
+      attribute, and the attribute must be appropriate for the true
+      label. <b>Note that this differs</b> from the <a
+        href="asd_reference.html#label_restriction_of_attribute">&lt;label_restriction&gt;</a>
+      XML element, where the labels can be true labels or effective
+      labels. When MAT digests the XML, it unpacks any effective labels
+      it finds in label restrictions.<br>
+    </p>
+    <p>The &lt;el_desc&gt; also doesn't correspond to what's found in
+      the <a href="asd_reference.html#choice_of_attribute">XML</a>. Any
+      effective labels that MAT finds when it digests the XML are
+      accumulated here at the level of the annotation, rather than the
+      attribute. The keys in this element are the string version of the
+      &lt;val&gt;, which must be an appropriate value for the "attr",
+      which is the name of an attribute for the annotation. The
+      "display" has the same form as the display for the toplevel
+      annotation.<br>
+    </p>
+    <p>The elements of &lt;display_desc&gt; are all optional, and
+      correspond to the &lt;label&gt; children of <a
+        href="task_xml.html#annotation_display_of_task">&lt;annotation_display&gt;</a>.
+      Look there for details.<br>
+    </p>
+    <p>The &lt;attr_display_desc&gt; corresponds to the
+      &lt;attribute&gt; children of <a
+        href="task_xml.html#annotation_display_of_task">&lt;annotation_display&gt;</a>.
+      These elements are specific to the JavaScript UI. We'll skip
+      documenting them for now.<br>
+    </p>
+    <h2><a name="Examples"></a>Examples<br>
+    </h2>
+    <p>Here is the result of generating the simplified output for the
+      Named Entity task:<br>
+    </p>
+    <pre>[<br>  {<br>    "display": {<br>      "accelerator": "P", <br>      "css": "background-color: #CCFF66"<br>    }, <br>    "type": "PERSON"<br>  }, <br>  {<br>    "display": {<br>      "accelerator": "L", <br>      "css": "background-color: #FF99CC"<br>    }, <br>    "type": "LOCATION"<br>  }, <br>  {<br>    "display": {<br>      "accelerator": "O", <br>      "css": "background-color: #99CCFF"<br>    }, <br>    "type": "ORGANIZATION"<br>  }<br>]<br></pre>
+    <p>Here's the result for the ENAMEX version of the Named Entity
+      task:</p>
+    <pre>[<br>  {<br>    "attrs": [<br>      {<br>        "choices": [<br>          "PERSON", <br>          "LOCATION", <br>          "ORGANIZATION"<br>        ], <br>        "name": "type"<br>      }<br>    ], <br>    "effective_labels": {<br>      "LOCATION": {<br>        "attr": "type", <br>        "display": {<br>          "accelerator": "L", <br>          "css": "background-color: #FF99CC"<br>        }, <br>        "val": "LOCATION"<br>      }, <br>      "ORGANIZATION": {<br>        "attr": "type", <br>        "display": {<br>          "accelerator": "O", <br>          "css": "background-color: #99CCFF"<br>        }, <br>        "val": "ORGANIZATION"<br>      }, <br>      "PERSON": {<br>        "attr": "type", <br>        "display": {<br>          "accelerator": "P", <br>          "css": "background-color: #CCFF66"<br>        }, <br>        "val": "PERSON"<br>      }<br>    }, <br>    "type": "ENAMEX"<br>  }<br>]<br></pre>
+    <p>And finally, here's the result for the Enhanced Named Entity
+      task:</p>
+    <pre>[<br>  {<br>    "attrs": [<br>      {<br>        "choices": [<br>          "Proper name", <br>          "Noun", <br>          "Pronoun"<br>        ], <br>        "name": "nomtype"<br>      }<br>    ], <br>    "display": {<br>      "accelerator": "P", <br>      "css": "background-color: #CCFF66", <br>      "edit_immediately": true<br>    }, <br>    "type": "PERSON"<br>  }, <br>  {<br>    "attrs": [<br>      {<br>        "choices": [<br>          "Proper name", <br>          "Noun", <br>          "Pronoun"<br>        ], <br>        "name": "nomtype"<br>      }, <br>      {<br>        "name": "is_political_entity", <br>        "type": "boolean"<br>      }<br>    ], <br>    "display": {<br>      "accelerator": "L", <br>      "css": "background-color: #FF99CC", <br>      "edit_immediately": true<br>    }, <br>    "type": "LOCATION"<br>  }, <br>  {<br>    "attrs": [<br>      {<br>        "choices": [<br>          "Proper name", <br>          "Noun", <br>          "Pronoun"<br>        ], <br>        "name": "nomtype"<br>      }<br>    ], <br>    "display": {<br>      "accelerator": "O", <br>      "css": "background-color: #99CCFF", <br>      "edit_immediately": true<br>    }, <br>    "type": "ORGANIZATION"<br>  }, <br>  {<br>    "attrs": [<br>      {<br>        "aggregation": "set", <br>        "label_restrictions": [<br>          "PERSON"<br>        ], <br>        "name": "mentions", <br>        "type": "annotation"<br>      }<br>    ], <br>    "display": {<br>      "accelerator": "C", <br>      "css": "background-color: lightgreen", <br>      "edit_immediately": true<br>    }, <br>    "hasSpan": false, <br>    "type": "PERSON_COREF"<br>  }, <br>  {<br>    "attrs": [<br>      {<br>        "label_restrictions": [<br>          "PERSON"<br>        ], <br>        "name": "actor", <br>        "type": "annotation"<br>      }, <br>      {<br>        "label_restrictions": [<br>          "ORGANIZATION", <br>          "LOCATION"<br>        ], <br>        "name": "location", <br>        "type": "annotation"<br>      }<br>    ], <br>    "display": {<br>      "accelerator": "E", <br>      "css": "background-color: pink", <br>      "edit_immediately": true<br>    }, <br>    "type": "LOCATED_EVENT"<br>  }, <br>  {<br>    "attrs": [<br>      {<br>        "label_restrictions": [<br>          "ORGANIZATION", <br>          "PERSON"<br>        ], <br>        "name": "located", <br>        "type": "annotation"<br>      }, <br>      {<br>        "label_restrictions": [<br>          "LOCATION"<br>        ], <br>        "name": "location", <br>        "type": "annotation"<br>      }<br>    ], <br>    "display": {<br>      "accelerator": "R", <br>      "css": "background-color: orange", <br>      "edit_immediately": true<br>    }, <br>    "hasSpan": false, <br>    "type": "LOCATION_RELATION"<br>  }<br>]<br></pre>
+    <br>
+  </body>
+</html>

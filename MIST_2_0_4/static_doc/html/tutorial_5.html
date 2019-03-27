@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Tutorial 5: Use the Command-line Engine and Scorer</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Tutorial 5: Use the command-line engine and scorer<br>
+    </h1>
+    <p>In <a href="tutorial_2.html">Tutorial 2</a>, you used a
+      command-line tool to build a model. In this tutorial, we'll use
+      the command-line engine to process documents using, among other
+      things, the model you built. We're going to use the same simple
+      named entity task that comes with MAT, and we're going to assume
+      that your task is installed.&nbsp; Like Tutorial 2, we're going to
+      do this tutorial in <a href="files_and_workspaces.html">file mode</a>.
+      And because this tutorial involves the command line, make sure
+      you're familiar with the "Conventions" section in your
+      platform-specific instructions in the "Getting Started" section of
+      the documentation. </p>
+    <p>In this tutorial, we're going to make use of the models we build
+      in Tutorial 2, and we're also going to use <a
+        href="MATEngine.html">MATEngine</a>.<br>
+    </p>
+    <h2>Step 1: Review important command-line arguments<br>
+    </h2>
+    <p>First, let's review some of the arguments to MATEngine.<br>
+    </p>
+    <p>In a shell:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">cd $MAT_PKG_HOME</span><br>% <span style="font-weight: bold;">bin/MATEngine --task 'Named Entity'</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">cd %MAT_PKG_HOME%</span><br>&gt; <span style="font-weight: bold;">bin\MATEngine.cmd --task "Named Entity"</span><br></pre>
+    <p>The --task directive is the first, and most important, directive.
+      Unless you only have one task installed, you'll always need it.
+      But you'll need more, and this is some of what you'll see (we've
+      edited the help message for this example; see the MATEngine page
+      for examples and complete documentation).<br>
+    </p>
+    <pre>Error: workflow must be specified<br>Usage: MATEngine [options] ...<br><br>Named Entity :<br>  available workflows:<br>    Hand annotation : steps zone, tokenize, tag<br>    Review/repair : steps <br>    Demo : steps zone, tokenize, tag<br><br>  Input options:<br>    --input_file=file   The file to process. Either this or --input_dir must<br>                        be specified. A single dash ('-') will cause the engine to read<br>                        from standard input.<br>    --input_dir=dir     The directory to process. Either this or --input_file<br>                        must be specified.<br>    --input_encoding=encoding<br>                        Input character encoding for raw files. Default is<br>                        ascii.<br>    --input_file_type=raw | mat-json<br>                        The file type of the input. Either raw (a raw file) or<br>                        mat-json (a rich JSON file produced as the output of<br>                        this engine or the annotation tool). Required.<br><br>  Output options:<br>    --output_file=file  Where to save the output. Optional. Must be paired<br>                        with --input_file. A single dash ('-') will cause the engine to<br>                        write to standard output.<br>    --output_dir=dir    Where to save the output. Optional. Must be paired<br>                        with --input_dir.<br>    --output_fsuff=suffix<br>                        The suffix to add to each filename when --output_dir<br>                        is specified. If absent, the name of each file will be<br>                        identical to the name of the file in the input<br>                        directory.<br>    --output_file_type=raw | mat-json<br>                        The type of the file to save. Either raw (a raw file)<br>                        or mat-json (a rich JSON file). Required if either<br>                        --output_file or --output_dir is specified.<br>    --output_encoding=encoding<br>                        Output character encoding for raw files. Default is<br>                        ascii.<br><br>  Task options:<br>    --workflow=workflow<br>                        The name of a workflow, as specified in some task.xml<br>                        file. Required if more than one workflow is available.<br>                        See above for available workflows.<br>    --steps=step,step,...<br>                        Some ordered subset of the steps in the specified<br>                        workflow. The steps should be concatenated with a<br>                        comma. See above for available steps.<br>    --undo_through=step<br>                        A step in the current workflow. All possible steps<br>                        already done in the document which follow this step<br>                        are undone, including this step, before any of the<br>                        steps in --steps are applied. You can use this flag in<br>                        conjunction with --steps to rewind and then reapply<br>                        operations.<br></pre>
+    <p><span style="font-family: monospace;"></span>The input and output
+      options should be self-explanatory. All raw files require an
+      encoding to be specified, which defaults to ASCII if not provided.
+      Input&nbsp; and output both require a file type, which will be one
+      of the MAT <a href="readers_and_writers.html">readers</a>. For
+      the purposes of this tutorial, the only ones you need to know
+      about are "raw" and "mat-json" (as shown above).<br>
+    </p>
+    <p>At the top of the help message, you'll see a listing for the
+      "Named Entity" task, showing you the named workflows and the steps
+      in each workflow. The step is the basic unit, and steps are
+      ordered in workflows. In order to do anything with the MATEngine,
+      you need to specify a workflow and some set of steps. For now,
+      that's all you need to know; the documentation on <a
+        href="tasks_and_workflows.html">tasks, workflows and steps</a>
+      provides more detail, as does the documentation on the <a
+        href="sample_task.html">sample 'Named Entity' task</a>.<br>
+    </p>
+    <h2>Step 2: Prepare a document for tagging</h2>
+    <p>Back in <a href="tutorial_1.html">Tutorial 1</a>, we used the UI
+      to prepare a document for hand tagging, because it was less
+      complex than using the command-line engine. Now, we'll show you
+      how to prepare a document for tagging (either hand tagging or
+      automated tagging) on the command line.<br>
+    </p>
+    <p>In order to prepare a document for tagging, you can use either
+      the "Demo" or the "Hand annotation" workflow in the Named Entity
+      task (the meanings of the workflows and steps may be different in
+      other tasks). In this task, the first two steps are the same, and
+      have the same realization; "zone" marks the appropriate taggable
+      regions in the document, and "tokenize" identifies the word units
+      in the document (because the annotation and training engine uses
+      words as its basic elements). Let's prepare our raw document
+      voa2.txt:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">cd $MAT_PKG_HOME</span><br>% <span style="font-weight: bold;">bin/MATEngine --task 'Named Entity' --workflow Demo --steps 'zone,tokenize' \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file $PWD/sample/ne/resources/data/raw/voa2.txt --input_file_type raw \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--output_file ./voa2_txt.json --output_file_type mat-json</span><br>zone : voa2.txt<br>tokenize : voa2.txt<br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">cd %MAT_PKG_HOME%</span><br>&gt; <span style="font-weight: bold;">bin\MATEngine.cmd --task "Named Entity" --workflow Demo --steps "zone,tokenize" \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file %CD%\sample\ne\resources\data\raw\voa2.txt --input_file_type raw \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--output_file %CD%\voa2_txt.json --output_file_type mat-json</span><br>zone : voa2.txt<br>tokenize : voa2.txt</pre>
+    <p>So what we did here was apply the zone and tokenize steps, in the
+      Demo workflow in the "Named Entity" task, to the raw input file
+      voa2.txt, saving the result as a rich annotated document
+      voa2_txt.json. Notice that the command reports which steps it's
+      applying.<br>
+    </p>
+    <p>Note that we can do multiple steps simultaneously; the only
+      reason we're preparing the document separately from tagging it is
+      for illustration.<br>
+    </p>
+    <p>If you want to review this document, the easiest way is to load
+      it into the UI; it should be identical to the output of step 2 in
+      <a href="tutorial_3.html">Tutorial 3</a>. You can also examine it
+      in your favorite editor, but it'll be fairly difficult to read,
+      even if you're familiar with the MAT JSON <a
+        href="mat_json_format.html">annotated file format</a>.<br>
+    </p>
+    <h2>Step 3: Tag the document</h2>
+    <p>In the same workflow, we'll now perform the "tag" step on the
+      file we just created.<br>
+    </p>
+    <p>First, let's see what happens when we try to zone and tag the
+      document again:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">cd $MAT_PKG_HOME</span><br>% <span style="font-weight: bold;">bin/MATEngine --task 'Named Entity' --workflow Demo --steps 'zone,tokenize' \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file ./voa2_txt.json --input_file_type mat-json --output_file ./voa2_txt.json \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--output_file_type mat-json</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">cd %MAT_PKG_HOME%</span><br>&gt; <span style="font-weight: bold;">bin\MATEngine.cmd --task "Named Entity" --workflow Demo --steps "zone,tokenize" \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file %CD%\voa2_txt.json --input_file_type mat-json --output_file %CD%\voa2_txt.json \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--output_file_type mat-json</span><br></pre>
+    <p>You'll notice that the engine reports nothing, because the input
+      annotated document has the applied steps recorded in it, and the
+      document won't repeat its steps. <br>
+    </p>
+    <p>Next, let's review some more of the command line options (again,
+      we've edited down the options for the purposes of this
+      discussion):<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATEngine --task 'Named Entity' --workflow Demo</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATEngine.cmd --task "Named Entity" --workflow Demo<br><br></span>Usage: MATEngine [options] ...<br><br><br>  Options for step 'tokenize' (workflows Hand annotation, Align, Demo):<br>    --heap_size=HEAP_SIZE<br>                        If present, specifies the -Xmx argument for the Java JVM<br><br>  Options for step 'tag' (workflows Demo):<br>    See also --heap_size in Options for step 'tokenize' (workflows Hand annotation, Align, Demo)<br><br>    --tagging_pre_models=TAGGING_PRE_MODELS<br>                        if present, a comma-separated list of glob-style patterns specifying the models to include as pre-<br>                        taggers.<br>    --tagger_local      don't try to contact a remote tagger server; rather, start up a local command.<br>    --tagger_model=TAGGER_MODEL<br>                        provide a tagger model file. Obligatory if no model is specified in the task step.<br>    --prior_adjust=PRIOR_ADJUST<br>                        Bias the Carafe tagger to favor precision (positive values) or recall (negative values). Default is<br>                        -1.0 (slight recall bias). Practical range of values is usually +-6.0.<br></pre>
+    <p>We can control the "tag" step with the command line options shown
+      here. Right now, the option we're interested in is --tagger_local,
+      because we don't want the engine to try to contact the Web server
+      to tag the document. In this step, we're going to take advantage
+      of the fact that we built a default model in <a
+        href="tutorial_2.html">Tutorial 2</a>.<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">cd $MAT_PKG_HOME</span><br>% b<span style="font-weight: bold;">in/MATEngine --task 'Named Entity' --workflow Demo --steps 'tag' --input_file ./voa2_txt.json \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file_type mat-json --output_file ./voa2_txt.json --output_file_type mat-json \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--tagger_local</span><br>tag : voa2_txt.json<br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">cd %MAT_PKG_HOME%</span><br>&gt; <span style="font-weight: bold;">bin\MATEngine.cmd --task "Named Entity" --workflow Demo --steps "tag" </span><span style="font-weight: bold;">--input_file %CD%\voa2_txt.json \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file_type mat-json --output_file %CD%\voa2_txt.json --output_file_type mat-json \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--tagger_local<br></span>tag : voa2_txt.json<br></pre>
+    <p>Notice that it reports that the tag step is performed. If you try
+      to repeat this command, you'll see that nothing happens, because
+      the document "knows" it's been tagged.<br>
+    </p>
+    <p>If you load this document into the UI, you'll see that it looks
+      identical to the output of step 3 in <a href="tutorial_3.html">Tutorial
+
+
+
+        3</a>.<br>
+    </p>
+    <h2>Step 4: Undo and redo</h2>
+    <p>You can undo steps and redo them in the same command. Let's say,
+      as in step 4 in <a href="tutorial_3.html">Tutorial 3</a>, you've
+      applied the model, but you haven't done any hand correction, and
+      you've subsequently prepared a more accurate default model, and
+      you want to undo the automated tagging and apply the newer model.</p>
+    <p>You can use the --undo_through directive to achieve this. In
+      addition, we're going to use the other model you built, in step 1
+      of <a href="tutorial_2.html">Tutorial 2</a>. The --undo_through
+      directive can be used in conjunction with --steps; the undo will
+      apply first.<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">cd $MAT_PKG_HOME</span><br>% <span style="font-weight: bold;">bin/MATEngine --task 'Named Entity' --workflow Demo --steps 'tag' --input_file ./voa2_txt.json \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file_type mat-json --output_file ./voa2_txt.json --output_file_type mat-json \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--tagger_local --tagger_model /tmp/ne_model --undo_through tag</span><br>tag : voa2_txt.json<br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">cd %MAT_PKG_HOME%</span><br>&gt; <span style="font-weight: bold;">bin\MATEngine.cmd --task "Named Entity" --workflow Demo --steps "tag" </span><span style="font-weight: bold;">--input_file %CD%\voa2_txt.json \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_file_type mat-json --output_file %CD%\voa2_txt.json --output_file_type mat-json \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--tagger_local</span> <span style="font-weight: bold;">--tagger_model %TMP%\ne_model --undo_through tag<br></span>tag : voa2_txt.json<br></pre>
+    <p>The --tagger_model directive allows us to specify an explicit
+      model to use, and the --undo_through directive undoes all the
+      steps through the step listed. You'll notice that if you omit
+      --undo_through, nothing will happen (because the document is
+      already tagged), but with --undo_through, the document is tagged
+      again (because --undo_through happens before --steps).<br>
+    </p>
+    <h2>Step 5: Run the scorer</h2>
+    <p>Recall that we have a version of this file which has already been
+      tagged. We can treat that version as the reference file, and this
+      version we just tagged as the hypothesis file, and run the scoring
+      tool:<br>
+    </p>
+    <pre>Unix:<br><br><span style="font-weight: bold;">% cd $MAT_PKG_HOME</span><br style="font-weight: bold;"><span style="font-weight: bold;">% bin/MATScore --file ./voa2_txt.json --ref_file ./sample/ne/resources/data/json/voa2.txt.json</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">cd %MAT_PKG_HOME%<br>&gt; <span style="font-weight: bold;">bin\MATScore.cmd --file %CD%\voa2_txt.json --ref_file %CD%\sample\ne\resources\data\json\voa2.txt.json</span><br></span></pre>
+    <p>The scorer will print a table to standard output describing the
+      precision, recall, and F-measure at the tag level for this file
+      comparison. The scorer has a large range of options; see the
+      documentation for <a href="MATScore.html">MATScore</a> for
+      details and examples.<br>
+    </p>
+    <p></p>
+    <h2>Step 5: Clean up (optional)</h2>
+    <p>If you're not planning on doing any other tutorials, and you
+      don't want the "Named Entity" task hanging around, remove it as
+      shown in the final step of <a href="tutorial_1.html">Tutorial 1</a>.<br>
+    </p>
+    This concludes Tutorial 5.<br>
+  </body>
+</html>

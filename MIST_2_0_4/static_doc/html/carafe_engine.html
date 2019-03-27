@@ -1,0 +1,784 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>The Default Carafe Engine</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>The default Carafe engine</h1>
+    <p>While it's possible to <a href="customize_task_advanced.html">use
+your
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        own training and tagging engine</a> in MAT, MAT provides Carafe,
+      a CRF-based sequence tagger, as a default training and tagging
+      engine for simple spans (i.e., span plus true or effective
+      labels). The flags for configuring Carafe are available in a
+      number of locations in MAT.<br>
+    </p>
+    <ul>
+      <li>The Carafe training engine can be configured using the
+        &lt;build_settings&gt; element in your <a href="task_xml.html">task.xml</a>
+        file</li>
+      <li>The Carafe training engine can be customized further using the
+        &lt;build_settings&gt; element in your <a
+          href="experiment_xml.html">experiment XML</a> file, or the
+        &lt;settings&gt; element for the "modelbuild" operation in the
+        &lt;workspace&gt; section of your task.xml file.</li>
+      <li>The Carafe training engine can be customized by passing flags
+        to the <a href="MATModelBuilder.html">MATModelBuilder</a>
+        command-line tool.</li>
+      <li>The Carafe tagging engine can be customized by passing flags
+        to the <a href="MATEngine.html">MATEngine</a> command-line
+        tool, and to other places in the system where MATEngine is
+        implicitly called, such as the &lt;args&gt; element in the
+        experiment XML file.</li>
+      <li>The Carafe tagging engine can be customized via the
+        &lt;run_settings&gt; element in the &lt;step&gt; element in the
+        &lt;workflow&gt; element in your task.xml file.<br>
+      </li>
+      <li>The Carafe tagging engine can be customized by using the
+        &lt;engine_settings&gt; element in the <a href="demo_xml.html">demo
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          XML</a> file.</li>
+      <li>The Carafe tagging engine can be customized by using the
+        &lt;settings&gt; element for the "autotag" operation in the
+        &lt;workspace&gt; section of your task.xml file.</li>
+    </ul>
+    <p>While Carafe only supports simple span tagging, it is not limited
+      to tasks which consist only of such labels. When presented with a
+      more complex task, Carafe will build models for, and insert, the
+      true or effective labels in the task (i.e., it will ignore all
+      spanless annotations, and ignore all attributes other than those
+      related to effective labels).<br>
+    </p>
+    <p>Carafe also provides an English tokenizer.<br>
+    </p>
+    <h2><a name="The_Carafe_documentation"></a>The Carafe documentation</h2>
+    <p>MAT is distributed with the Carafe documentation, which is
+      located <a href="jcarafe_resources/jCarafeUsersGuide.pdf">here</a>
+      if you're viewing this documentation via a Web server, or in
+      src/jcarafe.../resources if you've received MAT as a zip file.</p>
+    <h2>The tokenizer</h2>
+    <p>The Carafe tokenizer step is
+      MAT.JavaCarafe.CarafeTokenizationStep. This class should be
+      referenced in the &lt;step_implementation&gt; for your
+      tokenization step in your task.xml file.<br>
+    </p>
+    <h3>Options<br>
+    </h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Command line option<br>
+          </th>
+          <th style="vertical-align: top;">XML attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--heap_size &lt;s&gt;<br>
+          </td>
+          <td style="vertical-align: top;">heap_size<br>
+          </td>
+          <td style="vertical-align: top;">a heap size for the Java VM<br>
+          </td>
+          <td style="vertical-align: top;">The Carafe tokenizer is a
+            Java application which tokenizes batches of documents at a
+            time, and the default heap size may not be adequate for your
+            data. The value here is passed to the Java VM using the -Xmx
+            argument. Values like 512M or 2G are examples of expected
+            values. This setting overrides any equivalent setting in the
+            &lt;java_subprocess_parameters&gt; in the task.xml file. </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--stack_size &lt;s&gt;<br>
+          </td>
+          <td style="vertical-align: top;">stack_size<br>
+          </td>
+          <td style="vertical-align: top;">a stack size for the Java VM<br>
+          </td>
+          <td style="vertical-align: top;">The Carafe tokenizer is a
+            Java application which tokenizes batches of documents at a
+            time, and the default stack size may not be adequate for
+            your data. The value here is passed to the Java VM using the
+            -Xss argument. Values like 4096k or 512k are examples of
+            expected values. This setting overrides any equivalent
+            setting in the &lt;java_subprocess_parameters&gt; in the
+            task.xml file.</td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">---handle_tags<br>
+          </td>
+          <td style="vertical-align: top;">handle_tags<br>
+          </td>
+          <td style="vertical-align: top;">"yes" (XML)<br>
+          </td>
+          <td style="vertical-align: top;">If present, treat the signal
+            as XML and tokenize XML elements and entities as single
+            tokens.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">--tokenizer_patterns<br>
+          </td>
+          <td valign="top">tokenizer_patterns<br>
+          </td>
+          <td valign="top">a string<br>
+          </td>
+          <td valign="top">See the <a href="#The_Carafe_documentation">Carafe
+
+
+              docs</a> on --tokenizer-patterns.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="The_tagging_engine"></a>The tagging engine</h2>
+    <p>The Carafe tagging engine step is MAT.JavaCarafe.CarafeTagStep.
+      This class should be referenced in the &lt;step_implementation&gt;
+      for your automated tagging step in your task.xml file.</p>
+    <p>The Carafe tagger is sensitive to <a
+        href="annotations_and_segments.html#Admin_annotations_SEGMENTs_and">SEGMENTs</a>.
+      It will only insert annotations into SEGMENTs whose annotator =
+      "MACHINE" or annotator = null. If no segments are found, it will
+      insert annotations into all the zones; if no zones are found, it
+      will insert annotations into the entire document. Any SEGMENT into
+      which annotations are inserted will be marked annotator =
+      "MACHINE". </p>
+    <h3>Options</h3>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Command line option<br>
+          </th>
+          <th style="vertical-align: top;">XML attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--tagger_local<br>
+          </td>
+          <td style="vertical-align: top;">tagger_local<br>
+          </td>
+          <td style="vertical-align: top;">"yes" (XML)<br>
+          </td>
+          <td style="vertical-align: top;">By default, the MAT engine
+            will contact the MAT Web server to tag a document, because
+            the Web server has the capability of starting up and
+            monitoring a long-living tagger task. The reason this is
+            beneficial is that the Carafe tagger, like many model-based
+            taggers, has a fairly expensive startup cost. To block the
+            engine from contacting the Web server, and force it to start
+            up and shut down the tagger on its own, specify
+            tagger_local="yes".<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--tagger_model &lt;model&gt;<br>
+          </td>
+          <td style="vertical-align: top;">tagger_model<br>
+          </td>
+          <td style="vertical-align: top;">a string, a filename of a
+            Carafe model<br>
+          </td>
+          <td style="vertical-align: top;">If the task does not have a
+            default model, the user must specify the location of the
+            tagger model.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--prior_adjust<br>
+          </td>
+          <td style="vertical-align: top;">prior_adjust<br>
+          </td>
+          <td style="vertical-align: top;">a float<br>
+          </td>
+          <td style="vertical-align: top;">The Carafe tagger can be
+            biased toward recall or toward precision. This setting
+            biases the Carafe tagger to favor precision (positive
+            values) or recall (negative values). Default is -1.0 (slight
+            recall bias). Practical range of values is usually +-6.0.</td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--heap_size &lt;s&gt;<br>
+          </td>
+          <td style="vertical-align: top;">heap_size<br>
+          </td>
+          <td style="vertical-align: top;">a heap size for the Java VM<br>
+          </td>
+          <td style="vertical-align: top;">The Carafe tagger is a Java
+            application, and the default heap size may not be adequate
+            for your model. The value here is passed to the Java VM
+            using the -Xmx argument. Values like 512M or 2G are examples
+            of expected values. This setting overrides any equivalent
+            setting in the &lt;java_subprocess_parameters&gt; in the
+            task.xml file.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--stack_size &lt;s&gt;<br>
+          </td>
+          <td style="vertical-align: top;">stack_size<br>
+          </td>
+          <td style="vertical-align: top;">a stack size for the Java VM<br>
+          </td>
+          <td style="vertical-align: top;">The Carafe tagger is a Java
+            application, and the default stack size may not be adequate
+            for your data. The value here is passed to the Java VM using
+            the -Xss argument. Values like 4096k or 512k are examples of
+            expected values. This setting overrides any equivalent
+            setting in the &lt;java_subprocess_parameters&gt; in the
+            task.xml file.</td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--tagging_pre_models
+            &lt;s&gt;<br>
+          </td>
+          <td style="vertical-align: top;">tagging_pre_models<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">If present, a comma-separated
+            list of glob-style patterns specifying the models to include
+            as pre-taggers. This is an advanced feature that normal
+            users will not be using.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--add_tokens_internally<br>
+          </td>
+          <td style="vertical-align: top;">add_tokens_internally<br>
+          </td>
+          <td style="vertical-align: top;">"yes" (XML)<br>
+          </td>
+          <td style="vertical-align: top;">If present, Carafe will use
+            its internal tokenizer to tokenize the document before
+            tagging. If your workflow doesn't tokenize the document, you
+            must provide this flag, or Carafe will have no tokens to
+            base its tagging on. We recommend <span style="font-weight:
+              bold;">strongly</span> that you tokenize your documents
+            separately; you should not use this flag.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--capture_token_confidences<br>
+          </td>
+          <td style="vertical-align: top;">capture_token_confidences<br>
+          </td>
+          <td style="vertical-align: top;">"yes" (XML)<br>
+          </td>
+          <td style="vertical-align: top;">If present, Carafe will
+            capture token confidence metrics for later exploitation.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--capture_sequence_confidences<br>
+          </td>
+          <td style="vertical-align: top;">capture_sequence_confidences<br>
+          </td>
+          <td style="vertical-align: top;">"yes" (XML)<br>
+          </td>
+          <td style="vertical-align: top;">If present, Carafe will
+            capture sequence confidence metrics for later exploitation.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--parallel<br>
+          </td>
+          <td style="vertical-align: top;">parallel<br>
+          </td>
+          <td style="vertical-align: top;">"yes" (XML)<br>
+          </td>
+          <td style="vertical-align: top;">If present, parallelizes the
+            decoding.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--nthreads<br>
+          </td>
+          <td style="vertical-align: top;">nthreads<br>
+          </td>
+          <td style="vertical-align: top;">an integer<br>
+          </td>
+          <td style="vertical-align: top;">If --parallel is used,
+            controls the number of threads used for decoding.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="The_training_engine"></a>The training engine</h2>
+    <p>The Carafe training engine class is
+      MAT.JavaCarafe.CarafeModelBuilder. You should reference this class
+      in the &lt;model_config&gt; in your task.xml file.<br>
+    </p>
+    <p>The Carafe trainer is sensitive to <a
+        href="annotations_and_segments.html#Admin_annotations_SEGMENTs_and">SEGMENTs</a>.
+      It will train on all SEGMENTs which have been which have been
+      touched by a human annotator, whether or not they're gold (see,
+      however, the --partial_training_on_gold_only option). If no
+      SEGMENTs are found, it will use all the zones; if no zones are
+      found, it will use the entire document. The scope of the training
+      is important; any blank regions are treated as implicitly negative
+      information (i.e., the trainer will conclude that there's no
+      annotation there on purpose). </p>
+    <h3>Basic options</h3>
+    <p>There is only one setting here that you should change on any
+      regular basis:<br>
+    </p>
+    <table style="text-align: left;" border="1" cellpadding="2"
+      cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Command line option<br>
+          </th>
+          <th style="vertical-align: top;">XML attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--lexicon_dir &lt;dir&gt;<br>
+          </td>
+          <td style="vertical-align: top;">lexicon_dir<br>
+          </td>
+          <td style="vertical-align: top;">a pathname<br>
+          </td>
+          <td style="vertical-align: top;">If present, the name of a
+            directory which contains a Carafe training lexicon. This
+            pathname should be an absolute pathname, and should have a
+            trailing slash. The content of the directory should be a set
+            of files, each of which contains a sequence of tokens, one
+            per line. The name of the file will be used as a training
+            feature for the token. You can use this feature, for
+            instance, to provide implicit part-of-speech information
+            (e.g., create a file named ADJ which contains a sequence of
+            words that are adjectives) or name information (e.g., create
+            a file named NAME which contains a sequence of tokens which
+            can occur in proper names).<br>
+            <br>
+            On the command line, overrides any possible default in the
+            &lt;build_settings&gt; for the relevant model config in the
+            task.xml file for the task.<br>
+            <br>
+            Note that the interpretation of the contents of the lexicons
+            depends on the <a
+              href="#A_note_about_feature_specifications_">Carafe
+              feature specification</a>. <br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--heap_size &lt;s&gt;<br>
+          </td>
+          <td style="vertical-align: top;">heap_size<br>
+          </td>
+          <td style="vertical-align: top;">a heap size for the Java VM<br>
+          </td>
+          <td style="vertical-align: top;">The Carafe trainer is a Java
+            application, and the default heap size may not be adequate
+            for your data. The value here is passed to the Java VM using
+            the -Xmx argument. Values like 512M or 2G are examples of
+            expected values. This setting overrides any equivalent
+            setting in the &lt;java_subprocess_parameters&gt; in the
+            task.xml file. </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--stack_size &lt;s&gt;<br>
+          </td>
+          <td style="vertical-align: top;">stack_size<br>
+          </td>
+          <td style="vertical-align: top;">a stack size for the Java VM<br>
+          </td>
+          <td style="vertical-align: top;">The Carafe trainer is a Java
+            application, and the default stack size may not be adequate
+            for your data. The value here is passed to the Java VM using
+            the -Xss argument. Values like 4096k or 512k are examples of
+            expected values. This setting overrides any equivalent
+            setting in the &lt;java_subprocess_parameters&gt; in the
+            task.xml file.</td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--parallel<br>
+          </td>
+          <td style="vertical-align: top;">parallel<br>
+          </td>
+          <td style="vertical-align: top;">"yes" (XML)<br>
+          </td>
+          <td style="vertical-align: top;">If present, parallelizes the
+            training.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--nthreads<br>
+          </td>
+          <td style="vertical-align: top;">nthreads<br>
+          </td>
+          <td style="vertical-align: top;">an integer<br>
+          </td>
+          <td style="vertical-align: top;">If --parallel is used,
+            controls the number of threads used for training.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3>Advanced options</h3>
+    <p>The options in this section are documented here for completeness.
+      If you're not familiar with the Carafe training engine and its
+      implementation, the chances are that you'll never use any of these
+      values. If you want to use them, someone who is knowledgeable
+      about Carafe should set these values for you in task.xml, and
+      unless you really know what you're doing, you should not override
+      them on the command line. </p>
+    <p>Carafe provides the option of using non-standard training
+      methods. One of those methods is called <span style="font-weight:
+        bold;">periodic stepsize adjustment</span> (PSA). This method,
+      when used correctly, is significantly faster than the normal
+      training mechanism. However, it sometimes performs less well in
+      situations which are not yet clear. You might prefer to use it if
+      you're doing comparative analysis of multiple models, or you're
+      just starting off with a rough-and-ready system and you don't need
+      to optimize on accuracy yet. The --max_iterations flag governs the
+      number of training cycles; more is not necessarily better, because
+      the engine may overfit to the data.<br>
+    </p>
+    <p>The documentation for the --feature_spec flag below refers to
+      Carafe feature spec files. The documentation for how to create
+      these files can be found in the <a
+        href="#The_Carafe_documentation">Carafe documentation</a>.
+      Similarly, if you want details on the --gaussian_prior,
+      --no_begin, --l1, and --l1_c flags, see the Carafe documentation.<br>
+    </p>
+    <p>The documentation for --tags and --pre_models refers to an
+      advanced feature of Carafe where it can use tagging models to
+      generate input features for multi-stage tagging. We will not
+      discuss this advanced capability of Carafe any further.<br>
+    </p>
+    <table style="text-align: left;" border="1" cellpadding="2"
+      cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Command line option<br>
+          </th>
+          <th style="vertical-align: top;">XML attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--feature_spec &lt;file&gt;<br>
+          </td>
+          <td style="vertical-align: top;">feature_spec<br>
+          </td>
+          <td style="vertical-align: top;">a filename<br>
+          </td>
+          <td style="vertical-align: top;">Name of the file that
+            contains the Carafe <a
+              href="#A_note_about_feature_specifications_">feature
+              specification</a>. The default specification will be used
+            if none is provided. If the filename is not an absolute
+            filename, it will be interpreted relative to the directory
+            of the task which is being trained for. (This is because
+            this option more likely to be provided in your task.xml file
+            rather than on the command line.)<br>
+            <br>
+            On the command line, optional if feature_spec is set in the
+            &lt;build_settings&gt; for the relevant model config in the
+            task.xml file for the task.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--training_method
+            &lt;meth&gt;<br>
+          </td>
+          <td style="vertical-align: top;">training_method<br>
+          </td>
+          <td style="vertical-align: top;">"psa"<br>
+          </td>
+          <td style="vertical-align: top;">If present, specify a
+            training method other than the standard method. Currently,
+            the only recognized value is psa. The psa method is
+            noticeably faster, but may result in somewhat poorer
+            results. You can use a value of '' to override a previously
+            specified training method (e.g., a default method in your
+            task).<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--max_iterations &lt;num&gt;<br>
+          </td>
+          <td style="vertical-align: top;">max_iterations<br>
+          </td>
+          <td style="vertical-align: top;">an integer<br>
+          </td>
+          <td style="vertical-align: top;">Number of iterations for the
+            training mechanism to use. Current defaults are 200 for
+            standard training, 10 for PSA training. On the command line,
+            overrides any possible default in the &lt;build_settings&gt;
+            for the relevant model config in the task.xml file for the
+            task.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">---tags &lt;s&gt;<br>
+          </td>
+          <td style="vertical-align: top;">tags<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">If present, a comma-separated
+            list of tags to pass to the training engine instead of the
+            full tag set for the task (used to create per-tag
+            pre-tagging models for multi-stage training and tagging).<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--pre_models &lt;s&gt;<br>
+          </td>
+          <td style="vertical-align: top;">pre_models<br>
+          </td>
+          <td style="vertical-align: top;">a string<br>
+          </td>
+          <td style="vertical-align: top;">If present, a comma-separated
+            list of glob-style patterns specifying the models to include
+            as pre-taggers.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--gaussian_prior &lt;f&gt;<br>
+          </td>
+          <td style="vertical-align: top;">gaussian_prior<br>
+          </td>
+          <td style="vertical-align: top;">a float<br>
+          </td>
+          <td style="vertical-align: top;">A positive float, default is
+            10.0. See the Carafe docs for details.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--no_begin<br>
+          </td>
+          <td style="vertical-align: top;">no_begin<br>
+          </td>
+          <td style="vertical-align: top;">"yes" (XML)<br>
+          </td>
+          <td style="vertical-align: top;">Don't introduce begin states
+            during training. Useful if you're certain that you won't
+            have any adjacent spans with the same label. See the <a
+              href="#The_Carafe_documentation">Carafe documentation</a>
+            for more details.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--l1<br>
+          </td>
+          <td style="vertical-align: top;">l1<br>
+          </td>
+          <td style="vertical-align: top;">"yes" (XML)<br>
+          </td>
+          <td style="vertical-align: top;">Use L1 regularization for PSA
+            training. See the <a href="#The_Carafe_documentation">Carafe
+
+
+              docs</a> for details.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--l1_c &lt;f&gt;<br>
+          </td>
+          <td style="vertical-align: top;">l1_c<br>
+          </td>
+          <td style="vertical-align: top;">a float<br>
+          </td>
+          <td style="vertical-align: top;">Change the penalty factor for
+            the L1 regularizer. See the <a
+              href="#The_Carafe_documentation">Carafe docs</a> for
+            details.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--add_tokens_internally<br>
+          </td>
+          <td style="vertical-align: top;">add_tokens_internally<br>
+          </td>
+          <td style="vertical-align: top;">"yes" (XML)<br>
+          </td>
+          <td style="vertical-align: top;">If present, Carafe will use
+            its internal tokenizer to tokenize the document before
+            training. If your workflow doesn't tokenize the document,
+            you must provide this flag, or Carafe will have no tokens to
+            base its training on. We recommend <span
+              style="font-weight: bold;">strongly</span> that you
+            tokenize your documents separately; you should not use this
+            flag.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--partial_training_on_gold_only<br>
+          </td>
+          <td style="vertical-align: top;">partial_training_on_gold_only<br>
+          </td>
+          <td style="vertical-align: top;">"yes" (XML)<br>
+          </td>
+          <td style="vertical-align: top;">When Carafe is presented with
+            <a
+              href="annotations_and_segments.html#Admin_annotations_SEGMENTs_and">partially
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+              tagged documents</a>, by default MAT will ask Carafe to
+            train on all annotated segments, gold or not. If this flag
+            is specified, only "human gold" or "reconciled" segments
+            will be used for training.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">--word_properties<br>
+          </td>
+          <td valign="top">word_properties<br>
+          </td>
+          <td valign="top">a string<br>
+          </td>
+          <td valign="top">see the <a href="#The_Carafe_documentation">Carafe
+
+
+              docs</a> on --word-properties.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">--word_scores<br>
+          </td>
+          <td valign="top">word_scores<br>
+          </td>
+          <td valign="top">a string<br>
+          </td>
+          <td valign="top">see the <a href="#The_Carafe_documentation">Carafe
+
+
+              docs</a> on --word-scores.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">--learning_rate<br>
+          </td>
+          <td valign="top">learning_rate<br>
+          </td>
+          <td valign="top">a string<br>
+          </td>
+          <td valign="top">see the <a href="#The_Carafe_documentation">Carafe
+
+
+              docs</a> on --learning-rate.<br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top">--disk_cache<br>
+          </td>
+          <td valign="top">disk_cache<br>
+          </td>
+          <td valign="top">a string<br>
+          </td>
+          <td valign="top">see the <a href="#The_Carafe_documentation">Carafe
+
+
+              docs</a> on --disk-cache.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3><a name="A_note_about_feature_specifications_"></a>A note about
+      feature specifications
+    </h3>
+    <p>Carafe uses a declarative representation for describing the
+      features it will use when training and tagging. The default
+      feature specification file is found in resources/default.fspec in
+      your Java Carafe directory. The <a
+        href="carafe_engine.html#The_Carafe_documentation">Carafe docs</a>
+      describe the meaning of the contents of these files, and how to
+      write your own if you so choose.<br>
+    </p>
+    <p>In some cases, the feature specification interacts with trainer
+      parameters. For instance, the contents of the lexicon files
+      provided by the --lexicon_dir option are interpreted according to
+      features in the feature specification file, in particular the
+      lexFn and downLexFn specs, as follows:<br>
+    </p>
+    <ul>
+      <li>If you want your lexicons to match tokens in the text <b>case-sensitively</b>
+        (i.e., exact string match) you should build your lexicons with
+        the casing you expect in the text and include the "lexFn" spec
+        in your spec file.</li>
+      <li>If you want the lexicons to match <b>case-insensitively</b>,
+        you should include an all lower-case lexicon file and then
+        include the "downLexFn" spec instead of "lexFn".<br>
+      </li>
+    </ul>
+    <p>So, for example, if you're annotating names, and all the names
+      appear with consistent capitalization in your documents, you can
+      use "lexFn" and list the elements in your lexicon file using the
+      appropriate capitalization. On the other hand, if the
+      capitalization is inconsistent, then you should use the
+      case-insensitive option.<br>
+    </p>
+    <p>The default feature spec file distributed with MAT contains a
+      "lexFn" feature, for case-sensitive matching.<br>
+    </p>
+  </body>
+</html>

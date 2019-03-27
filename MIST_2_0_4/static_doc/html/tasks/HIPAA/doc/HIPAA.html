@@ -1,0 +1,275 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>The HIPAA Task</title>
+    <!-- this will appear as tasks/<taskdir>/doc/<file>, and the doc CSS
+       is in css, so... -->
+    <link href="../../../../css/doc.css" rel="stylesheet"
+      type="text/css">
+  </head>
+  <body>
+    <h1>The HIPAA task<br>
+    </h1>
+    <p>The HIPAA task is a general-purpose deidentification task which
+      addresses deidentification of medical records. Make sure you've
+      read
+      the documentation on <a href="../../core/doc/general.html">general
+deidentification
+        customizations</a>.<br>
+    </p>
+    <h2>Task name</h2>
+    <p>The name of this task, when you need to refer to it in MATEngine,
+      MATWorkspaceEngine, or the UI, is "HIPAA Deidentification".<br>
+    </p>
+    <h2>Additional steps</h2>
+    <p>Most of the workflows in the HIPAA task have an
+      additional initial step,
+      "clean", which cannot be undone; this step converts the document
+      to
+      ASCII with Unix line endings.
+    </p>
+    <h2>Annotation set<br>
+    </h2>
+    <p></p>
+    <p>The HIPAA law which governs medical record privacy specifies 19
+      categories which the law requires to be obscured. We discuss their
+      implementation here. This implementation is informed by our
+      experiences so far with our research partners. The bold text for
+      each
+      section is taken directly from 45CFR164.514, the law which governs
+      PHI
+      privacy.<br>
+    </p>
+    <p><span style="font-weight: bold;">(A) Names</span><br>
+    </p>
+    <p style="margin-left: 40px;">The NAME tag (full and partial names)
+      and
+      the INITIALS tag (initials).<br>
+    </p>
+    <p><span style="font-weight: bold;">(B) All geographic subdivisions
+        smaller than a State, including </span><br style="font-weight:
+        bold;">
+      <span style="font-weight: bold;">street address, city, county,
+        precinct, zip code, and their equivalent </span><br
+        style="font-weight: bold;">
+      <span style="font-weight: bold;">geocodes, except for the initial
+        three
+        digits of a zip code if, </span><br style="font-weight: bold;">
+      <span style="font-weight: bold;">according to the current publicly
+        available data from the Bureau of the </span><br
+        style="font-weight: bold;">
+      <span style="font-weight: bold;">Census:</span><br
+        style="font-weight: bold;">
+      <span style="font-weight: bold;">&nbsp; (1) The geographic unit
+        formed
+        by combining all zip codes with the </span><br
+        style="font-weight: bold;">
+      <span style="font-weight: bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        same
+        three initial digits contains more than 20,000 people; and</span><br
+        style="font-weight: bold;">
+      <span style="font-weight: bold;">&nbsp; (2) The initial three
+        digits of
+        a zip code for all such geographic </span><br
+        style="font-weight: bold;">
+      <span style="font-weight: bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        units
+        containing 20,000 or fewer people is changed to 000.</span><br>
+    </p>
+    <p style="margin-left: 40px;">The LOCATION tag. This tag does not
+      permit subdivision of ZIP codes. The state should be obscured as
+      well.
+      All contiguous elements of a location should be included in a
+      single
+      tag, e.g., "12 Mulberry Lane, Winston-Salem, NC, 52004". Locations
+      internal to a hospital, such as room numbers, should use the OTHER
+      tag.<br>
+    </p>
+    <p><span style="font-weight: bold;">(C) All elements of dates
+        (except
+        year) for dates directly related </span><br style="font-weight:
+        bold;">
+      <span style="font-weight: bold;">to an individual, including birth
+        date, admission date, discharge date, </span><br
+        style="font-weight: bold;">
+      <span style="font-weight: bold;">date of death; and all ages over
+        89
+        and all elements of dates (including </span><br
+        style="font-weight: bold;">
+      <span style="font-weight: bold;">year) indicative of such age,
+        except
+        that such ages and elements may be </span><br
+        style="font-weight: bold;">
+      <span style="font-weight: bold;">aggregated into a single category
+        of
+        age 90 or older</span><br>
+    </p>
+    <p style="margin-left: 40px;">The DATE tag and the AGE tag. The DATE
+      tag should include the year, to support resynthesis of realistic
+      fillers (this process is significantly hampered by leaving the
+      year
+      out). We recommend that all ages be tagged.<br>
+    </p>
+    <p><span style="font-weight: bold;">(D) Telephone numbers;</span><br
+        style="font-weight: bold;">
+      <span style="font-weight: bold;">(E) Fax numbers;</span><br>
+    </p>
+    <div style="margin-left: 40px;">The PHONE tag.<br>
+      <br style="font-weight: bold;">
+    </div>
+    <span style="font-weight: bold;">(F) Electronic mail addresses;</span><br>
+    <br>
+    <div style="margin-left: 40px;">The EMAIL tag.<br>
+      <br>
+    </div>
+    <span style="font-weight: bold;">(G) Social security numbers;</span><br>
+    <br>
+    <div style="margin-left: 40px;">The SSN tag.<br>
+      <br>
+    </div>
+    <span style="font-weight: bold;">(H) Medical record numbers;</span><br
+      style="font-weight: bold;">
+    <span style="font-weight: bold;">(I) Health plan beneficiary
+      numbers;</span><br style="font-weight: bold;">
+    <span style="font-weight: bold;">(J) Account numbers;</span><br
+      style="font-weight: bold;">
+    <span style="font-weight: bold;">(K) Certificate/license numbers;</span><br
+      style="font-weight: bold;">
+    <span style="font-weight: bold;">(L) Vehicle identifiers and serial
+      numbers, including license plate numbers;</span><br
+      style="font-weight: bold;">
+    <span style="font-weight: bold;">(M) Device identifiers and serial
+      numbers;</span><br>
+    <br>
+    <div style="margin-left: 40px;">The IDNUM tag. This tag can also be
+      used for any other alphanumeric code not listed here, if the user
+      prefers.<br>
+      <br>
+    </div>
+    <span style="font-weight: bold;">(N) Web Universal Resource Locators
+      (URLs);</span><br>
+    <br>
+    <div style="margin-left: 40px;">The URL tag.<br>
+      <br>
+    </div>
+    <span style="font-weight: bold;">(O) Internet Protocol (IP) address
+      numbers;</span><br>
+    <br>
+    <div style="margin-left: 40px;">The IPADDRESS tag.<br>
+      <br style="font-weight: bold;">
+    </div>
+    <span style="font-weight: bold;">(P) Biometric identifiers,
+      including
+      finger and voice prints;</span><br style="font-weight: bold;">
+    <span style="font-weight: bold;">(Q) Full face photographic images
+      and
+      any comparable images;</span><br>
+    <br>
+    <div style="margin-left: 40px;">Not relevant.<br>
+      <br>
+    </div>
+    <span style="font-weight: bold;">(R) Any other unique identifying
+      number, characteristic, or code, </span><br style="font-weight:
+      bold;">
+    <span style="font-weight: bold;">except as permitted by paragraph
+      (c)
+      of this section</span><br>
+    <br>
+    <div style="margin-left: 40px;">The OTHER tag. This tag may include
+      things like room numbers, or any other identifying information the
+      use
+      chooses not to use IDNUM for. <br>
+      <br>
+    </div>
+    In addition, although not required by HIPAA, the HOSPITAL tag can be
+    used to obscure the name of hospitals and other medical facilities,
+    since many users seem to want to do that.<br>
+    <h2>Additional replacer implementations</h2>
+    <p>The HIPAA task provides some special replacer implementations.<br>
+    </p>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Implementation<br>
+          </th>
+          <th style="vertical-align: top;">UI name<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">HIPAAResynthesis.HIPAAClearReplacementEngine<br>
+          </td>
+          <td style="vertical-align: top;">clear&nbsp;-&gt;&nbsp;clear<br>
+          </td>
+          <td style="vertical-align: top;">A specialization of the
+            general
+            clear -&gt; clear replacer which provides some
+            customizations for
+            rendering some HIPAA-specific categories.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">HIPAAResynthesis.HIPAADEIDStyleReplacementEngine<br>
+          </td>
+          <td style="vertical-align: top;">clear&nbsp;-&gt;&nbsp;DE-ID<br>
+          </td>
+          <td style="vertical-align: top;">Maps clear text PIIs to the a
+            DE-id-style obscured pattern.<br>
+            <br>
+            For most tags, the pattern is, e.g., **HOSPITAL. However,
+            AGE, DATE
+            and NAME have subsequent patterns surrounded by angle
+            brackets.<br>
+            <ul>
+              <li>**NAME&lt;AAA B. CCC&gt;, where the pattern represents
+                the
+                pattern of name tokens in the clear text name. The token
+                substitutions
+                are, by default, consistent within the scope of a single
+                document.</li>
+              <li>**DATE&lt;5/6/09&gt;, where the sequence between the
+                brackets is
+                an actual date, displaced consistently throughout the
+                document by the
+                same randomly-selected offset.</li>
+              <li>**AGE&lt;in 30s&gt;, where the sequence between the
+                bracket
+                indicates a decade of life, with the exception of
+                "birth-12", "in
+                teens", and "90+".<br>
+              </li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">HIPAAResynthesis.HIPAADEIDStyleResynthesisEngine<br>
+          </td>
+          <td style="vertical-align: top;">DE-ID&nbsp;-&gt;&nbsp;clear<br>
+          </td>
+          <td style="vertical-align: top;">Maps the DE-id-style pattern
+            described above into clear text <br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">HIPAAResynthesis.HIPAABracketResynthesisEngine<br>
+          </td>
+          <td style="vertical-align: top;">[&nbsp;]&nbsp;-&gt;&nbsp;clear<br>
+          </td>
+          <td style="vertical-align: top;">A specialization of the
+            general
+            [ ] -&gt; clear replacer which provides some customizations
+            for
+            rendering some HIPAA-specific categories<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p> </p>
+  </body>
+</html>

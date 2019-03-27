@@ -1,0 +1,733 @@
+<!-- scraped from https://www.cia.gov/library/publications/the-world-factbook/rankorder/rawdata_2119.txt 
+     edited by hand to add additional alternatives -->
+<entries cap_status="mixed" weighted="yes">
+  <entry weight="1336718015">
+    <head>China</head>
+  </entry>
+  <entry weight="1189172906">
+    <head>India</head>
+  </entry>
+  <entry weight="313232044">
+    <head>United States</head>
+    <head>the United States</head>
+    <head>the US</head>
+    <head>USA</head>
+  </entry>
+  <entry weight="245613043">
+    <head>Indonesia</head>
+  </entry>
+  <entry weight="203429773">
+    <head>Brazil</head>
+  </entry>
+  <entry weight="187342721">
+    <head>Pakistan</head>
+  </entry>
+  <entry weight="158570535">
+    <head>Bangladesh</head>
+  </entry>
+  <entry weight="155215573">
+    <head>Nigeria</head>
+  </entry>
+  <entry weight="138739892">
+    <head>Russia</head>
+  </entry>
+  <entry weight="126475664">
+    <head>Japan</head>
+  </entry>
+  <entry weight="113724226">
+    <head>Mexico</head>
+  </entry>
+  <entry weight="101833938">
+    <head>Philippines</head>
+    <head>the Philippines</head>
+  </entry>
+  <entry weight="90873739">
+    <head>Ethiopia</head>
+  </entry>
+  <entry weight="90549390">
+    <head>Vietnam</head>
+  </entry>
+  <entry weight="82079636">
+    <head>Egypt</head>
+  </entry>
+  <entry weight="81471834">
+    <head>Germany</head>
+  </entry>
+  <entry weight="78785548">
+    <head>Turkey</head>
+  </entry>
+  <entry weight="77891220">
+    <head>Iran</head>
+  </entry>
+  <entry weight="71712867">
+    <head>Democratic Republic of the Congo</head>
+  </entry>
+  <entry weight="66720153">
+    <head>Thailand</head>
+  </entry>
+  <entry weight="65312249">
+    <head>France</head>
+  </entry>
+  <entry weight="62698362">
+    <head>United Kingdom</head>
+    <head>the United Kingdom</head>
+    <head>UK</head>
+    <head>the UK</head>
+    <head>Great Britain</head>
+  </entry>
+  <entry weight="61016804">
+    <head>Italy</head>
+  </entry>
+  <entry weight="53999804">
+    <head>Burma</head>
+  </entry>
+  <entry weight="49004031">
+    <head>South Africa</head>
+  </entry>
+  <entry weight="48754657">
+    <head>South Korea</head>
+  </entry>
+  <entry weight="46754784">
+    <head>Spain</head>
+  </entry>
+  <entry weight="45134707">
+    <head>Ukraine</head>
+  </entry>
+  <entry weight="45047502">
+    <head>Sudan</head>
+  </entry>
+  <entry weight="44725543">
+    <head>Colombia</head>
+  </entry>
+  <entry weight="42746620">
+    <head>Tanzania</head>
+  </entry>
+  <entry weight="41769726">
+    <head>Argentina</head>
+  </entry>
+  <entry weight="41070934">
+    <head>Kenya</head>
+  </entry>
+  <entry weight="38441588">
+    <head>Poland</head>
+  </entry>
+  <entry weight="34994937">
+    <head>Algeria</head>
+  </entry>
+  <entry weight="34612250">
+    <head>Uganda</head>
+  </entry>
+  <entry weight="34030589">
+    <head>Canada</head>
+  </entry>
+  <entry weight="31968361">
+    <head>Morocco</head>
+  </entry>
+  <entry weight="30399572">
+    <head>Iraq</head>
+  </entry>
+  <entry weight="29835392">
+    <head>Afghanistan</head>
+  </entry>
+  <entry weight="29391883">
+    <head>Nepal</head>
+  </entry>
+  <entry weight="29248943">
+    <head>Peru</head>
+  </entry>
+  <entry weight="28728607">
+    <head>Malaysia</head>
+  </entry>
+  <entry weight="28128600">
+    <head>Uzbekistan</head>
+  </entry>
+  <entry weight="27635743">
+    <head>Venezuela</head>
+  </entry>
+  <entry weight="26131703">
+    <head>Saudi Arabia</head>
+  </entry>
+  <entry weight="24791073">
+    <head>Ghana</head>
+  </entry>
+  <entry weight="24457492">
+    <head>North Korea</head>
+  </entry>
+  <entry weight="24133492">
+    <head>Yemen</head>
+  </entry>
+  <entry weight="23071779">
+    <head>Taiwan</head>
+  </entry>
+  <entry weight="22948858">
+    <head>Mozambique</head>
+  </entry>
+  <entry weight="22517750">
+    <head>Syria</head>
+  </entry>
+  <entry weight="21926221">
+    <head>Madagascar</head>
+  </entry>
+  <entry weight="21904551">
+    <head>Romania</head>
+  </entry>
+  <entry weight="21766711">
+    <head>Australia</head>
+  </entry>
+  <entry weight="21504162">
+    <head>Cote d'Ivoire</head>
+    <head>Ivory Coast</head>
+  </entry>
+  <entry weight="21283913">
+    <head>Sri Lanka</head>
+  </entry>
+  <entry weight="19711291">
+    <head>Cameroon</head>
+  </entry>
+  <entry weight="16888760">
+    <head>Chile</head>
+  </entry>
+  <entry weight="16847007">
+    <head>Netherlands</head>
+  </entry>
+  <entry weight="16751455">
+    <head>Burkina Faso</head>
+  </entry>
+  <entry weight="16468886">
+    <head>Niger</head>
+  </entry>
+  <entry weight="15879252">
+    <head>Malawi</head>
+  </entry>
+  <entry weight="15522373">
+    <head>Kazakhstan</head>
+  </entry>
+  <entry weight="15007343">
+    <head>Ecuador</head>
+  </entry>
+  <entry weight="14701717">
+    <head>Cambodia</head>
+  </entry>
+  <entry weight="14159904">
+    <head>Mali</head>
+  </entry>
+  <entry weight="13881336">
+    <head>Zambia</head>
+  </entry>
+  <entry weight="13824463">
+    <head>Guatemala</head>
+  </entry>
+  <entry weight="13338541">
+    <head>Angola</head>
+  </entry>
+  <entry weight="12643799">
+    <head>Senegal</head>
+  </entry>
+  <entry weight="12084304">
+    <head>Zimbabwe</head>
+  </entry>
+  <entry weight="11370425">
+    <head>Rwanda</head>
+  </entry>
+  <entry weight="11087330">
+    <head>Cuba</head>
+  </entry>
+  <entry weight="10760305">
+    <head>Portugal</head>
+  </entry>
+  <entry weight="10760136">
+    <head>Greece</head>
+  </entry>
+  <entry weight="10758945">
+    <head>Chad</head>
+  </entry>
+  <entry weight="10629186">
+    <head>Tunisia</head>
+  </entry>
+  <entry weight="10601009">
+    <head>Guinea</head>
+  </entry>
+  <entry weight="10431477">
+    <head>Belgium</head>
+  </entry>
+  <entry weight="10216190">
+    <head>Burundi</head>
+  </entry>
+  <entry weight="10190213">
+    <head>Czech Republic</head>
+  </entry>
+  <entry weight="10118683">
+    <head>Bolivia</head>
+  </entry>
+  <entry weight="9976062">
+    <head>Hungary</head>
+  </entry>
+  <entry weight="9956648">
+    <head>Dominican Republic</head>
+  </entry>
+  <entry weight="9925640">
+    <head>Somalia</head>
+  </entry>
+  <entry weight="9719932">
+    <head>Haiti</head>
+  </entry>
+  <entry weight="9577552">
+    <head>Belarus</head>
+  </entry>
+  <entry weight="9325032">
+    <head>Benin</head>
+  </entry>
+  <entry weight="9088728">
+    <head>Sweden</head>
+  </entry>
+  <entry weight="8372373">
+    <head>Azerbaijan</head>
+  </entry>
+  <entry weight="8260490">
+    <head>South Sudan</head>
+  </entry>
+  <entry weight="8217280">
+    <head>Austria</head>
+  </entry>
+  <entry weight="8143564">
+    <head>Honduras</head>
+  </entry>
+  <entry weight="7639961">
+    <head>Switzerland</head>
+  </entry>
+  <entry weight="7627200">
+    <head>Tajikistan</head>
+  </entry>
+  <entry weight="7473052">
+    <head>Israel</head>
+  </entry>
+  <entry weight="7310555">
+    <head>Serbia</head>
+  </entry>
+  <entry weight="7122508">
+    <head>Hong Kong</head>
+  </entry>
+  <entry weight="7093635">
+    <head>Bulgaria</head>
+  </entry>
+  <entry weight="6771993">
+    <head>Togo</head>
+  </entry>
+  <entry weight="6597960">
+    <head>Libya</head>
+  </entry>
+  <entry weight="6508271">
+    <head>Jordan</head>
+  </entry>
+  <entry weight="6477211">
+    <head>Laos</head>
+  </entry>
+  <entry weight="6459058">
+    <head>Paraguay</head>
+  </entry>
+  <entry weight="6187591">
+    <head>Papua New Guinea</head>
+  </entry>
+  <entry weight="6071774">
+    <head>El Salvador</head>
+  </entry>
+  <entry weight="5939484">
+    <head>Eritrea</head>
+  </entry>
+  <entry weight="5666301">
+    <head>Nicaragua</head>
+  </entry>
+  <entry weight="5587443">
+    <head>Kyrgyzstan</head>
+  </entry>
+  <entry weight="5529888">
+    <head>Denmark</head>
+  </entry>
+  <entry weight="5477038">
+    <head>Slovakia</head>
+  </entry>
+  <entry weight="5363669">
+    <head>Sierra Leone</head>
+  </entry>
+  <entry weight="5259250">
+    <head>Finland</head>
+  </entry>
+  <entry weight="5148664">
+    <head>United Arab Emirates</head>
+    <head>UAE</head>
+  </entry>
+  <entry weight="4997503">
+    <head>Turkmenistan</head>
+  </entry>
+  <entry weight="4950027">
+    <head>Central African Republic</head>
+  </entry>
+  <entry weight="4740737">
+    <head>Singapore</head>
+  </entry>
+  <entry weight="4691849">
+    <head>Norway</head>
+  </entry>
+  <entry weight="4670976">
+    <head>Ireland</head>
+  </entry>
+  <entry weight="4622163">
+    <head>Bosnia and Herzegovina</head>
+  </entry>
+  <entry weight="4585874">
+    <head>Georgia</head>
+  </entry>
+  <entry weight="4576562">
+    <head>Costa Rica</head>
+  </entry>
+  <entry weight="4483804">
+    <head>Croatia</head>
+  </entry>
+  <entry weight="4314377">
+    <head>Moldova</head>
+  </entry>
+  <entry weight="4290347">
+    <head>New Zealand</head>
+  </entry>
+  <entry weight="4243929">
+    <head>Republic of the Congo</head>
+  </entry>
+  <entry weight="4143101">
+    <head>Lebanon</head>
+  </entry>
+  <entry weight="3989133">
+    <head>Puerto Rico</head>
+  </entry>
+  <entry weight="3786764">
+    <head>Liberia</head>
+  </entry>
+  <entry weight="3535547">
+    <head>Lithuania</head>
+  </entry>
+  <entry weight="3460462">
+    <head>Panama</head>
+  </entry>
+  <entry weight="3308535">
+    <head>Uruguay</head>
+  </entry>
+  <entry weight="3281634">
+    <head>Mauritania</head>
+  </entry>
+  <entry weight="3133318">
+    <head>Mongolia</head>
+  </entry>
+  <entry weight="3027959">
+    <head>Oman</head>
+  </entry>
+  <entry weight="2994667">
+    <head>Albania</head>
+  </entry>
+  <entry weight="2967975">
+    <head>Armenia</head>
+  </entry>
+  <entry weight="2868380">
+    <head>Jamaica</head>
+  </entry>
+  <entry weight="2595628">
+    <head>Kuwait</head>
+  </entry>
+  <entry weight="2568555">
+    <head>West Bank</head>
+  </entry>
+  <entry weight="2204708">
+    <head>Latvia</head>
+  </entry>
+  <entry weight="2147585">
+    <head>Namibia</head>
+  </entry>
+  <entry weight="2077328">
+    <head>Macedonia</head>
+  </entry>
+  <entry weight="2065398">
+    <head>Botswana</head>
+  </entry>
+  <entry weight="2000092">
+    <head>Slovenia</head>
+  </entry>
+  <entry weight="1924886">
+    <head>Lesotho</head>
+  </entry>
+  <entry weight="1825632">
+    <head>Kosovo</head>
+  </entry>
+  <entry weight="1797860">
+    <head>The Gambia</head>
+    <head>Gambia</head>
+  </entry>
+  <entry weight="1657155">
+    <head>Gaza Strip</head>
+  </entry>
+  <entry weight="1596677">
+    <head>Guinea-Bissau</head>
+  </entry>
+  <entry weight="1576665">
+    <head>Gabon</head>
+  </entry>
+  <entry weight="1370424">
+    <head>Swaziland</head>
+  </entry>
+  <entry weight="1303717">
+    <head>Mauritius</head>
+  </entry>
+  <entry weight="1282963">
+    <head>Estonia</head>
+  </entry>
+  <entry weight="1227505">
+    <head>Trinidad and Tobago</head>
+  </entry>
+  <entry weight="1214705">
+    <head>Bahrain</head>
+  </entry>
+  <entry weight="1177834">
+    <head>Timor-Leste</head>
+    <head>East Timor</head>
+  </entry>
+  <entry weight="1120489">
+    <head>Cyprus</head>
+  </entry>
+  <entry weight="883125">
+    <head>Fiji</head>
+  </entry>
+  <entry weight="848016">
+    <head>Qatar</head>
+  </entry>
+  <entry weight="794683">
+    <head>Comoros</head>
+  </entry>
+  <entry weight="757074">
+    <head>Djibouti</head>
+  </entry>
+  <entry weight="744768">
+    <head>Guyana</head>
+  </entry>
+  <entry weight="708427">
+    <head>Bhutan</head>
+  </entry>
+  <entry weight="668225">
+    <head>Equatorial Guinea</head>
+  </entry>
+  <entry weight="661807">
+    <head>Montenegro</head>
+  </entry>
+  <entry weight="573003">
+    <head>Macau</head>
+  </entry>
+  <entry weight="571890">
+    <head>Solomon Islands</head>
+  </entry>
+  <entry weight="516100">
+    <head>Cape Verde</head>
+  </entry>
+  <entry weight="507160">
+    <head>Western Sahara</head>
+  </entry>
+  <entry weight="503302">
+    <head>Luxembourg</head>
+  </entry>
+  <entry weight="491989">
+    <head>Suriname</head>
+  </entry>
+  <entry weight="408333">
+    <head>Malta</head>
+  </entry>
+  <entry weight="401890">
+    <head>Brunei</head>
+  </entry>
+  <entry weight="394999">
+    <head>Maldives</head>
+    <head>the Maldives</head>
+  </entry>
+  <entry weight="321115">
+    <head>Belize</head>
+  </entry>
+  <entry weight="313312">
+    <head>The Bahamas</head>
+  </entry>
+  <entry weight="311058">
+    <head>Iceland</head>
+  </entry>
+  <entry weight="294935">
+    <head>French Polynesia</head>
+  </entry>
+  <entry weight="286705">
+    <head>Barbados</head>
+  </entry>
+  <entry weight="256275">
+    <head>New Caledonia</head>
+  </entry>
+  <entry weight="224564">
+    <head>Vanuatu</head>
+  </entry>
+  <entry weight="193161">
+    <head>Samoa</head>
+  </entry>
+  <entry weight="179506">
+    <head>Sao Tome and Principe</head>
+  </entry>
+  <entry weight="161557">
+    <head>Saint Lucia</head>
+  </entry>
+  <entry weight="142180">
+    <head>Curacao</head>
+  </entry>
+  <entry weight="109666">
+    <head>Virgin Islands</head>
+  </entry>
+  <entry weight="108419">
+    <head>Grenada</head>
+  </entry>
+  <entry weight="106836">
+    <head>Federated States of Micronesia</head>
+    <head>Micronesia</head>
+  </entry>
+  <entry weight="106113">
+    <head>Aruba</head>
+  </entry>
+  <entry weight="105916">
+    <head>Tonga</head>
+  </entry>
+  <entry weight="103869">
+    <head>Saint Vincent and the Grenadines</head>
+  </entry>
+  <entry weight="100743">
+    <head>Kiribati</head>
+  </entry>
+  <entry weight="94161">
+    <head>Jersey</head>
+  </entry>
+  <entry weight="89188">
+    <head>Seychelles</head>
+  </entry>
+  <entry weight="87884">
+    <head>Antigua and Barbuda</head>
+  </entry>
+  <entry weight="84825">
+    <head>Andorra</head>
+  </entry>
+  <entry weight="84655">
+    <head>Isle of Man</head>
+  </entry>
+  <entry weight="72969">
+    <head>Dominica</head>
+  </entry>
+  <entry weight="68679">
+    <head>Bermuda</head>
+  </entry>
+  <entry weight="67242">
+    <head>American Samoa</head>
+  </entry>
+  <entry weight="67182">
+    <head>Marshall Islands</head>
+  </entry>
+  <entry weight="65068">
+    <head>Guernsey</head>
+  </entry>
+  <entry weight="57670">
+    <head>Greenland</head>
+  </entry>
+  <entry weight="51384">
+    <head>Cayman Islands</head>
+  </entry>
+  <entry weight="50314">
+    <head>Saint Kitts and Nevis</head>
+  </entry>
+  <entry weight="49267">
+    <head>Faroe Islands</head>
+  </entry>
+  <entry weight="46050">
+    <head>Northern Mariana Islands</head>
+  </entry>
+  <entry weight="44819">
+    <head>Turks and Caicos Islands</head>
+  </entry>
+  <entry weight="37429">
+    <head>Sint Maarten</head>
+  </entry>
+  <entry weight="35236">
+    <head>Liechtenstein</head>
+  </entry>
+  <entry weight="31817">
+    <head>San Marino</head>
+  </entry>
+  <entry weight="30615">
+    <head>Saint Martin</head>
+  </entry>
+  <entry weight="30539">
+    <head>Monaco</head>
+  </entry>
+  <entry weight="28956">
+    <head>Gibraltar</head>
+  </entry>
+  <entry weight="25383">
+    <head>British Virgin Islands</head>
+  </entry>
+  <entry weight="20956">
+    <head>Palau</head>
+  </entry>
+  <entry weight="15700">
+    <head>Dhekelia</head>
+  </entry>
+  <entry weight="15700">
+    <head>Akrotiri</head>
+  </entry>
+  <entry weight="15398">
+    <head>Wallis and Futuna</head>
+  </entry>
+  <entry weight="15094">
+    <head>Anguilla</head>
+  </entry>
+  <entry weight="11124">
+    <head>Cook Islands</head>
+  </entry>
+  <entry weight="10544">
+    <head>Tuvalu</head>
+  </entry>
+  <entry weight="9322">
+    <head>Nauru</head>
+  </entry>
+  <entry weight="7700">
+    <head>Saint Helena Ascension and Tristan da Cunha</head>
+  </entry>
+  <entry weight="7367">
+    <head>Saint Barthelemy</head>
+  </entry>
+  <entry weight="5888">
+    <head>Saint Pierre and Miquelon</head>
+  </entry>
+  <entry weight="5140">
+    <head>Montserrat</head>
+  </entry>
+  <entry weight="3140">
+    <head>Falkland Islands</head>
+  </entry>
+  <entry weight="2169">
+    <head>Norfolk Island</head>
+  </entry>
+  <entry weight="2019">
+    <head>Svalbard</head>
+  </entry>
+  <entry weight="1402">
+    <head>Christmas Island</head>
+  </entry>
+  <entry weight="1384">
+    <head>Tokelau</head>
+  </entry>
+  <entry weight="1311">
+    <head>Niue</head>
+  </entry>
+  <entry weight="832">
+    <head>Vatican City</head>
+    <head>the Vatican</head>
+  </entry>
+  <entry weight="596">
+    <head>Cocos (Keeling) Islands</head>
+  </entry>
+  <entry weight="48">
+    <head>Pitcairn Islands</head>
+  </entry>
+</entries>

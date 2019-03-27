@@ -1,0 +1,345 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Web Application Server</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Web Application Server<br>
+    </h1>
+    <h2>Description</h2>
+    <p>The Web application server is a threaded server which provides
+      services to the Web UI, as well as supporting the tagger broker.
+      By default, the application server also starts up a command loop
+      which allows the user to start up and shut down various portions
+      of the application. The application server supports CGI access for
+      some services, and XML-RPC for others. The service API is intended
+      to be internal; it will be documented at a later point.<br>
+    </p>
+    <div style="margin-right: 10px; margin-left: 10px; padding-left:
+      10px; padding-right: 10px; border: 1px solid black;
+      background-color: lightgray">
+      <h2>The MAT Web server is NOT SECURE<br>
+      </h2>
+      <p>The native MAT Web server is <span style="font-weight: bold;">not
+
+
+
+
+
+          an enterprise-secure implementation, and will never be one</span>.
+        It does not use SSL, and it does not provide any security
+        logging or traceability. You should assume that anyone who has
+        access to your network can see your Web server traffic. Also, at
+        the moment, it is not possible to run MAT under another, more
+        secure Web configuration.<br>
+      </p>
+    </div>
+    <p><span style="font-weight: bold;">Note</span>: the Web application
+      server inventories the tagger models it makes available in file
+      mode at <span style="font-weight: bold;">startup</span> time. If
+      you build a model after you start the Web server, the Web server
+      won't know about that model until you restart it. (This condition
+      does not apply to workspaces.)<br>
+    </p>
+    <h3>The command loop</h3>
+    <p>When you start up the Web server, and it's running a command
+      loop, you see something like this:<br>
+    </p>
+    <pre>Web server started on port 7801.<br><br>Web server command loop. Commands are:<br><br>exit       - exit the command loop and stop the Web server<br>loopexit   - exit the command loop, but leave the Web server running<br>taggerexit - shut down the tagger service, if it's running<br>restart    - restart the Web server<br>ws_key     - show the workspace key<br>help, ?    - this message<br><br>Workspace key is w65gABlWFKYSdZwXCHaspyhW0DySP7ZW<br>Command:<br></pre>
+    <p>These commands should be self-explanatory. The command that
+      you're most likely to use is "ws_key", which prints out the
+      workspace key that the Web server knows. The <a
+        href="workspace_security.html">workspace security documentation</a>
+      explains the importance of this key. </p>
+    <p>On Windows, it's not possible for the Web server to restart if
+      it's running in a terminal (so the "restart" command will fail, if
+      you want, e.g., to restart because you've added a new task).
+      Automatic midnight restarts for the service configuration still
+      work.<br>
+    </p>
+    <h2>Usage</h2>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATWeb</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATWeb.cmd</span><br><br>Usage: MATWeb [options]<br></pre>
+    <h2>Options</h2>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <td style="vertical-align: top;">--port &lt;num&gt;<br>
+          </td>
+          <td style="vertical-align: top;">Port to listen on (default is
+            7801).<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--noscreen<br>
+          </td>
+          <td style="vertical-align: top;">Don't report Web errors and
+            access to stdout.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--access_log &lt;file&gt;<br>
+          </td>
+          <td style="vertical-align: top;">Absolute pathname of intended
+            access log file. If absent, the Web access information will
+            be written to standard output, unless --noscreen is
+            specified.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--error_log &lt;file&gt;</td>
+          <td style="vertical-align: top;">Absolute pathname of intended
+            error log file. If absent, the Web error information will be
+            written to standard output, unless --noscreen is specified.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--tagger_log &lt;file&gt;</td>
+          <td style="vertical-align: top;">Absolute pathname of intended
+            tagger log file. If absent, tagger service status output
+            will be routed to standard output.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--clear_logs<br>
+          </td>
+          <td style="vertical-align: top;">Clear the logs before
+            startup.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--no_cmdloop<br>
+          </td>
+          <td style="vertical-align: top;">Don't start up an interactive
+            command loop.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--no_tagger_service<br>
+          </td>
+          <td style="vertical-align: top;">Don't start up the tagger
+            service.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--localhost_only<br>
+          </td>
+          <td style="vertical-align: top;">Accept connections only from
+            localhost or 127.0.0.1.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--log_rotation_count
+            &lt;n&gt;<br>
+          </td>
+          <td style="vertical-align: top;">Rotate logs on restart, and
+            keep only n logs<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--midnight_restart<br>
+          </td>
+          <td style="vertical-align: top;">Restart automatically at
+            midnight (useful for rolling over logs)<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--workspace_key &lt;k&gt;<br>
+          </td>
+          <td style="vertical-align: top;">Use the specified key as a
+            workspace key. This flag is used mostly when the server
+            automatically restarts after an error, so the user doesn't
+            need to change the workspace key in the UI. However, it can
+            also be used explicitly, e.g., to associate a
+            previously-agreed-upon "password" for the workspaces.<br>
+            <br>
+            <span style="font-weight: bold;">WARNING</span>: the key
+            will be visible in process listings. If you want something
+            more secure, use --workspace_key_file.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--workspace_key_file
+            &lt;f&gt;<br>
+          </td>
+          <td style="vertical-align: top;">Like --workspace_key, but
+            more secure. The key file should be readable only by the
+            user starting up MATWeb, and should be a UTF-8 file
+            containing the workspace key.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--workspace_key_file_is_temporary<br>
+          </td>
+          <td style="vertical-align: top;">If --workspace_key_file is
+            provided, remove the key file immediately after startup.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--allow_remote_workspace_access<br>
+          </td>
+          <td style="vertical-align: top;">By default, workspaces only
+            permit access from local clients. If this flag is specified,
+            the server allows workspaces to be accessed by clients on
+            remote hosts.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--workspace_container_directory
+
+
+
+
+
+
+
+
+
+
+            &lt;dir&gt;<br>
+          </td>
+          <td style="vertical-align: top;">By default, when the user
+            opens a workspace from the UI, she must provide a full
+            pathname. If you provide this option, which is repeatable,
+            and the user provides a partial pathname, the server will
+            search in each of the candidate container directories for a
+            workspace at the location indicated by the partial pathname.
+            If this option is provided, the user will no longer be able
+            to specify a full pathname, in order to circumscribe remote
+            access when MATWeb is being run as a persistent service. </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--supersede_existing_server<br>
+          </td>
+          <td style="vertical-align: top;">If specified, terminate any
+            MATWeb server running on the requested port on this machine,
+            if the current user has permission to do so.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--output_log &lt;log&gt;<br>
+          </td>
+          <td style="vertical-align: top;">Redirect all stray output
+            from stdout and stderr to this log. This file should be
+            readable only by the user starting up MATWeb, since the
+            workspace key may be written to this log. </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--as_service &lt;dir&gt;<br>
+          </td>
+          <td style="vertical-align: top;">Start up MATWeb as a service.
+            This creates the specified log directory and starts up as if
+            you specified<br>
+            <pre>--log_rotation_count 7 --midnight_restart --allow_remote_workspace_access \<br>--supersede_existing_server --noscreen --no_cmdloop \<br>--access_log &lt;dir&gt;/access.log --error_log &lt;dir&gt;/error.log \<br>--tagger_log &lt;dir&gt;/tagger.log --output_log &lt;dir&gt;/output.log</pre>
+            This option is interpreted before all other command line
+            options, so you can also specify options like
+            --log_rotation_count or --access_log if you like. Options
+            like --workspace_container_directory, --localhost_only,
+            --workspace_key, --no_tagger_service are also respected.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--spawn_tabbed_terminal<br>
+          </td>
+          <td style="vertical-align: top;">If available, spawn the Web
+            server in a tabbed terminal and exit. See the <a
+              href="#GUI">GUI</a> section. The documentation for this
+            option when you use the <a
+              href="common_cmdline_options.html">--help option</a> will
+            tell you whether tabbed terminals are available to you.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>For more details about --output_log, --workspace_key,
+      --workspace_key_file, and --workspace_container_directory, see the
+      section on <a href="workspace_security.html">workspace security</a>.<br>
+    </p>
+    <p>MATWeb also makes the <a href="common_cmdline_options.html">common
+
+
+
+        options</a> available.</p>
+    <h2><a name="GUI"></a>GUI</h2>
+    <p>The --spawn_tabbed_terminal option spawns the optional tabbed
+      terminal which is (usually) distributed with MAT. If available,
+      this option will start either the mrxvt tabbed terminal
+      application (on Unix), the Terminator tabbed terminal application
+      (on Mac), or the Console tabbed terminal application (on Windows),
+      and then exit. The tabbed terminal re-invokes MATWeb, and contains
+      four tabs:<br>
+    </p>
+    <ul>
+      <li>An interactive loop to control the Web server thread of MATWeb</li>
+      <li>A tab showing the output of the tagger server thread of MATWeb</li>
+      <li>A tab showing the access history of the Web server thread of
+        MATWeb</li>
+      <li>A tab showing the standard error of the Web server thread of
+        MATWeb</li>
+    </ul>
+    <p>Here's a screen shot of the Mac version of the tabbed terminal:</p>
+    <img style="width: 609px; height: 470px;" alt=""
+      src="../img/controller.jpg"><br>
+    <p>Most, but not all, command-line options are compatible with the
+      tabbed terminal; the ones that aren't are the ones that are
+      relevant to setting up a service.<br>
+    </p>
+    <p>If the tabbed terminal isn't available, MATWeb will start up in
+      the usual way on the console.<br>
+    </p>
+    <h2>Examples</h2>
+    <h3>Example 1</h3>
+    <p>To start up the Web server listening on the default port, with a
+      command loop and all status messages printed to standard output:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATWeb</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATWeb.cmd</span><br></pre>
+    <h3>Example 2<br>
+    </h3>
+    <p>To start up the Web server on port 7806, but only allow
+      connections from the local host:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATWeb --port 7806 --localhost_only</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATWeb.cmd --port 7806 --localhost_only</span><br></pre>
+    <h3>Example 3</h3>
+    <p>To start up the Web server on the default port, but write the
+      status messages to different files:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATWeb --access_log ./web_access.log --error_log ./web_error.log \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--tagger_log ./web_tagger.log --noscreen<br><br></span>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATWeb.cmd --access_log %CD%\web_access.log --error_log %CD%\web_error.log \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--tagger_log %CD%\web_tagger.log --noscreen</span><br><span style="font-weight: bold;"></span></pre>
+    <p>Without the --noscreen flag, the Web server messages will be
+      printed both to the files and to standard output.<br>
+    </p>
+    <h3>Example 4</h3>
+    <p>On Unix, to start up the Web server as a Unix cron job, saving
+      logs for the previous 7 days in /etc/MAT/logs, and restarting each
+      midnight, enter this command line in your crontab, if MAT_PKG_HOME
+      is /usr/MAT:<br>
+    </p>
+    <pre><span style="font-weight: bold;">/usr/MAT/bin/MATWeb --access_log /etc/MAT/logs/web_access.log \<br>--error_log /etc/MAT/logs/web_error.log \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--tagger_log /etc/MAT/logs/web_tagger.log --noscreen \<br>--no_cmdloop --midnight_restart --log_rotation_count 7</span> <br></pre>
+    <p>Caution: this mode is very, very lightly tested.<br>
+    </p>
+    <h3>Example 5</h3>
+    <p>Let's say you want to distribute access to some MAT workspaces to
+      a range of annotators on a variety of machines, but you don't want
+      to force them to remember a complex workspace key or pathname. You
+      can specify the workspace key and the container directory for the
+      workspaces on the command line when you start up MATWeb. (Be sure
+      to distribute the workspace key to your annotators in a secure
+      manner, since it's our only means of security at the moment.)<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATWeb --workspace_key my_annotator_key \<br>--workspace_container_directory </span><span style="font-weight: bold;">/path/to/dir/containing/workspaces<br><br></span>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATWeb.cmd </span><span style="font-weight: bold;">--workspace_key my_annotator_key \<br>--workspace_container_directory </span><span style="font-weight: bold;">C:\path\to\dir\containing\workspaces</span><span style="font-weight: bold;"><br></span><span style="font-weight: bold;"></span></pre>
+    <h3>Example 6</h3>
+    <p>Let's say you want to start up the Web server as a cron job, but
+      you don't want all the verbosity in example 4, and you also want
+      to specify the workspace key and the workspace container
+      directory, and you prefer a log rotation of 5:<br>
+    </p>
+    <pre><span style="font-weight: bold;">/usr/MAT/bin/MATWeb --as_service /etc/MAT/logs</span><span style="font-weight: bold;"> \<br></span><span style="font-weight: bold;">--workspace_key my_annotator_key \<br>--workspace_container_directory </span><span style="font-weight: bold;">/path/to/dir/containing/workspaces \</span><br><span style="font-weight: bold;">--log_rotation_count 5</span></pre>
+    <p>This is the same as if you had specified<br>
+    </p>
+    <pre><span style="font-weight: bold;">/usr/MAT/bin/MATWeb --midnight_restart --allow_remote_workspace_access \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--supersede_existing_server --noscreen --no_cmdloop \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--access_log /etc/MAT/logs/access.log --error_log /etc/MAT/logs/error.log \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--tagger_log /etc/MAT/logs/tagger.log --output_log /etc/MAT/logs/output.log</span> \<br style="font-weight: bold;"><span style="font-weight: bold;">--workspace_key my_annotator_key \<br>--workspace_container_directory /path/to/dir/containing/workspaces \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--log_rotation_count 5</span><br></pre>
+  </body>
+</html>

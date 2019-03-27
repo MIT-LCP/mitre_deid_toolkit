@@ -1,0 +1,363 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=windows-1252"
+      http-equiv="Content-Type">
+    <title>Readers and Writers</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Readers and writers</h1>
+    <p>All the MAT tools are flexibly configured to use one of an
+      extensible set of readers and writers. Currently, there are three
+      reader/writer types: raw, mat-json, and xml-inline. There is also
+      a fake-xml-inline reader. These types can be passed to tools like
+      <a href="MATEngine.html">MATEngine</a>. You may also find that
+      your task has defined additional readers and writers; consult your
+      task maintainer for details about these.<br>
+    </p>
+    <h2>raw</h2>
+    <p>For reading, a file of this type is treated as all signal. For
+      write, the signal is extracted from the relevant annotated
+      document. This reader/writer has no additional options. The
+      default encoding for this reader/writer is ASCII.<br>
+    </p>
+    <p>It is <b>very</b> important that you know what the encoding of
+      your raw document is, and not just for MAT; any tool that reads
+      raw text documents needs to know. If you're not sure, ask the
+      person who provided the documents to you.<br>
+    </p>
+    <h2>mat-json</h2>
+    <p>This type designates the <a href="mat_json_format.html">MAT-specific
+
+
+
+
+
+
+
+
+
+
+        JSON document format</a> (current version is 2). This
+      reader/writer has no additional options. The only available
+      encoding is UTF-8.<br>
+    </p>
+    <h2>mat-json-v1</h2>
+    <p>This type designates <a href="mat_json_format.html#Version_1">version
+
+
+
+
+
+
+
+
+
+
+        1 of the MAT-specific JSON document format</a>. This type is
+      available only as a writer (since mat-json reads both version 1
+      and version 2). It has no additional options. The only available
+      encoding is UTF-8.<br>
+    </p>
+    <p> </p>
+    <h2><a name="inline_xml_rw"></a>Reading and writing inline XML<br>
+    </h2>
+    <p>In many circumstances, annotators will want to work with inline
+      XML as a serialization of documents containing span annotations,
+      either for compatibility with text editors, or interoperability
+      with other tools or existing reference corpora, or for ease of
+      textual visual inspection. MAT attempts to make this easy to do,
+      but it's important to understand how MAT thinks about the
+      relationship between inline XML and annotations.</p>
+    <p>You might encounter three types of documents which are said to be
+      "XML":</p>
+    <ul>
+      <li>Documents which conform to the more general, complex SGML
+        specification, but are sloppily referred to as XML. If these
+        documents contain any truly SGML-level features, MAT will not be
+        able to read these documents using either of the options
+        described here. It's unlikely that you'll encounter this case,
+        but it's possible.<br>
+      </li>
+      <li>Documents which conform to the XML specification. These
+        documents can be read using the xml-inline reader described
+        below.</li>
+      <li>Documents which use XML-stye elements to indicate spanned
+        annotations, but aren't otherwise XML: the may be no single
+        encompassing toplevel XML element, syntactically significant
+        characters like &lt;&gt;&amp; aren't encoded as XML entities,
+        etc. These documents aren't XML, but the MAT fake-xml-inline
+        reader can be used to read them.</li>
+    </ul>
+    <p>You can also write valid XML documents using the xml-inline
+      writer.<br>
+    </p>
+    <h3>xml-inline</h3>
+    <p>The XML inline reader accepts valid XML (and only valid XML). The
+      default encoding is UTF-8.<br>
+    </p>
+    <p>When you use this reader, you may encounter XML elements which
+      don't correspond to any known annotation type in your task. There
+      are three options you have for how to handle this situation:<br>
+    </p>
+    <ul>
+    </ul>
+    <b>The unknown elements can be </b><b>discarded</b>. This is the <b>default
+
+      behavior</b>. may or may not be the behavior you want; think
+    carefully and consider your other alternatives.<br>
+    <p><b>The unknown elements can be </b><b>treated as annotations</b>.
+      For instance, you may have a file which contains structural corpus
+      information, e.g., document boundaries such as
+      &lt;DOC&gt;....&lt;/DOC&gt;. You might wish these to be preserved
+      as annotations, either via the UI, or on the command line, via the
+      --xml_translate_all option. Although we make this option
+      available, if you really want these annotations, you should
+      declare these elements to be annotation types in your task. (Note,
+      too, that in this particular example, MAT doesn't really "know"
+      how to treat the material within each &lt;DOC&gt;...&lt;/DOC&gt;
+      interval as a separate document; so if you work with such corpora
+      extensively, we recommend segmenting these multi-document corpus
+      files into individual document files.)</p>
+    <b>The underlying signal can be </b><b>treated as XML</b>, either
+    via the UI, or on the command line, via the --xml_input_is_overlay
+    option. This final option is quite subtle. MAT's view of XML is
+    that, by default, an XML document is a <b>serialization of an
+      annotated document</b>: the elements are really ways of indicating
+    the location of annotations, and the document signal is the <b>unserialized</b>
+    XML character data. So "&amp;amp" in your XML document is the
+    serialization of the ampersand character - this is what any
+    well-behaved XML parser will give you. There's another way of
+    looking at this, namely that the XML document is a set of
+    annotations <b>overlaid on another XML document</b>. In other
+    words, the signal of the document is what you get when you subtract
+    the XML elements which correspond to annotation types in your task.
+    This latter interpretation corresponds to your final option. So in
+    this latter interpretation, "&amp;amp;" and other entities will be
+    retained in the signal, as will all elements which don't correspond
+    to annotation types. If you choose this final option, you're really
+    committing yourself to the subtracted signal being well-formed XML,
+    so be careful. In general, this final option is <b>seldom, if ever,</b>
+    what you want.<br>
+    <p>The reader implements these alternatives via the following
+      options:<br>
+    </p>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Command line option<br>
+          </th>
+          <th style="vertical-align: top;">XML attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--xml_input_is_overlay<br>
+          </td>
+          <td style="vertical-align: top;">xml_input_is_overlay<br>
+          </td>
+          <td style="vertical-align: top;">"yes" (XML)<br>
+          </td>
+          <td style="vertical-align: top;">Normally, the XML reader will
+            digest elements with the same name as a known annotation in
+            the given task, and discard all other XML markup. If this
+            flag is specified, the input XML will be treated as a mix of
+            task-relevant annotations and underlying XML, and the
+            extracted signal will be a well-formed XML file. Ignored if
+            --xml_translate_all is specified.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--xml_translate_all<br>
+          </td>
+          <td style="vertical-align: top;">xml_translate_all<br>
+          </td>
+          <td style="vertical-align: top;">"yes" (XML)<br>
+          </td>
+          <td style="vertical-align: top;">Normally, the XML reader will
+            digest elements with the same name as a known annotation in
+            the given task, and discard all other XML markup. If this
+            flag is specified, all elements will be converted to
+            annotations; if a task is provided and the element label
+            doesn't correspond to an annotation label, a new annotation
+            type will be constructed.<br>
+            <br>
+            If no task is provided (<a href="MATScore.html">MATScore</a>,
+            <a href="MATReport.hml">MATReport</a> and <a
+              href="MATTransducer.html">MATTransducer</a> all can be
+            used without tasks), the reader will set this flag
+            internally.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>The writer accepts the following options:<br>
+    </p>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Command line option<br>
+          </th>
+          <th style="vertical-align: top;">XML attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--signal_is_xml<br>
+          </td>
+          <td style="vertical-align: top;">signal_is_xml<br>
+          </td>
+          <td style="vertical-align: top;">"yes" (XML)<br>
+          </td>
+          <td style="vertical-align: top;">Normally, the XML writer
+            assumes that the underlying signal is not XML. If this flag
+            is present, the underlying signal will be treated as a
+            well-formed XML file when the output file is rendered. If
+            the input file type is also 'xml-inline', use the
+            --xml_input_is_overlay flag to control this setting instead.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--xml_output_tag_exclusions
+            &lt;tag,tag,...&gt;<br>
+          </td>
+          <td style="vertical-align: top;">xml_output_tag_exclusions<br>
+          </td>
+          <td style="vertical-align: top;">A comma-delimited list of
+            annotation labels to exclude from the XML output.</td>
+          <td style="vertical-align: top;"><br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--xml_output_exclude_metadata<br>
+          </td>
+          <td style="vertical-align: top;">xml_output_exclude_metadata<br>
+          </td>
+          <td style="vertical-align: top;">"yes" (XML)</td>
+          <td style="vertical-align: top;">Normally, the XML writer
+            saves the document metadata inside an XML comment, so it can
+            be read back in by the XML reader, and also renders the
+            annotation and attribute type information as zero-length XML
+            tags. This flag causes this metadata not to be written.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Every attempt is made to make XML read/write lossless with
+      respect to the underlying document. However, this is not always
+      possible, because MAT documents use standoff annotations, and any
+      crossing dependencies will end up&nbsp; generating malformed XML
+      (e.g., &lt;a&gt;text&lt;b&gt;text&lt;/a&gt;text&lt;/b&gt;). You
+      can use the --xml_output_tag_exclusions option to discard the
+      offending annotation types.<br>
+    </p>
+    <p>When used as a writer, xml-inline will dump the annotation and
+      attribute type information (unless --xml_output_exclude_metadata
+      is used). This type information enables all attribute types to be
+      read correctly when xml-inline is used as a reader, whether or not
+      the same annotation task is used. This includes set and list types
+      and annotation-valued attributes. When xml-inline is used as a
+      reader, it looks for the appropriate representation of these
+      types, and if you've provided a task, you can interpret these
+      values correctly even if the document was not produced with the
+      MAT xml-inline writer. We document these values here for
+      completeness; you're welcome to try writing such a document with
+      another tool and seeing if it MAT can read it, but we're not
+      guaranteeing that they'll work.<br>
+    </p>
+    <ul>
+      <li>Spanless annotations ignore the extent of the XML tag.<br>
+      </li>
+      <li>Float, int, and string attribute types are interpreted as
+        expected; e.g., if the attribute is declared to be an int, "5"
+        will be digested as an integer, and if it's declared to be a
+        string, the digested value will be "5".</li>
+      <li>Boolean attribute types digest "yes" as true, everything else
+        as false.</li>
+      <li>Annotation attribute types have a value which is a
+        cross-referencing ID. If you want to assign an ID to an
+        annotation so it can be referenced in an attribute value, assign
+        it to the "_mat:id" XML attribute.</li>
+      <li>List and set attribute values should be concatenated using
+        ",". So a set attribute value consisting of 2 ints would be
+        "5,6". There's no way to escape the comma in string attribute
+        types; that's a bug.<br>
+      </li>
+    </ul>
+    <h4><span style="font-weight: bold;">xml-inline in the MAT UI</span></h4>
+    <p>The xml-inline reader/writer is available as an option in the MAT
+      UI when you load and save documents in file mode.<br>
+    </p>
+    <p>When you select "xml-inline" as your load option in the MAT UI,
+      the "Load document" dialog looks like this:<br>
+    </p>
+    <p><img alt="[Load dialog]" src="../img/xml_inline_load.jpg"
+        height="319" width="484"><br>
+    </p>
+    <p>The menu contains the three options described above. The link
+      will bring you to this page, in a new window or tab.<br>
+    </p>
+    <p>When you select "xml-inline" as from the "Save" menu in your
+      document window, you'll see the following popup:<br>
+    </p>
+    <p><img alt="[Save popup]" src="../img/xml_inline_save.jpg"
+        height="232" width="482"><br>
+    </p>
+    <p>The "Underlying signal is XML" checkbox corresponds to the
+      --signal_is_xml option; the "Annotation types to exclude" typein
+      window corresponds to the --xml_output_tag_exclusions option; and
+      the "Exclude MAT document metadata" checkbox corresponds to the
+      --xml_output_exclude_metadata option. The link will bring you to
+      this page, in a new window or tab.<br>
+    </p>
+    <h3>fake-xml-inline</h3>
+    <p>We commonly encounter data which is XML-"like", which simply has
+      inline SGML-ish markup in a raw document, like so:<br>
+    </p>
+    <pre>The &lt;ORGANIZATION&gt;Smith &amp; Jones Corporation&lt;/ORGANIZATION&gt; has announced its IPO.<br></pre>
+    <p>In these documents, XML-significant characters "&amp;&lt;&gt;"
+      are not properly escaped, and there is no toplevel XML tag
+      surrounding the entire document. The fake-xml-inline reader will
+      search for patterns of the form &lt;...&gt;, and figures out
+      whether the "tag" is a opening, closing, or zero-length tag. It
+      translates attribute-value pairs of the SGML-ish opening tags into
+      annotation attribute-value pairs. If it finds an attribute-value
+      string which can't be parsed using XML-ish rules, it will treat
+      the enclosing "tag" as part of the signal. The reader recognizes
+      nested "tag"s correctly. Because this reader is targeted at
+      extracting XML-ish markup from a raw document, there's no option
+      equivalent to --xml_input_is_overlay, and unlike the xml-inline
+      reader, all annotations are converted, not just the known ones.<br>
+    </p>
+    <p>The default encoding for this reader is UTF-8. There is no
+      corresponding writer.<br>
+    </p>
+    <h2>Defining your own reader/writer</h2>
+    <p>If you have an idiosyncratic document format you want to use,
+      It's not too difficult to <a href="customize_task_advanced.html">define
+your
+
+
+
+
+
+
+
+
+
+
+        own reader/writer</a>.<br>
+    </p>
+  </body>
+</html>

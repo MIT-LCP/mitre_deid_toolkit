@@ -1,0 +1,85 @@
+This task is intended as a generic HIPAA task. Below, we list the 19
+categories which the law requires to be obscured, and discuss their
+implementation here. This implementation is informed by our
+experiences so far with our research partners. The text for each
+section is taken directly from 45CFR164.514, the law which governs PHI
+privacy. 
+
+"(A) Names"
+
+- The NAME tag (full and partial names) and the INITIALS tag
+(initials). 
+
+"(B) All geographic subdivisions smaller than a State, including 
+street address, city, county, precinct, zip code, and their equivalent 
+geocodes, except for the initial three digits of a zip code if, 
+according to the current publicly available data from the Bureau of the 
+Census:
+  (1) The geographic unit formed by combining all zip codes with the 
+      same three initial digits contains more than 20,000 people; and
+  (2) The initial three digits of a zip code for all such geographic 
+      units containing 20,000 or fewer people is changed to 000."
+
+- The LOCATION tag. This tag does not permit subdivision of ZIP
+codes. The state should be obscured as well. All contiguous elements
+of a location should be included in a single tag, e.g., "12 Mulberry
+Lane, Winston-Salem, NC, 52004". Locations internal to a hospital,
+such as room numbers, should use the OTHER tag.
+
+"(C) All elements of dates (except year) for dates directly related 
+to an individual, including birth date, admission date, discharge date, 
+date of death; and all ages over 89 and all elements of dates (including 
+year) indicative of such age, except that such ages and elements may be 
+aggregated into a single category of age 90 or older"
+
+- The DATE tag and the AGE tag. The DATE tag should include the year,
+to support resynthesis of realistic fillers (this process is
+significantly hampered by leaving the year out). We recommend that all
+ages be tagged.
+
+"(D) Telephone numbers;
+(E) Fax numbers"
+
+- The PHONE tag.
+
+"(F) Electronic mail addresses"
+
+- The EMAIL tag.
+
+"(G) Social security numbers"
+
+- The SSN tag.
+
+"(H) Medical record numbers;
+(I) Health plan beneficiary numbers;
+(J) Account numbers;
+(K) Certificate/license numbers;
+(L) Vehicle identifiers and serial numbers, including license plate 
+numbers;
+(M) Device identifiers and serial numbers;"
+
+- The IDNUM tag. This tag can also be used for any other alphanumeric
+code not listed here, if the user prefers.
+
+"(N) Web Universal Resource Locators (URLs);"
+
+- The URL tag.
+
+"(O) Internet Protocol (IP) address numbers;"
+
+- The IPADDRESS tag.
+
+"(P) Biometric identifiers, including finger and voice prints;
+(Q) Full face photographic images and any comparable images;"
+
+- Not relevant.
+
+"(R) Any other unique identifying number, characteristic, or code, 
+except as permitted by paragraph (c) of this section"
+
+- The OTHER tag. This tag may include things like room numbers, or any
+other identifying information the use chooses not to use IDNUM for. 
+
+In addition, although not required by HIPAA, the HOSPITAL tag can be
+used to obscure the name of hospitals and other medical facilities,
+since many users seem to want to do that.

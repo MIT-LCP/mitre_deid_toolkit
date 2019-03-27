@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Model Builder</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Model builder</h1>
+    <h2>Description</h2>
+    <p>The model builder constructs a model according to the
+      configuration provided in the specified task and on the command
+      line. This model can be used by <a href="MATEngine.html">MATEngine</a>
+      to automatically tag documents. Note that if you're using the
+      Carafe engine provided with MAT, the model that is built will only
+      train to find the simple spanned annotations in documents (no
+      spanless annotations will be trained for, and no attributes will
+      be trained for beyond those associated with the effective label).<br>
+    </p>
+    <p>Note that you should never use <a href="MATModelBuilder.html">MATModelBuilder</a>
+      to save models into workspace; use <a
+        href="MATWorkspaceEngine.html">MATWorkspaceEngine</a> instead. </p>
+    <p>Note: if you create a model using this tool, and you want to do
+      autotagging in file mode in the <a href="use_ui.html">MAT UI</a>,
+      you <span style="font-weight: bold;">must</span> restart the <a
+        href="MATWeb.html">MAT Web server</a>. Otherwise, the UI will
+      not be able to access the newest model.<br>
+    </p>
+    <h2>Usage</h2>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATModelBuilder</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATModelBuilder.cmd</span><br><br>Usage: MATModelBuilder [basic options] [other options]<br></pre>
+    <h2>Basic options</h2>
+    <table style="text-align: left;" border="1" cellpadding="2"
+      cellspacing="2">
+      <tbody>
+        <tr>
+          <td style="vertical-align: top;">--task &lt;task&gt;<br>
+          </td>
+          <td style="vertical-align: top;">Name of the task to use. Must
+            be the first argument, if present. Obligatory if the system
+            knows of more than one task. The system will provide a list
+            of known tasks as part of its help string.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--config_name &lt;name&gt;<br>
+          </td>
+          <td style="vertical-align: top;">Name of the model build
+            config to use. Must be the first argument after --task, if
+            present. Optional. Default model build config will be used
+            if no config is specified.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--input_dir &lt;dir&gt;<br>
+          </td>
+          <td style="vertical-align: top;">A directory, all of whose
+            files will be used in the model construction. Can be
+            repeated. May be specified with --input_files.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--input_files &lt;pat&gt;<br>
+          </td>
+          <td style="vertical-align: top;">A glob-style pattern
+            describing full pathnames to use in the model construction.
+            May be specified with --input_dir. Can be repeated. (If
+            you're not familiar with Unix, glob patterns are file name
+            patterns recognized by Unix shells. Consult your favorite
+            Unix documentation for details.)<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--file_type &lt;t&gt;<br>
+          </td>
+          <td style="vertical-align: top;">The file type of the input.
+            One of the available <a href="readers_and_writers.html">readers</a>.
+            The "raw" reader is not permitted. The "mat-json" reader is
+            the default.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--encoding &lt;encoding&gt;<br>
+          </td>
+          <td style="vertical-align: top;">The encoding of the input.
+            The default is the appropriate default for the file type.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--model_file &lt;file&gt;<br>
+          </td>
+          <td style="vertical-align: top;">Location to save the created
+            model. The directory must already exist. Obligatory if
+            --save_as_default_model isn't specified.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--save_as_default_model<br>
+          </td>
+          <td style="vertical-align: top;">If the the task.xml file for
+            the task specifies the &lt;default_model&gt; element, save
+            the model in the specified location, possibly overriding any
+            existing model.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>MATModelBuilder also makes the <a
+        href="common_cmdline_options.html">common options</a> available.</p>
+    <h2>Other options</h2>
+    <p>The reader referenced in the --file_type option may introduce
+      additional options, which are described <a
+        href="readers_and_writers.html">here</a>. These additional
+      options must follow the --file_type option.<br>
+    </p>
+    <p>The particular training engine defined for the task in your
+      task.xml file will make available other command-line options. The
+      command-line options for the Carafe engine are described <a
+        href="carafe_engine.html">here</a>. The examples below assume
+      that you're using the Carafe engine.<br>
+    </p>
+    <h2>Examples</h2>
+    <h3>Example 1<br>
+    </h3>
+    <p>Let's say that you have several annotated documents in
+      /path/to/my/docs, and there are no other files in that directory.
+      Further, you have only one task, the task has no default model,
+      and you have a default &lt;model_config&gt; in your task.xml file
+      which contains appropriate settings for the engine, feature set
+      and PSA training. The following command would write your model to
+      the file named "task_model" in the current directory:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATModelBuilder --input_dir /path/to/my/docs --model_file $PWD/task_model</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATModelBuilder.cmd --input_dir c:\path\to\my\docs --model_file %CD%\task_model</span><br></pre>
+    <p>To make use of this model, you could pass it to MATEngine as the
+      value of the --tagger_model flag.<br>
+    </p>
+    <h3>Example 2<br>
+    </h3>
+    <p>Let's say you have multiple tasks, and the one you want to use is
+      "Named Entity". Your documents are in the same place, but there
+      are other documents there too; fortunately, all the documents you
+      want to use end with '.json'. In addition, your documents have
+      lots of really odd person names in them, but you conveniently have
+      a list of the names you're looking for, and you've prepared a
+      directory /path/to/my/lexicon which contains a single file named
+      NAMES which contains each of the tokens of interest, like so:<br>
+    </p>
+    <pre>Urbatz<br>Yuguwima<br>Florshin<br>Batywan<br></pre>
+    <p>The task you're using has a default model. The following command
+      would save your model as the default:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATModelBuilder --task "Named Entity" \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_files '/path/to/my/docs/*.json' \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--lexicon_dir /path/to/my/lexicon/ --save_as_default_model</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATModelBuilder.cmd --task "Named Entity" \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_files "c:\path\to\my\docs\*.json" \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--lexicon_dir c:\path\to\my\lexicon\ --save_as_default_model</span><br></pre>
+    <h3>Example 3</h3>
+    <p>Let's say we're in the same situation as example 2, except you
+      only want to build a model out of the files 100.json through
+      199.json, as well as the files in /path/to/my/other/docs.<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATModelBuilder --task "Named Entity" \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_files '/path/to/my/docs/1[0-9][0-9].json' \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_dir /path/to/my/other/docs \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--lexicon_dir /path/to/my/lexicon/ --save_as_default_model<br><br></span>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATModelBuilder.cmd --task "Named Entity" \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_files "c:\path\to\my\docs\1[0-9][0-9].json" \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_dir c:\path\to\my\other/docs \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--lexicon_dir c:\path\to\my\lexicon\ --save_as_default_model</span><br><span style="font-weight: bold;"></span></pre>
+    <h3>Example 4</h3>
+    <p>Let's say we're in the same situation as example 3, except the
+      documents are XML inline documents with the ".xml" suffix:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATModelBuilder --task "Named Entity" \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_files '/path/to/my/docs/1[0-9][0-9].xml' \<br>--file_type xml-inline \<br style="font-weight: bold;"></span><span style="font-weight: bold;">--input_dir /path/to/my/other/docs \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--lexicon_dir /path/to/my/lexicon/ --save_as_default_model<br><br></span>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATModelBuilder.cmd --task "Named Entity" \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_files "c:\path\to\my\docs\1[0-9][0-9].xml" \<br>--file_type xml-inline \<br style="font-weight: bold;"></span><span style="font-weight: bold;">--input_dir c:\path\to\my\other\docs \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--lexicon_dir c:\path\to\my\lexicon\ --save_as_default_model</span><br><span style="font-weight: bold;"></span></pre>
+    <h3>Example 5</h3>
+    <p>Let's say we're in the same situation as example 3, but we have a
+      non-default model configuration that we want to use:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATModelBuilder --task "Named Entity" <br>--config_name 'alt_config' \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_files '/path/to/my/docs/1[0-9][0-9].xml' \<br>--file_type xml-inline \<br style="font-weight: bold;"></span><span style="font-weight: bold;">--input_dir /path/to/my/other/docs \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--lexicon_dir /path/to/my/lexicon/ --save_as_default_model<br><br></span>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATModelBuilder.cmd --task "Named Entity" <br>--config_name "alt_config" \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_files "c:\path\to\my\docs\1[0-9][0-9].xml" \<br>--file_type xml-inline \<br style="font-weight: bold;"></span><span style="font-weight: bold;">--input_dir c:\path\to\my\other/docs \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--lexicon_dir c:\path\to\my\lexicon\ --save_as_default_model</span><br></pre>
+    <br>
+  </body>
+</html>

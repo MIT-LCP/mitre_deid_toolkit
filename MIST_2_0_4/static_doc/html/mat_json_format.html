@@ -1,0 +1,291 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>MAT JSON Document Format</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>MAT JSON Document Format</h1>
+    <p>The MAT toolkit is designed to be loosely coupled, using
+      documents at rest (rather than data structures in process) as the
+      common data interface. The default format for rich annotated
+      documents is described in this document; the full range of
+      available readers and writers is described <a
+        href="readers_and_writers.html">elsewhere</a>.<br>
+    </p>
+    <h2>JSON<br>
+    </h2>
+    <p>The MAT document format is built on top of the <a
+        href="http://json.org">Javascript Object Notation</a> (JSON). It
+      is simple and lightweight, and unlike XML, is designed for typed
+      data. This format closely mirrors the structure of the documents
+      themselves, so it's worth reviewing in any case, but especially if
+      you want to process MAT-annotated documents outside of the MAT
+      toolkit. Currently, we provide facilities for rendering and
+      digesting this format in <a href="python_api.html">Python</a>, <a
+        href="js_api.html">JavaScript</a>, and <a
+        href="javadoc/java-mat-core/index.html">Java</a>; if you want to
+      manipulate this format in any other programming language, you'll
+      have to write the renderer/digester yourself.<br>
+    </p>
+    <p>JSON is so-called because it's a subset of the Javascript
+      programming language, and thus exceptionally well-suited for
+      passing data to and from Web applications like the MAT UI. JSON
+      contains hashes (curly brackets), lists (square brackets), UTF-16
+      strings, integers and floats, plus the constants <span
+        style="font-family: monospace;">null</span>, <span
+        style="font-family: monospace;">true</span>, <span
+        style="font-family: monospace;">false</span>.&nbsp; Whitespace
+      is not significant except within strings. That's it.<br>
+    </p>
+    <p>It's important to remember that JSON is not a data structure;
+      it's a string representation of data structures. There are JSON
+      libraries for reading and writing JSON strings and mapping them to
+      native data structures. E.g., in Python, hashes are mapped to
+      dictionaries, strings to string, lists to lists, <span
+        style="font-family: monospace;">null</span> to None, <span
+        style="font-family: monospace;">true</span> to True, <span
+        style="font-family: monospace;">false</span> to False.<br>
+    </p>
+    <h2>The MAT document format</h2>
+    <p>The current version number of the MAT document format is 2. All
+      literals specified below are case-sensitive.<br>
+    </p>
+    <pre>&lt;document&gt;: {"signal": &lt;string&gt;, "metadata": &lt;metadata&gt;, "asets": &lt;aset_list&gt;, "version": 2 }<br><br>&lt;metadata&gt;: { ... }<br><br>&lt;aset_list&gt;: [ &lt;aset_entry&gt;* ]<br><br>&lt;aset_entry&gt;: { "type": &lt;string&gt;, "hasID": &lt;boolean&gt;, "hasSpan": &lt;boolean&gt;,<br>                "attrs": [ &lt;attr_entry&gt;* ], "annots": &lt;annot_list&gt; }<br><br>&lt;attr_entry&gt;: { "name": &lt;string&gt;, "type": &lt;attr_type&gt;, "aggregation": &lt;aggr_type&gt; }<br><br>&lt;attr_type&gt;: "string" | "annotation" | "float" | "int" | "boolean"<br><br>&lt;aggr_type&gt;: null | "none" | "list" | "set"<br><br>&lt;annot_list&gt;: [ &lt;annot_entry&gt;* ]<br><br>&lt;annot_entry&gt;: &lt;spanned_annot_entry&gt; | &lt;spanless_annot_entry&gt;<br><br>&lt;spanned_annot_entry&gt;: [ &lt;int&gt;, &lt;int&gt;, &lt;id&gt;?, &lt;value&gt;* ]<br><br>&lt;spanless_annot_entry&gt;: [ &lt;id&gt;?, &lt;value&gt; ]<br><br>&lt;id&gt;: &lt;string&gt;<br><br>&lt;value&gt;: &lt;base_value&gt; | &lt;aggregation_value&gt; <br><br>&lt;base_value&gt;: null | &lt;string&gt; | &lt;id&gt; | &lt;float&gt; | &lt;integer&gt; | &lt;boolean&gt; <br><br>&lt;aggregation_value&gt;: [ &lt;string&gt;* | &lt;id&gt;* | &lt;float&gt;* | &lt;integer&gt;* | &lt;boolean&gt;* ]<br></pre>
+    <p>The value of "signal" is the document contents; once the document
+      has any annotations at all, the signal should not be changed.<br>
+    </p>
+    <p>The "version" key is obligatory, and its value must be 2.
+      Decoders should raise an error if the version is later than the
+      version they're designed to handle. If the "version" key is
+      absent, or its version is 1, the document is in MAT document
+      format version 1. All version 2 decoders should recognize version
+      1 as well (see below).<br>
+    </p>
+    <p>The &lt;metadata&gt; is a hash, whose contents are
+      application-specific. Currently, we use it to track which steps of
+      workflows have been applied to a document, whether the document is
+      a reconciliation document or not, and for pairing information in
+      comparison documents. Rule of thumb should be that if you are
+      modifying a document, you should make sure the metadata is
+      preserved. </p>
+    <p>The &lt;aset_list&gt; is a sequence of entries, one for each
+      annotation type.<br>
+    </p>
+    <p>Each &lt;aset_entry&gt; specifies the name of a tag (e.g.,
+      "PERSON"), whether or not the annotations in this set have IDs
+      ("hasID"), whether or not the annotations in this set have spans
+      ("hasSpan"), a list of attributes which can be filled, and a list
+      of annotations. If "hasID" is not present, its value is assumed to
+      be false. If "hasSpan" is not present, its value is assumed to be
+      true.<br>
+    </p>
+    <p><span style="font-weight: bold;">Note</span>: MAT uses the
+      presence or absence of an &lt;aset_entry&gt; as an indication of
+      whether some operation has attempted to add elements of that
+      annotation type to the document. Do <span style="font-weight:
+        bold;">not</span> prepopulate the document with
+      &lt;aset_entry&gt;s which have empty &lt;annot_list&gt;s. This
+      infelicity will be removed in a subsequent release.<br>
+    </p>
+    <p>Each &lt;attr_entry&gt; specifies the name of the attribute
+      (e.g., "gender") and the type of the attribute. The recognized
+      &lt;attr_type&gt;s in version 2 are "string", "int", "float",
+      "boolean", and "annotation". The attribute can also have an
+      aggregation type; the recognized &lt;attr_type&gt;s in version 2
+      are "list", "set", and "none" or null. Both the type and
+      aggregation are optional. The default value for the attribute type
+      is "string"; the default aggregation value is null. The legal
+      &lt;value&gt;s for each type and aggregation are:<br>
+    </p>
+    <ul>
+      <li>type "string": null or a JSON string</li>
+      <li>type "int": null or a JSON number which corresponds to an
+        integer (JSON has no distinction between ints and floats)</li>
+      <li>type "float": null or a JSON number</li>
+      <li>type "boolean": null or a JSON boolean (true or false)</li>
+      <li>type "annotation": null or a JSON string which is the ID of
+        another annotation</li>
+      <li>aggregation "list": null or a JSON list of values of the
+        appropriate type</li>
+      <li>aggregation "set": null or a JSON list of values of the
+        appropriate type<br>
+      </li>
+    </ul>
+    <p>The form of each element of the list of annotations depends on
+      the values of "hasID" and "hasSpan". If "hasSpan" is true, the
+      first two elements are integers, which are 0-based indices into
+      the signal representing the start and end of the annotation span,
+      respectively. If "hasID" is true, the element immediately after
+      the indices (or the first element, if "hasSpan" is false) is the
+      ID of the annotation, which can be referred to by other
+      annotations if they have an attribute whose value is "annotation".
+      <br>
+    </p>
+    <p>In each annotation set, the value of "attrs" (the attribute
+      entries) and the list of attribute values in each element of
+      "annots", after "hasSpan" and "hasID" have been accounted for, are
+      essentially parallel; the attribute values may be no longer than
+      the attribute entries, and they are paired with each other until
+      the values are exhausted, at which point all subsequent attribute
+      values should be treated as <span style="font-family: monospace;">null</span>.
+      The reason for allowing annot lists which are shorter than the
+      list of attribute names is partially for space efficiency, and
+      partially to support the option of adding a new attribute to an
+      annotation type without having to go to the trouble of adding a <span
+        style="font-family: monospace;">null</span> to every instance of
+      that annotation type.<br>
+    </p>
+    <p>Here's a sample document: </p>
+    <pre>{"signal": "I like Michael Jackson and Janet Jackson.",<br> "version": 2,<br> "asets": [ {"type": "PERSON", "hasID": false, "hasSpan": true,<br>             "attrs": [{"name": "gender", "type": "string"}, <br>                       {"name": "number", "type": "string", "aggregation": null}],<br>             "annots": [[7, 22, null, "singular"], [27, 41, "female"]]} ].<br> "metadata": {}<br>}<br></pre>
+    <p>In this example, note that the value of the "gender" attribute
+      for the PERSON annotation spanning "Michael Jackson" is <span
+        style="font-family: monospace;">null</span>, and the value of
+      the "number" attribute is "singular".&nbsp; For the PERSON
+      annotation spanning "Janet Jackson" only the "gender" attribute is
+      specified (it is "female"), implying that the "number" attribute
+      for this annotation is <span style="font-family: monospace;">null</span>.&nbsp;
+
+
+
+
+
+
+
+
+
+      This illustrates how the MAT document format allows the specified
+      list of annotation values to be shorter than the list of
+      annotation names (with implicit nulls making up the difference).<br>
+    </p>
+    <h3><a name="Version_1"></a>Previous versions: version 1</h3>
+    <p>Version 1 is somewhat simpler than version 2; it differs from
+      version 2 in that there are no spanless annotations or
+      annotation-valued attributes. The Python, Javascript and Java
+      mat-json reader/writers all recognize both versions. However, they
+      all produce version 2. The version 1 readers (in MAT 1.3 and
+      previous) will not be able to read version 2. We provide a special
+      mat-json-v1 writer in MAT 2.0 to write version-1-compatible MAT
+      JSON documents (by discarding spanless annotations and attribute
+      values which are annotations).<br>
+    </p>
+    <p>Here is the spec. All literals are case-sensitive.<br>
+    </p>
+    <pre>&lt;document&gt;: {"signal": &lt;string&gt;, "metadata": &lt;metadata&gt;, "asets": &lt;aset_list&gt;, "version": 1 }<br><br>&lt;aset_list&gt;: [ &lt;aset_entry&gt;* ]<br><br>&lt;aset_entry&gt;: { "type": &lt;string&gt;, "attrs": [ &lt;string&gt;* ], "annots": &lt;annot_list&gt; }<br><br>&lt;annot_list&gt;: [ [ &lt;int&gt;, &lt;int&gt;, &lt;string&gt;* ]* ]<br></pre>
+    <p>The value of "signal" is the document contents; once the document
+      has any annotations at all, the signal should not be changed.<br>
+    </p>
+    <p>The "version" key is optional, in this initial version of the
+      format. Decoders should assume that if the key is missing, the
+      version is 1. Decoders should raise an error if the version is
+      later than the version they're designed to handle.<br>
+    </p>
+    <p>The &lt;metadata&gt; is a hash, whose contents are
+      application-specific. Currently, we use it to track which steps of
+      workflows have been applied to a document. Rule of thumb should be
+      that if you are modifying a document, you should make sure the
+      metadata is preserved. </p>
+    <p>The &lt;aset_list&gt; is a sequence of entries, one for each
+      annotation type. Each &lt;aset_entry&gt; specifies the name of a
+      tag (e.g., "PERSON"), a list of attributes which can be filled
+      (e.g. ["gender"]), and a list of annotations. Each element of the
+      list of annotations contains two integers, which are 0-based
+      indexes into the signal representing the start and end of the
+      annotation span, respectively, plus attribute values. The value of
+      "attrs" (the attribute names) and the list of values after the
+      first two integers in each element in the value of "annots" (the
+      attribute values) are essentially parallel; the attribute values
+      may be no longer than the attribute names, and they are paired
+      with each other until the values are exhausted, at which point all
+      subsequent attribute values should be treated as <span
+        style="font-family: monospace;">null</span>. The reason for
+      allowing annot lists which are shorter than the list of attribute
+      names is partially for space efficiency, and partially to support
+      the option of adding a new attribute to an annotation type without
+      having to go to the trouble of adding a <span style="font-family:
+        monospace;">null</span> to every instance of that annotation
+      type.<br>
+    </p>
+    <p>Here's a sample document: </p>
+    <pre>{"signal": "I like Michael Jackson and Janet Jackson.",<br> "asets": [ {"type": "PERSON", <br>             "attrs": ["gender", "number"],<br>             "annots": [[7, 22, null, "singular"], [27, 41, "female"]]} ].<br> "metadata": {}<br>}<br></pre>
+    In this example, note that the value of the "gender" attribute for
+    the PERSON annotation spanning "Michael Jackson" is <span
+      style="font-family: monospace;">null</span>, and the value of the
+    "number" attribute is "singular".&nbsp; For the PERSON annotation
+    spanning "Janet Jackson" only the "gender" attribute is specified
+    (it is "female"), implying that the "number" attribute for this
+    annotation is <span style="font-family: monospace;">null</span>.&nbsp;
+
+
+
+
+
+
+
+
+
+    This illustrates how the MAT document format allows the specified
+    list of annotation values to be shorter than the list of annotation
+    names (with implicit nulls making up the difference).
+    <h2>A note about files, signal offsets, JSON strings, and character
+      encodings</h2>
+    <p>To write a document to a MAT JSON document file, convert your
+      document object to the appropriate data structures in your
+      programming language, render the structure to JSON, and write the
+      string to a file, using the UTF-8 character encoding. To read a
+      document, read the contents of the file using the UTF-8 character
+      encoding, decode the string into the matching data structures in
+      your programming language, and convert those data structures into
+      your document object.<br>
+    </p>
+    <p>The character encoding of a MAT JSON document is always UTF-8.<br>
+    </p>
+    <p>It's important to remember, always, what&nbsp; the index offsets
+      in the annotations represent: they are character offsets,
+      independent of the particular character encoding. (If you don't
+      understand the distinction, we recommend you read <a
+        href="http://joelonsoftware.com/articles/Unicode.html">Joel
+        Spolsky's Unicode primer</a>.) We've chosen UTF-8 as our
+      encoding for MAT JSON documents because it is flexible enough to
+      encode all Unicode characters with good efficiency, and it's a
+      proper superset of ASCII. So if an annotation covers the span from
+      index 7 to index 22, as the first annotation does in our example
+      above, this means "from the 7th character of the document (where 0
+      is the first) to the 21st character of the document (where 0 is
+      the first)". It does <span style="font-weight: bold;">not</span>
+      mean "from the 7th byte of the document to the 21st byte of the
+      document". <br>
+    </p>
+    <p>This can lead to tremendous confusion in counting offsets,
+      depending on how your programming language treats Unicode strings.
+      For instance, Javascript has UTF-16 strings, which means that each
+      Unicode character takes up exactly 2 bytes, and it just so happens
+      that the 2-byte numeric value is the same as the Unicode code
+      point for that character. For characters whose Unicode code point
+      is greater than 65536 (that is, larger than can be represented in
+      2 bytes), UTF-16 has a system of what they call "surrogates",
+      which are pairs of 2-byte sequences reserved for representing
+      these larger code points. So in some cases, a Unicode character
+      takes up 2 bytes in UTF-16, and in other cases, it takes up 4
+      bytes. Now, this case is extremely unusual; all the characters in
+      all the living human languages are in the 2-byte space, but the
+      Unicode code point space is 32 bits, so there are quite a number
+      of rare characters (e.g., music notation, dead languages) which
+      appear as these "surrogate pairs".<br>
+    </p>
+    <p>The reason this is relevant to programmers is that these
+      surrogate pairs count as length 2 in Javascript; that is, the
+      String.length attribute counts UTF-16 elements. Java is similar,
+      except that it has a separate set of APIs for counting Unicode
+      characters (e.g., charAt() vs. codePointAt() in Java 1.5).<br>
+    </p>
+    <p>None of the document object libraries included with MAT (Python,
+      Javascript, Java) currently treat these characters above the
+      2-byte space correctly.<br>
+    </p>
+  </body>
+</html>

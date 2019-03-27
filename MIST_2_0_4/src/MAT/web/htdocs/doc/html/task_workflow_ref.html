@@ -1,0 +1,252 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Tasks, Workflows and Steps</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Tasks, workflows, and steps</h1>
+    <p>For the most part, you can't do anything substantial with the MAT
+      toolkit without defining a <span style="font-weight: bold;">task</span>.
+      A task is a set of activities, called <span style="font-weight:
+        bold;">workflows</span>, which can be broken down into <span
+        style="font-weight: bold;">steps</span>. Each task has a set of
+      <a href="annotations_and_segments.html">annotations</a> that its
+      activities share; each step in a task can participate in multiple
+      workflows, and each step makes the "same" contribution to each
+      workflow it participates in. All these concepts are interrelated,
+      and it's difficult to discuss one without the other, but we'll try
+      to describe them in the most sensible order.<br>
+    </p>
+    <h2>Steps</h2>
+    <p>Steps are atomic actions in your workflows. The most common type
+      of step adds a category of annotation; e.g., a tokenization step
+      adds token annotations. Each step has an implementation (either
+      self-contained, or a wrapper for an external tool) which is a
+      Python class. We provide a number of useful step implementations
+      which you can use in your workflow. If you want to define your own
+      steps, you'll have to consult the <a
+        href="customize_task_advanced.html">advanced topics</a>.<br>
+    </p>
+    <p>Here are the step implementations, along with their common step
+      names, that MAT provides "out of the box":<br>
+    </p>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Step implementation name<br>
+          </th>
+          <th valign="top">common step name<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">MAT.PluginMgr.WholeZoneStep<br>
+          </td>
+          <td valign="top">zone<br>
+          </td>
+          <td style="vertical-align: top;">This step assigns a single
+            zone annotation with label "zone" and attribute
+            "region_type" with value "body", to the entire document.
+            This step also adds administrative <a
+              href="annotations_and_segments.html#Admin_annotations_SEGMENTs_and">SEGMENT</a>
+            annotations to track annotation progress.<br>
+            <br>
+            The options for this step are described immediately below.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">MAT.JavaCarafe.CarafeTokenizationStep<br>
+          </td>
+          <td valign="top">tokenize<br>
+          </td>
+          <td style="vertical-align: top;">This step runs the Carafe
+            tokenizer on the relevant document, generating token
+            annotations with label "lex" in such a way that the zone
+            boundaries are not crossed.<br>
+            <br>
+            The options for this step are described <a
+              href="carafe_engine.html">here</a>.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">MAT.JavaCarafe.CarafeTagStep<br>
+          </td>
+          <td valign="top">tag<br>
+          </td>
+          <td style="vertical-align: top;">This step runs the Carafe
+            tagger, adding content tags to the document.<br>
+            <br>
+            The options for this step are described <a
+              href="carafe_engine.html">here</a>.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">MAT.PluginMgr.TagStep<br>
+          </td>
+          <td valign="top">hand tag<br>
+          </td>
+          <td style="vertical-align: top;">This step is the parent of
+            all tag steps. It serves as a placeholder implementation for
+            hand annotation in those workflows that do not have
+            automated content tagging, and to implement "undo" in
+            automated tag steps. Any steps with this implementation must
+            be designated by_hand="yes" in the task.xml file.<br>
+            <br>
+            This step has no available options.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">MAT.PluginMgr.AlignStep<br>
+          </td>
+          <td valign="top">align<br>
+          </td>
+          <td style="vertical-align: top;">This step is intended to work
+            with documents which have been imported from other formats
+            (e.g., XML inline), which have content annotations which may
+            not align with token boundaries. This step aligns the
+            content annotation boundaries with with the token boundaries
+            by expanding the annotations to the nearest token
+            boundaries. This alignment is expected in the UI annotation
+            tool (and, in fact, by may trainable tagging engines,
+            including Carafe). Insert a step with this implementation in
+            your workflows which are intended to manage imported
+            documents.<br>
+            <br>
+            This step has no available options.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>See the <a href="sample_task.html">sample 'Named Entity' task</a>
+      for a detailed example of how these steps are used in workflows.<br>
+    </p>
+    <p>The options these step implementations can bear can be specified
+      in the task.xml file or in the invocation of the MAT engine.The
+      one general-purpose step which has options is
+      MAT.PluginMgr.WholeZoneStep:<br>
+    </p>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Command line option<br>
+          </th>
+          <th style="vertical-align: top;">XML attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--mark_gold<br>
+          </td>
+          <td style="vertical-align: top;">mark_gold<br>
+          </td>
+          <td style="vertical-align: top;">"yes" (XML)<br>
+          </td>
+          <td style="vertical-align: top;">If present, mark the <a
+              href="annotations_and_segments.html#Admin_annotations_SEGMENTs_and">document
+
+
+
+
+              segments</a> as gold-standard data (annotator =
+            "GOLD_STANDARD", status = "reconciled")<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>The UI also makes available a separate "mark gold" step, which
+      has no backend implementation.<br>
+      <span style="font-weight: bold;"></span></p>
+    <h2>Workflows</h2>
+    <p>Once you have a set of step implementations to draw from, you can
+      create mnemonic names for them and assemble them into workflows.
+      Four extremely common and obvious workflows are<br>
+    </p>
+    <ul>
+      <li>a workflow that zones a document, tokenizes it, and then
+        automatically tags it (called "Demo" in the "Named Entity" task)<br>
+      </li>
+      <li>a workflow which zones a document, tokenizes it, and then
+        provides a placeholder for human annotation (called "Hand
+        annotation' in the "Named Entity" task)</li>
+      <li>a workflow for hand annotation without tokenization (called
+        "Tokenless hand annotation" in the "Named Entity" task)<br>
+      </li>
+      <li>a workflow which has no steps, but which allows a final phase
+        of human review and hand-correction (called "Review/repair" in
+        the "Named Entity" task)<br>
+      </li>
+    </ul>
+    <p>If you create other, custom steps, you may have other workflows.</p>
+    <p> </p>
+    <p>One quirk of the mnemonic names for steps is that they're global
+      to the task. The implementation of, say, "tokenize" can differ
+      from workflow to workflow, but when you apply different workflows
+      to a document, the document knows what's already been done by
+      virtue of the named steps that have been applied. So it's not a
+      good idea for the effect of step implementations to differ among
+      workflows. The implementations can provide different <span
+        style="font-weight: bold;">methods</span> for achieving the same
+      effect (e.g., different automated taggers, or hand vs. automated
+      tagging), but they should not vary any further; the tags which are
+      added by any implementation of a named step should be the same.<br>
+    </p>
+    <h2>Other things you may find in tasks</h2>
+    <p>In general, tasks provide a customization bundle for your use of
+      MAT. In this document, we've described two of the most prominent
+      customizations: defining steps and defining workflows (we've
+      discussed <a href="annotations_and_segments.html">annotations</a>
+      elsewhere). There are many other things you can customize:<br>
+    </p>
+    <ul>
+      <li>You can provide specialized Javascript and CSS code for the
+        MAT UI. These customizations are very complex, and we will leave
+        them undocumented in this release.</li>
+      <li>You can specify default settings for building models in the
+        task.xml file. These settings are essentially the flags
+        described in the documentation for <a
+          href="MATModelBuilder.html">MATModelBuilder</a>.</li>
+      <li>You can declare settings for the operations in your workspaces
+        in the task.xml file. These settings are essentially the flags
+        described in the documentation for <a href="MATEngine.html">MATEngine</a>
+        and <a href="MATModelBuilder.html">MATModelBuilder</a>
+        (depending on which one the operation uses).</li>
+      <li>You can customize how annotations are compared for scoring and
+        comparison.<br>
+      </li>
+      <li>You can define custom steps in Python, and refer to them in
+        the task.xml file. For hints on how to do this, see the section
+        "Creating Your Own Steps" in the <a
+          href="customize_task_advanced.html">advanced task
+          customization</a> docs.</li>
+      <li>You can define new workspace folders, and refer to them and
+        customize their behavior in the task.xml file. These
+        customizations are still evolving, and we will leave them
+        undocumented in this release.</li>
+      <li>You can customize the documentation that's visible via the MAT
+        UI. These customizations are very complex, and we will leave
+        them undocumented in this release.</li>
+      <li>You can create a demo.xml file which uses your task to field a
+        Web demo.<br>
+      </li>
+    </ul>
+    <p>For relevant examples of these, please consult <a
+        href="sample_task.html">"The sample tasks"</a>, <a
+        href="create_task.html">"Creating a new task"</a>, <a
+        href="create_demo.html">"Creating a new demo"</a>, and the
+      documentation for the <a href="task_xml.html">task XML</a> and
+      the <a href="demo_xml.html">demo XML</a>.<br>
+    </p>
+    <p></p>
+  </body>
+</html>

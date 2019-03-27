@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=windows-1252"
+      http-equiv="Content-Type">
+    <title>Overview</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Overview</h1>
+    <p>The MITRE Annotation Toolkit (MAT) is a suite of tools which can
+      be used for automated and human tagging of annotations. </p>
+    <p>If you don't know what annotation is, here's a quick and dirty
+      definition: annotation is a process, used mostly by researchers in
+      natural&nbsp; language processing, of enhancing documents with
+      information about the various phrase types the documents contain.
+      So if the document contains the sentence "John F. Kennedy visited
+      Guam", the document would be enhanced with the information that
+      "John F. Kennedy" is a person, and "Guam" is a location. The MAT
+      toolkit provides support for defining the types of information
+      that should be added, and for adding that information manually or
+      automatically. </p>
+    <p>MAT supports both UI interaction and command-line interaction,
+      and provides various levels of control over the overall annotation
+      process. It can be customized for specific tasks (e.g., named
+      entity identification, de-identification of medical records). The
+      goal of MAT is not to help you configure your training engine (in
+      the default case, the Carafe CRF system) to achieve the best
+      possible performance on your data. MAT is for "everything else":
+      all the tools you end up wishing you had.<br>
+    </p>
+    <h2>What's in MAT?</h2>
+    <p>MAT contains:<br>
+    </p>
+    <ul>
+      <li>a span tag <a href="carafe_engine.html">trainer and decoder</a>
+        (the Carafe CRF system)</li>
+      <li>a logging-enabled Web-based hand annotation, alignment, and
+        comparison tool for span and relation annotation tasks </li>
+      <li>a Web- and command-line-based <a href="MATEngine.html">process
+
+
+          workflow engine</a> (for multiple-step tagging)<br>
+      </li>
+      <li>a Web- and command-line-based <a
+          href="MATWorkspaceEngine.html">document management engine</a>
+        (for managing the state of your documents)</li>
+      <li>a <a href="MATScore.html">scorer</a> for span and relation
+        annotations which produces detailed Excel- or
+        OpenOffice-compatible CSV files</li>
+      <li>a <a href="MATReport.html">concordance tool</a> for span and
+        relation annotations which produces CSV or aligned text output</li>
+      <li>a <a href="MATTransducer.html">transduction tool</a> which
+        converts annotated documents among various formats, and supports
+        a declarative XML format for specifying annotation conversions
+        (e.g., changing attribute value or label names)<br>
+      </li>
+      <li>an XML-configurable <a href="MATExperimentEngine.html">experiment
+
+
+          engine</a></li>
+      <li>an XML-configurable framework for fielding Web demos</li>
+      <li>a <a href="standalone_viewer.html">standalone</a> document
+        viewing, annotation, alignment and comparison tool</li>
+    </ul>
+    <p>The primary task for which MAT was built is the tag-a-little,
+      learn-a-little (TALLAL) loop, which we'll describe in a minute,
+      but because the MAT components are loosely coupled, you can do a
+      whole range of things with MAT, like<br>
+    </p>
+    <ul>
+      <li>view annotated documents</li>
+      <li>visually compare the output of multiple annotation tools<br>
+      </li>
+      <li>annotate documents using a Web browser and save them in your
+        favorite format</li>
+    </ul>
+    <p>Some of these things require a little work on your part, but
+      MAT's value added is considerable.<br>
+    </p>
+    <h2>What was MAT designed for?</h2>
+    <p>MAT's design targets the <span style="font-weight: bold;">tag-a-little,
+
+
+
+
+        learn-a-little</span> (TALLAL) loop, illustrated here:<br>
+    </p>
+    <p style="text-align: center;"><img style="width: 418px; height:
+        421px;" alt="TALLAL loop" src="../img/tallal.jpg"><br>
+    </p>
+    <p>The TALLAL loop is used for jointly creating corpora of
+      correctly-annotated documents, side by side with a model for
+      automatically adding these annotations to documents. In the
+      default case, the user begins by hand-annotating a group of
+      documents, and using the trainer to create a model for automatic
+      tagging. The user then uses the model to create automatically
+      annotated documents, which can then be hand-corrected and added to
+      the corpus of documents available as inputs to model creation. In
+      this way, the user expands the corpus, while creating a
+      better-fitting model, and reducing effort on each iteration as the
+      model improves. At various points, the user can also use the
+      correctly-annotated corpus to assess the accuracy of the model,
+      using the experiment engine.<br>
+    </p>
+  </body>
+</html>

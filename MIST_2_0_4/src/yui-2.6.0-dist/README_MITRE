@@ -1,0 +1,8 @@
+Yahoo! UI Library
+-----------------
+
+This directory contains a trimmed-down version of the Yahoo! UI
+library. All run-time code is included; examples and documentation
+have been removed for reasons of size. The full library is available
+from http://developer.yahoo.com/yui. The license for this software is
+BSD; it can be found at http://developer.yahoo.net/yui/license.txt.

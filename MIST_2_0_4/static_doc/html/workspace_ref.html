@@ -1,0 +1,1255 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Using Workspaces</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Using workspaces</h1>
+    <p>Workspaces provide a guided, structured way of managing and
+      processing your documents. <a href="files_and_workspaces.html">Make
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        sure</a> that this is what you want. Workspace mode is provided
+      by <a href="MATWorkspaceEngine.html">MATWorkspaceEngine</a> on
+      the command line, and via "File -&gt; Open workspace..." in the
+      Web UI. You can find a summary of the highlights about using
+      workspaces <a href="workspaces.html">here</a>; this document
+      provides the details.<br>
+    </p>
+    <ul>
+      <li><a href="#The_structure_of_the_workspace_directory">The
+          structure of the workspace directory</a></li>
+      <li><a href="#Workspace_users">Workspace users</a><br>
+      </li>
+      <li><a href="#Workspace_operations">Workspace operations</a></li>
+      <li><a href="#Workspace_security">Workspace security</a></li>
+      <li><a href="#Workspace_locking">Workspace locking</a></li>
+      <li><a href="#Troubleshooting">Troubleshooting</a></li>
+      <li><a href="#Advanced_topic:_workspace_reconciliation">Advanced
+          topic: workspace reconciliation</a><br>
+      </li>
+      <li><a href="#Advanced_topic:_the_workspace_database">Advanced
+          topic: the workspace database</a><br>
+      </li>
+    </ul>
+    <h2><a name="The_structure_of_the_workspace_directory"></a>The
+      structure of the workspace directory</h2>
+    <p>Workspaces are just directories. The structure of these
+      directories looks like this:<br>
+    </p>
+    <ul>
+      <li>folders (dir) - a directory containing the workspace folders,
+        which are themselves directories. This directory will contain,
+        at least:</li>
+      <ul>
+        <li>core (dir)</li>
+        <li><a href="#Advanced_topic:_workspace_reconciliation">reconciliation</a>
+          (dir) (not yet used)<br>
+        </li>
+        <li>export (dir) (not yet used)<br>
+        </li>
+      </ul>
+      <li>models (dir) - a directory containing any models that are
+        built during workspace operations</li>
+      <ul>
+        <li>model (file) - the most recently generated Carafe model (may
+          not exist)</li>
+        <li>model_basenames (file) - a file containing a list of the
+          basenames used to create the&nbsp; most recent model<br>
+        </li>
+      </ul>
+      <li>opLockfile (file) - if present, the workspace is locked.</li>
+      <li>_checkpoint (dir) - if <a href="#Logging">logging</a> is
+        enabled, contains the log<br>
+      </li>
+      <li>ws_db.db (file) - the <a
+          href="#Advanced_topic:_the_workspace_database">workspace
+          SQLite database</a>, which contains metadata about the
+        documents and the workspace itself</li>
+    </ul>
+    <h2><a name="Workspace_users"></a>Workspace users</h2>
+    <p>One of the innovations in workspaces in MAT 2.0 is its close
+      connection with <a
+        href="annotation_ref.html#Admin_annotations_SEGMENTs_and">segments
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        and annotation progress</a>. All documents in workspaces are now
+      closely tracked for their annotation state (including, ultimately,
+      annotation of subsections of documents), which includes tracking
+      who modified the annotations in the various document portions. As
+      a result, every document edit in workspaces is linked to a
+      workspace <span style="font-weight: bold;">user</span>.<br>
+    </p>
+    <p>The inventory of users of a workspace is entirely up to its
+      creators and managers. Every workspace must be created with at
+      least one initial user. The names of these users are not bound to
+      any external resource; they're not required to be the same as
+      login names, for instance. They're merely there to provide a way
+      of attributing document changes. There's no account management or
+      passwords; you can "claim" to be any registered user you want to
+      claim to be when you edit a workspace. We're assuming that you're
+      using MAT workspaces in a cooperative environment in which this
+      sort of inappropriate behavior won't arise.<br>
+    </p>
+    <p>Although there's no requirement that registered user names
+      correspond to external resources like login names, you may find it
+      easiest to use login names anyway, so that your workspace
+      annotators don't have to remember a different name when they open
+      a workspace.<br>
+    </p>
+    <p>Workspace users are assigned <b>roles</b>, which indicate what
+      they can do within the workspace. By default, all users can
+      annotate documents in the core folder. If <a
+        href="#Advanced_topic:_workspace_reconciliation">workspace
+        reconciliation</a> is configured, workspace users are also
+      assigned reconciliation roles. By default, each user has all
+      reconciliation roles except "human_decision" (the ability to make
+      an enforceable judgment about a reconciliation choice).<br>
+    </p>
+    <h2><a name="Workspace_operations"></a>Workspace operations</h2>
+    <p>The available operations are:</p>
+    <p> </p>
+    <table style=" text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">topic<br>
+          </th>
+          <th style="vertical-align: top;">operation<br>
+          </th>
+          <th style=" vertical-align: top;">availability<br>
+          </th>
+          <th style="vertical-align: top;">folder<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;"><a href="#Creation">creation</a><br>
+          </td>
+          <td style="vertical-align: top;"><a href="#create">create</a><br>
+          </td>
+          <td style="vertical-align: top;">command line<br>
+          </td>
+          <td style="vertical-align: top;">(global)<br>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="1" rowspan="7" style="vertical-align: top;"><a
+              href="#File_management">file management</a><br>
+          </td>
+          <td style="vertical-align: top;"><a href="#import">import</a><br>
+          </td>
+          <td style="vertical-align: top;">command line<br>
+          </td>
+          <td style="vertical-align: top;">(global)<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;"><a href="#remove">remove</a><br>
+          </td>
+          <td style="vertical-align: top;">command line<br>
+          </td>
+          <td style="vertical-align: top;">(global)<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;"><a href="#assign">assign</a><br>
+          </td>
+          <td style="vertical-align: top;">command line<br>
+          </td>
+          <td style="vertical-align: top;">(global)<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;"><a href="#open_file">open_file</a><br>
+          </td>
+          <td style="vertical-align: top;">UI, command line debug<br>
+          </td>
+          <td style="vertical-align: top;">(global)<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;"><a href="#markgold">markgold</a><br>
+          </td>
+          <td style="vertical-align: top;">UI, command line debug<br>
+          </td>
+          <td style="vertical-align: top;">core<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;"><a href="#unmarkgold">unmarkgold</a><br>
+          </td>
+          <td style="vertical-align: top;">UI, command line debug<br>
+          </td>
+          <td style="vertical-align: top;">core<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;"><a href="#save">save</a><br>
+          </td>
+          <td style="vertical-align: top;">UI, command line debug<br>
+          </td>
+          <td style="vertical-align: top;">core, reconciliation<br>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="1" rowspan="3" style="vertical-align: top;"><a
+              href="#Inspection">inspection</a><br>
+          </td>
+          <td style="vertical-align: top;"><a href="#list">list</a><br>
+          </td>
+          <td style="vertical-align: top;">UI, command line<br>
+          </td>
+          <td style="vertical-align: top;">(global)<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;"><a
+              href="#workspace_configuration">workspace_configuration</a><br>
+          </td>
+          <td style="vertical-align: top;">command line<br>
+          </td>
+          <td style="vertical-align: top;">(global)<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;"><a href="#dump_database">dump_database</a><br>
+          </td>
+          <td style="vertical-align: top;">command line<br>
+          </td>
+          <td style="vertical-align: top;">(global)<br>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="1" rowspan="3" style="vertical-align: top;"><a
+              href="#Logging">logging</a><br>
+          </td>
+          <td style="vertical-align: top;"><a href="#enable_logging">enable_logging</a><br>
+          </td>
+          <td style="vertical-align: top;">command line<br>
+          </td>
+          <td style="vertical-align: top;">(global)<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;"><a href="#disable_logging">disable_logging</a><br>
+          </td>
+          <td style="vertical-align: top;">command line<br>
+          </td>
+          <td style="vertical-align: top;">(global)<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;"><a href="#rerun_log">rerun_log</a><br>
+          </td>
+          <td style="vertical-align: top;">command line<br>
+          </td>
+          <td style="vertical-align: top;">(global)<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;" colspan="1" rowspan="4"><a
+              href="#Users">users</a><br>
+          </td>
+          <td style="vertical-align: top;"><a href="#register_users">register_users</a><br>
+          </td>
+          <td style="vertical-align: top;">command line<br>
+          </td>
+          <td style="vertical-align: top;">(global)<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;"><a href="#list_users">list_users</a><br>
+          </td>
+          <td style="vertical-align: top;">command line<br>
+          </td>
+          <td style="vertical-align: top;">(global)<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;"><a href="#add_roles">add_roles</a><br>
+          </td>
+          <td style="vertical-align: top;">command line<br>
+          </td>
+          <td style="vertical-align: top;">(global)<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;"><a href="#remove_roles">remove_roles</a><br>
+          </td>
+          <td style="vertical-align: top;">command line<br>
+          </td>
+          <td style="vertical-align: top;">(global)<br>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="1" rowspan="2" style="vertical-align: top;"><a
+              href="#Automated_tagging">automated tagging</a><br>
+            <br>
+          </td>
+          <td style="vertical-align: top;"><a href="#modelbuild">modelbuild</a><br>
+          </td>
+          <td style="vertical-align: top;">command line<br>
+          </td>
+          <td style="vertical-align: top;">core<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;"><a href="#autotag">autotag</a><br>
+          </td>
+          <td style="vertical-align: top;">UI, command line<br>
+          </td>
+          <td style="vertical-align: top;">core<br>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="1" rowspan="4" style="vertical-align: top;"><a
+              href="#Experimentation">experimentation</a><br>
+          </td>
+          <td style="vertical-align: top;"><a href="#list_basename_sets">list_basename_sets</a><br>
+          </td>
+          <td style="vertical-align: top;">command line<br>
+          </td>
+          <td style="vertical-align: top;">(global)<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;"><a
+              href="#add_to_basename_set">add_to_basename_set</a><br>
+          </td>
+          <td style="vertical-align: top;">command line<br>
+          </td>
+          <td style="vertical-align: top;">(global)<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;"><a
+              href="#remove_from_basename_set">remove_from_basename_set</a><br>
+          </td>
+          <td style="vertical-align: top;">command line<br>
+          </td>
+          <td style="vertical-align: top;">(global)<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;"><a href="#run_experiment">run_experiment</a><br>
+          </td>
+          <td style="vertical-align: top;">command line<br>
+          </td>
+          <td style="vertical-align: top;">(global)<br>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="1" rowspan="3" style="vertical-align: top;"><a
+              href="#Reconciliation">reconciliation</a><br>
+            (not yet enabled)<br>
+          </td>
+          <td style="vertical-align: top;"><a
+              href="#configure_reconciliation">configure_reconciliation</a><br>
+          </td>
+          <td style="vertical-align: top;">command line<br>
+          </td>
+          <td style="vertical-align: top;">(global)<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;"><a
+              href="#submit_to_reconciliation">submit_to_reconciliation</a><br>
+          </td>
+          <td style="vertical-align: top;">command line<br>
+          </td>
+          <td style="vertical-align: top;">core<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;"><a
+              href="#remove_from_reconciliation">remove_from_reconciliation</a><br>
+          </td>
+          <td style="vertical-align: top;">command line<br>
+          </td>
+          <td style="vertical-align: top;">reconciliation<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;"><a href="#Administration">administration</a><br>
+          </td>
+          <td style="vertical-align: top;"><a href="#force_unlock">force_unlock</a><br>
+          </td>
+          <td style="vertical-align: top;">command line<br>
+          </td>
+          <td style="vertical-align: top;">core<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>There are also internal operations which are not publicly visible
+      (release_lock, update_ui_log). </p>
+    <p>We'll review each of these operations in turn.<br>
+    </p>
+    <h3><a name="Creation"></a>Creation</h3>
+    <h4><a name="create"></a>create</h4>
+    <p style="margin-left: 40px;">The create operation creates a
+      workspace. It requires a <a href="tasks_and_workflows.html">task</a>
+      and an initial <a href="#Workspace_users">user</a>. <br>
+    </p>
+    <p style="margin-left: 40px;">This operation is available only on
+      the <a href="MATWorkspaceEngine.html#create">command line</a>.<br>
+    </p>
+    <h3><a name="File_management"></a>File management</h3>
+    <h4><a name="import"></a>import</h4>
+    <p style="margin-left: 40px;"> The import operation ingests
+      documents into the workspace. The documents are all converted to
+      MAT JSON format, and are prepared for annotation. You can
+      optionally assign documents to users.<br>
+    </p>
+    <p style="margin-left: 40px;">This operation is only available on
+      the <a href="MATWorkspaceEngine.html#import">command line</a>.</p>
+    <div style="margin-left: 40px;"> </div>
+    <p style="margin-left: 40px;"> Historically, the import operation
+      could target multiple folders, but in MAT 2.0, only the core
+      folder is eligible for import.</p>
+    <h4 style="margin-left: 40px;">Configuring the import operation in
+      task.xml</h4>
+    <p style="margin-left: 40px;">In task.xml, you can specify the
+      default process by which documents are prepared for annotation
+      when they're imported. Here's an example:<br>
+    </p>
+    <pre style="margin-left: 40px;">  &lt;workspace&gt;<br>    ...<br>    &lt;operation name="import"&gt;<br>      &lt;settings workflow="Demo" steps="zone,tokenize"/&gt;<br>    &lt;/operation&gt;<br>    ...<br>  &lt;/workspace&gt;<br></pre>
+    <p style="margin-left: 40px;">As described here, these settings can
+      be overridden using the --workflows and --steps options described
+      in <a href="MATWorkspaceEngine.html#import">MATWorkspaceEngine</a>.<br>
+    </p>
+    <h4><a name="remove"></a>remove</h4>
+    <p style="margin-left: 40px;">The remove operation removes all
+      copies of the basename from the workspace. <span
+        style="font-weight: bold;">Warning</span>: this operation will
+      remove all traces of the basenames from the workspace folders and
+      the database. Do not use it unless you really want them removed.<br>
+    </p>
+    <p style="margin-left: 40px;">This operation is only available on
+      the <a href="MATWorkspaceEngine.html#remove">command line</a>.</p>
+    <h4><a name="assign"></a>assign</h4>
+    <p style="margin-left: 40px;">This operation assigns the specified
+      basenames to the specified users. Each user gets his or her own
+      copy of the document to annotate. If the document's annotations
+      have been already altered by a human, the basename cannot be
+      assigned.<br>
+    </p>
+    <p style="margin-left: 40px;">This operation is only available on
+      the <a href="MATWorkspaceEngine.html#assign">command line</a>.<br>
+    </p>
+    <h4><a name="open_file"></a>open_file</h4>
+    <p style="margin-left: 40px;">This operation opens a workspace file
+      and returns its contents. It also locks the workspace file in the
+      workspace database. This lock is typically released when a file is
+      closed in the UI, using the private release_lock operation. If
+      this document is "stranded" - if, for instance, a user forgets to
+      close the document - you can use the <a href="#force_unlock">force_unlock</a>
+      operation to fix this.<br>
+    </p>
+    <p style="margin-left: 40px;">This operation is available in the <a
+        href="use_ui.html">MAT UI</a>, or on the <a
+        href="MATWorkspaceEngine.html#open_file">command line</a> if
+      --debug is provided.<br>
+    </p>
+    <h4><a name="markgold"></a>markgold</h4>
+    <p style="margin-left: 40px;">This operation marks all of the
+      "non-gold" segments in a document "<a
+        href="annotations_and_segments.html#Admin_annotations_SEGMENTs_and">human
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        gold</a>".<br>
+    </p>
+    <p style="margin-left: 40px;">This operation is available in the MAT
+      UI, or indirectly on the command line via the <a
+        href="MATWorkspaceEngine.html#import">import</a> operation, or
+      on the <a href="MATWorkspaceEngine.html#markgold">command line</a>
+      if --debug is provided. When used in the UI, it will trigger a
+      save operation first if the document has unsaved changes.<br>
+    </p>
+    <h4><a name="unmarkgold"></a>unmarkgold</h4>
+    <p style="margin-left: 40px;">This operation marks all of the "human
+      gold" or "reconciled" segments in a document "<a
+        href="annotations_and_segments.html#Admin_annotations_SEGMENTs_and">non-gold</a>".<br>
+    </p>
+    <div style="margin-left: 40px;"> This operation is available in the
+      MAT UI, or on the <a href="MATWorkspaceEngine.html#unmarkgold">command
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        line</a> if --debug is provided. When used in the UI, it will
+      trigger a save operation first if the document has unsaved
+      changes.</div>
+    <p style="margin-left: 40px;"> </p>
+    <h4><a name="save"></a>save<br>
+    </h4>
+    <p style="margin-left: 40px;">This operation saves the contents of a
+      workspace file.<br>
+    </p>
+    <p style="margin-left: 40px;">This operation is available in the <a
+        href="use_ui.html">MAT UI</a>, or on the <a
+        href="MATWorkspaceEngine.html#save">command line</a> if --debug
+      is provided.<br>
+    </p>
+    <p> </p>
+    <h3><a name="Logging"></a>Logging</h3>
+    <blockquote> </blockquote>
+    <p>MAT provides a rich and extensive logging infrastructure
+      specifically for workspaces. When logging is enabled, MAT
+      workspace operations log every action and data modification, so
+      that the activities in the workspace can be rerun from the point
+      that logging was enabled, exactly as they were originally
+      performed.<br>
+    </p>
+    <blockquote> </blockquote>
+    <p> Workspace logging is distinct from <a
+        href="ui_settings.html#The_logging_button">UI logging</a>. The
+      MAT UI has the capability of capturing all the user gestures, and
+      save these gestures to a CSV file at the user's request. If
+      workspace logging is enabled, the UI turns on this capability
+      specifically for the current workspace, and uploads the log
+      fragments to the MAT server with every save operation in the
+      "core" folder. The <a href="logger.html">format</a> of this log
+      is identical to the format of the UI logger. Unlike general UI
+      logging, this logging cannot be configured or controlled from the
+      UI. Finally, this logging does not interfere with general UI
+      logging; if you choose to enable UI logging, you'll still get all
+      the user gestures, including those that are captured for workspace
+      logging. </p>
+    <h4><a name="enable_logging"></a>enable_logging</h4>
+    <blockquote>
+      <p>This operation enables the logging.&nbsp; The log will be saved
+        in the _checkpoint subdirectory of the workspace directory.</p>
+    </blockquote>
+    <blockquote>
+      <p>This operation is available on the <a
+          href="MATWorkspaceEngine.html#enable_logging">command line</a>.<br>
+      </p>
+    </blockquote>
+    <h4><a name="disable_logging"></a>disable_logging</h4>
+    <blockquote>
+      <p>This operation disables logging. If a log is being collected,
+        by default it is moved to the first available
+        _checkpoint_&lt;n&gt; path. However, the user can force the log
+        to be disabled if she chooses. In either case, this ensures that
+        _checkpoint never contains a discontinuous log.<br>
+      </p>
+      <p>This operation is available on the <a
+          href="MATWorkspaceEngine.html#disable_logging">command line</a>.</p>
+    </blockquote>
+    <h4><a name="rerun_log"></a>rerun_log</h4>
+    <blockquote>
+      <p>This operation allows you to rerun the log. It will use the
+        _checkpoint/_rerun subdirectory of the workspace directory to
+        store the rerun state. You can use this capability to recreate
+        any intermediate state of your workspace, e.g., for experiment
+        analysis.<br>
+      </p>
+      <p>This operation is available on the <a
+          href="MATWorkspaceEngine.html#rerun_log">command line</a>. </p>
+    </blockquote>
+    <h3><a name="Inspection"></a>Inspection<br>
+    </h3>
+    <h4><a name="list"></a>list</h4>
+    <p style="margin-left: 40px;">This operation shows you the contents
+      of the folders in the workspace. The listing shows you the <a
+        href="annotations_and_segments.html#Admin_annotations_SEGMENTs_and">status</a>
+      of the document, as well as who it's <a href="#assign">assigned</a>
+      to.<br>
+    </p>
+    <p style="margin-left: 40px;">It is available both on the <a
+        href="MATWorkspaceEngine.html#list">command line</a>, and in the
+      <a href="use_ui.html">MAT UI</a> as part of the workspace
+      interface. </p>
+    <h4><a name="workspace_configuration"></a>workspace_configuration</h4>
+    <p style="margin-left: 40px;">This operation describes a number of
+      properties of the workspace. Most of these properties are
+      capabilities of MAT which are currently in development, but not
+      yet publicly released. We've included the infrastructure for
+      supporting these emerging capabilities in order to ensure that
+      users of MAT will not have to update their workspaces when these
+      capabilities are released. The properties reported are:<br>
+    </p>
+    <ul style="margin-left: 40px;">
+      <li>Task: the name of the task that the workspace uses.</li>
+      <li>Users: the workspace <a href="#Workspace_users">users</a>
+        that are <a href="#register_users">registered</a>.</li>
+      <li>Reconciliation phases: in a future release, MAT will support <a
+          href="ui_reconciliation.html">reconciliation</a> within
+        workspaces, in some fairly flexible, powerful configurations. In
+        MAT 2.0, this capability is disabled.</li>
+      <li>Logging: in a future release, MAT will support an elaborate
+        workspace logging capability, which includes the ability to
+        capture all workspace actions and rerun workspace activity from
+        the point that logging was enabled. In MAT 2.0, this capability
+        is disabled.</li>
+      <li>Prioritization: in a future release, MAT may support
+        prioritization queues, to enable techniques such as active
+        learning. In MAT 2.0, this capability is disabled.<br>
+      </li>
+    </ul>
+    <h4><a name="dump_database"></a>dump_database</h4>
+    <p style="margin-left: 40px;">This operation describes all the
+      tables in the <a href="#Advanced_topic:_the_workspace_database">workspace
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        database</a>. It is a useful debugging tool for the technically
+      inclined.<br>
+    </p>
+    <p style="margin-left: 40px;">This operation is only available on
+      the <a href="MATWorkspaceEngine.html#dump_database">command line</a>.<br>
+    </p>
+    <h3><a name="Users"></a>Users</h3>
+    <p>Workspace users have roles which say what they can do in the
+      workspace, but unless <a
+        href="#Advanced_topic:_workspace_reconciliation">workspace
+        reconciliation</a> is enabled, users have only one available
+      role, "core_annotation", which means the user is eligible to
+      perform annotation. If reconciliation is enabled, each <a
+        href="toocaan_reconciliation.html">reconciliation phase</a> is
+      also recognized as a role. The role "all" is a shorthand for all
+      available roles.<br>
+    </p>
+    <p>You can explicitly specify user roles which you register the
+      users, or afterward. You may want to vary the available roles for
+      annotators because, e.g., you may want only some of them to
+      participate in particular reconciliation phases; say, you might
+      want only some annotators to be able to perform the decisive
+      human_decision reconciliation step.<br>
+    </p>
+    <h4><a name="register_users"></a>register_users</h4>
+    <p style="margin-left: 40px;">This operation allows you to add
+      registered <a href="#Workspace_users">users</a> to your
+      workspace. Perhaps you want to be able to track the contributions
+      of multiple annotators, or you might want to actually <a
+        href="#assign">assign</a> documents to multiple annotators and
+      do multiple annotation. You may also want to assign roles to your
+      users. You cannot unregister users once they're registered,
+      although you can remove all their roles.<br>
+    </p>
+    <p style="margin-left: 40px;">This operation is only available on
+      the <a href="MATWorkspaceEngine.html#register_users">command line</a>.<br>
+    </p>
+    <h4><a name="list_users"></a>list_users</h4>
+    <p style="margin-left: 40px;">This operation lists the <a
+        href="#Workspace_users">users</a> in a workspace. It is also
+      available as part of the <a href="#workspace_configuration">workspace_configuration</a>
+      operation.<br>
+    </p>
+    <p style="margin-left: 40px;">This operation is only available on
+      the <a href="MATWorkspaceEngine.html#list_users">command line</a>.<br>
+    </p>
+    <h4><a name="add_roles"></a>add_roles</h4>
+    <blockquote>
+      <p>The add_roles operation adds roles to existing users.<br>
+      </p>
+      <p>This operation is only available on the <a
+          href="MATWorkspaceEngine.html#add_roles">command line</a>.<br>
+      </p>
+    </blockquote>
+    <h4><a name="remove_roles"></a>remove_roles</h4>
+    <blockquote>
+      <p>The remove_roles operation removes roles from existing users.<br>
+      </p>
+      <p>This operation is only available on the <a
+          href="MATWorkspaceEngine.html#remove_roles">command line</a>.<br>
+      </p>
+    </blockquote>
+    <p style="margin-left: 40px;"> </p>
+    <h3><a name="Automated_tagging"></a>Automated tagging</h3>
+    <span style="font-weight: bold;"></span>
+    <h4><a name="modelbuild"></a>modelbuild</h4>
+    <p style="margin-left: 40px;">This operation builds a model which
+      can be used to <a href="#autotag">autotag</a> other documents.
+      Every <a
+        href="annotations_and_segments.html#Admin_annotations_SEGMENTs_and">document
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        segment</a> in the workspace which has been touched by a human
+      annotator is used to build this model. If there are multiple
+      copies of a document because the document is multiply assigned,
+      all copies will be used (so that document will be overrepresented
+      in the model, and all conflicting annotations will be used as
+      well). You can optionally ask the workspace to autotag documents
+      after the model is built.<br>
+    </p>
+    <p style="margin-left: 40px;"><span style="font-weight: bold;">Note</span>:
+      the workspace model is <span style="font-weight: bold;">completely
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        distinct</span> from the default task model.<br>
+    </p>
+    <p style="margin-left: 40px;">This operation is only available on
+      the <a href="MATWorkspaceEngine.html#modelbuild">command line</a>.<br>
+    </p>
+    <h4 style="margin-left: 40px;">Configuring the modelbuild operation
+      in task.xml<br>
+    </h4>
+    <p style="margin-left: 40px;">If you want to customize your
+      modelbuild operation, e.g., restrict it to just the gold segments,
+      you can do so in task.xml. You can use any setting that's
+      available to the <a href="carafe_engine.html#The_training_engine">training
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        engine</a>.<br>
+    </p>
+    <pre style="margin-left: 40px;">  &lt;workspace&gt;<br>    ...<br>    &lt;operation name="modelbuild"&gt;<br>      &lt;settings partial_training_on_gold_only="yes"/&gt;<br>    &lt;/operation&gt;<br>    ...<br>  &lt;/workspace&gt;</pre>
+    <h4><a name="autotag"></a>autotag</h4>
+    <p style="margin-left: 40px;">This operation automatically tags
+      documents using the current workspace model. You can specify
+      individual basenames to tag, or tag all documents. The <a
+        href="carafe_engine.html#The_tagging_engine">tagging engine</a>
+      will only tag those document segments which have not yet been
+      touched by a human annotator. Existing (machine-generated)
+      annotations in those segments will be discarded and new ones
+      added. <br>
+      <br>
+      <span style="font-weight: bold;">Note</span>: this operation does
+      not use the Carafe tagging server, even in the UI. So the startup
+      cost of the tagging engine is incurred each time the autotag
+      operation is executed. This operation also does not use the
+      default task model, ever; it only uses models constructed using
+      the modelbuild operation.<br>
+    </p>
+    <p style="margin-left: 40px;">This operation is available in the <a
+        href="use_ui.html">MAT UI</a> (for individual documents) and on
+      the <a href="MATWorkspaceEngine.html#autotag">command line</a>.
+      When used in the UI, it will trigger a save operation first if the
+      document has unsaved changes.<br>
+    </p>
+    <h3><a name="Experimentation"></a>Experimentation</h3>
+    <p>We can establish basename sets which we can reference when we run
+      experiments.<br>
+    </p>
+    <h4><a name="list_basename_sets"></a>list_basename_sets</h4>
+    <p style="margin-left: 40px;">This operation lists the basename sets
+      and their contents. This operation is only available on the <a
+        href="MATWorkspaceEngine.html#list_basename_sets">command line</a>.</p>
+    <h4><a name="add_to_basename_set"></a>add_to_basename_set</h4>
+    <p style="margin-left: 40px;">This operation adds basenames to a
+      given basename set (and implicitly creates the set if necessary).
+      This operation is only available on the <a
+        href="MATWorkspaceEngine.html#add_to_basename_set">command line</a>.</p>
+    <h4><a name="remove_from_basename_set"></a>remove_from_basename_set</h4>
+    <p style="margin-left: 40px;">This operation removes basenames from
+      a given basename set (and implicitly removes the set if
+      necessary). This operation is only available on the <a
+        href="MATWorkspaceEngine.html#remove_from_basename_set">command
+        line</a>.</p>
+    <h4><a name="run_experiment"></a>run_experiment</h4>
+    <p style="margin-left: 40px;">This operation allows you to run an
+      experiment based on this workspace, either using an <a
+        href="experiment_xml.html">experiment file</a> or by specifying
+      the properties of the test set in terms of properties of the
+      workspace basenames. <br>
+    </p>
+    <h3><a name="Reconciliation"></a>Reconciliation</h3>
+    <p>
+      <meta http-equiv="content-type" content="text/html;
+        charset=ISO-8859-1">
+      Each MAT workspace has the ability to support <a
+        href="#Advanced_topic:_workspace_reconciliation"> reconciliation</a>,
+      which is the process by which the consistency of annotations is
+      checked, and conflicts are possibly resolved. This process is not
+      yet available due to UI limitations, but will be in our next
+      release. As part of this process, you'll be able to perform
+      cross-validation of the input documents, to help identify
+      inconsistencies in human annotation.<br>
+    </p>
+    <p>You can submit any document to reconciliation at any point in the
+      annotation process (as long as it isn't being annotated by
+      someone). You must configure reconciliation before you submit any
+      documents.<br>
+    </p>
+    <h4><a name="configure_reconciliation"></a>configure_reconciliation</h4>
+    <blockquote>
+      <p>Use this operation to establish the active reconciliation
+        phases for your workspace.<br>
+      </p>
+      <p>This operation is only available on the <a
+          href="MATWorkspaceEngine.html#configure_reconciliation">command
+
+
+
+
+
+
+
+
+          line</a>.<br>
+      </p>
+    </blockquote>
+    <h4><a name="submit_to_reconciliation"></a>submit_to_reconciliation</h4>
+    <blockquote>
+      <p>Use this operation to submit documents for reconciliation. The
+        phases that are assigned to the documents will be the phases
+        provided in the most recent configure_reconciliation operation.<br>
+      </p>
+      <p>This operation is only available on the <a
+          href="MATWorkspaceEngine.html#submit_to_reconciliation">command
+
+
+
+
+
+
+
+
+          line</a>.<br>
+      </p>
+    </blockquote>
+    <h4><a name="remove_from_reconciliation"></a>remove_from_reconciliation</h4>
+    <blockquote>
+      <p>If, for some reason, a document fails to exit reconciliation
+        naturally (if some of the users fail to complete their
+        reconciliation steps, for example), you can use this operation
+        to remove the document forcibly from reconciliation. You have
+        the option of discarding the reconciliation decisions that were
+        made.<br>
+      </p>
+      <p>This operation is only available on the <a
+          href="MATWorkspaceEngine.html#remove_from_reconciliation">command
+
+
+
+
+
+
+
+
+          line</a>.<br>
+      </p>
+    </blockquote>
+    <h3><a name="Administration"></a>Administration</h3>
+    <h4><a name="force_unlock"></a>force_unlock</h4>
+    <p style="margin-left: 40px;">This operation forces a basename in
+      the named folder to be unlocked. <span style="font-weight: bold;">Warning</span>:
+      be very certain that you apply the force_unlock operation <span
+        style="font-weight: bold;">only</span> to basenames whose locks
+      have been stranded. If you unlock a basename which is being
+      annotated, the annotator will not be able to save her changes.<br>
+    </p>
+    <p style="margin-left: 40px;">This operation is only available on
+      the <a href="MATWorkspaceEngine.html#force_unlock">command line</a>.<br>
+    </p>
+    <h2><a name="Workspace_security"></a>Workspace security<br>
+    </h2>
+    <p>Unlike file mode, workspace mode is <span style="font-weight:
+        bold;">stateful</span> from the point of view of the UI. It is
+      the server, rather than the client, which loads and saves the
+      files. However, we don't want just anybody to be able to cause the
+      server to perform these stateful operations, so the <a
+        href="MATWeb.html">MAT web server</a> implements <a
+        href="workspace_security.html">some security mechanisms</a>.<br>
+    </p>
+    <p>Note, however, that the MAT workspace functionality is <span
+        style="font-weight: bold;">not an enterprise-secure
+        implementation, and will never be one</span>. It does not use
+      SSL; it does not perform any sort of user authentication beyond
+      the workspace key; it does not provide any security logging or
+      traceability; and it does not currently implement transactions.
+      You should assume that anyone who has access to your network can
+      see your workspace traffic, and overwrite your data. </p>
+    <p>Note that <a href="#Workspace_users">workspace users</a> play no
+      role in workspace security.<br>
+    </p>
+    <h2><a name="Workspace_locking"></a>Workspace locking</h2>
+    <p> Workspaces maintain an internal lock to ensure that any
+      operations which change the state of the workspace are exclusive.
+      This locking mechanism is quite simple - it relies on the presence
+      or absence of the "opLockfile" file. If something goes horribly
+      wrong,&nbsp; it's possible that the workspace may get in a
+      stranded state, where it fails to remove "opLockfile" at the end
+      of the operation. If you're getting a notification that the
+      workspace is in use, and you're sure it's not, you can remove the
+      file by hand. As an added bonus, the file contents will tell you
+      what operation was being performed by which user, and what time
+      the lock was established.</p>
+    <h2><a name="Troubleshooting"></a> Troubleshooting</h2>
+    <h3><a name="Failed_import"></a>Failed import</h3>
+    <p>You may realize, once you've completed an import operation, that
+      you didn't import the basenames the way you'd wanted; perhaps
+      you'd intended to strip a suffix, or you assigned them to the
+      wrong workspace user. You can use the remove operation to remove
+      the basenames from the workspace in preparation for re-importing.
+      <span style="font-weight: bold;">Warning</span>: this operation
+      will remove all traces of the basenames from the workspace folders
+      and the database. Do not use it unless you really want them
+      removed.<br>
+    </p>
+    <pre>% $MAT_PKG_HOME/bin/MATWorkspaceEngine &lt;dir&gt; remove basename1...<br></pre>
+    <p>If you're not sure what basenames are available, the --help
+      option will list them:<br>
+    </p>
+    <pre>% $MAT_PKG_HOME/bin/MATWorkspaceEngine &lt;dir&gt; remove --help<br></pre>
+    <p>More on the remove operation <a href="#remove">here</a>.<br>
+    </p>
+    <h3><a name="Locked_files"></a>Locked files</h3>
+    <p>The workspaces do not permit documents to be edited by more than
+      one annotator at a time. The workspaces achieve this exclusivity
+      through the use of file locks, which are recorded in the workspace
+      database. When an annotator opens a document for annotation, the
+      annotation UI is given a lock ID which it can use to release the
+      document when the editing session is over. In some circumstances,
+      unfortunately, the document is not unlocked; for instance, if the
+      UI encounters an unexpected error and crashes before unlocking the
+      document. You can use the force_unlock operation to clear this
+      lock from the database.<br>
+    </p>
+    <pre>% $MAT_PKG_HOME/bin/MATWorkspaceEngine &lt;dir&gt; force_unlock --user user1 core basename1<br></pre>
+    <p>If you just want to unlock everything, don't specify any
+      basenames. If you want to know what's locked, use the
+      dump_databsae operation:<br>
+    </p>
+    <pre>% $MAT_PKG_HOME/bin/MATWorkspaceEngine &lt;dir&gt; dump_database<br></pre>
+    <p>This will show you the content of the workspace database tables.<br>
+    </p>
+    <p><span style="font-weight: bold;">Warning</span>: be very certain
+      that you apply the force_unlock operation <span
+        style="font-weight: bold;">only</span> to basenames whose locks
+      have been stranded. If you unlock a basename which is being
+      annotated, the annotator will not be able to save her changes.<br>
+    </p>
+    <p> More on force_unlock <a href="#force_unlock%27">here</a>.<br>
+    </p>
+    <h3>Error "workspace is currently unavailable (processing another
+      request)"</h3>
+    <p>If you get this error message, and you're absolutely certain that
+      no one else is working on the workspace, something horrible has
+      happened, and a previous operation has failed in such a way to
+      fail to remove the "opLockfile" file. More on how to deal with
+      this <a href="#Workspace_locking">here</a>.<br>
+    </p>
+    <h2><a name="Advanced_topic:_workspace_reconciliation"></a>Advanced
+      topic: workspace reconciliation</h2>
+    Each MAT workspace has ability to support reconciliation, which is
+    the process by which the consistency of annotations is checked, and
+    conflicts are possibly resolved. This facility is not yet available
+    due to UI limitations, but it will be in our next release. This
+    section describes the behavior that we plan to make available.<br>
+    <br>
+    You can submit any document to reconciliation at any point in the
+    annotation process (as long as it isn't being annotated by someone).
+    You'll use the <a href="#submit_to_reconciliation">submit_to_reconciliation</a>
+    operation to submit the documents. This operation will lock the
+    basenames in the core folder (so no one can open those documents for
+    annotation) and prepare a document, called a reconciliation
+    document, which contains all the annotations in all the documents
+    that correspond to that basename, sorted into "votes" which
+    indicate, for each segment of the document in conflict, which
+    annotator produced which pattern of annotations. The workspace
+    annotators will then follow the reconciliation steps which are <a
+      href="#configure_reconciliation">configured</a> at the time that
+    the documents are submitted for reconciliation.<br>
+    <h3> Reconciliation steps<br>
+    </h3>
+    There are three possible reconciliation steps currently supported.
+    You can set up your workspace to use any or all of these
+    reconciliation steps, and you can change what steps are enabled for
+    future submissions at any given time. The available steps, in order,
+    are:<br>
+    <ul>
+      <li><span style="font-weight: bold;">crossvalidation_challenge</span>:
+        in this step, the available documents are divided into several
+        subsets, and a set of candidate annotations for each document is
+        prepared by building an annotation model using n-1 subsets and
+        applying it to the nth subset. For each segment that a given
+        annotator has annotated, these candidate annotations are
+        compared to the annotations that the annotator provided. If they
+        match, that segment is marked as reconciled. If they don't
+        match, the annotator is presented with the option of preferring
+        the automatically generated annotations. If the annotator
+        accepts that option, the segment is marked as reconciled; if
+        not, the segment remains unreconciled.<br>
+      </li>
+      <li><span style="font-weight: bold;">human_vote</span>: in this
+        step, each annotator is given the opportunity to vote on the
+        available annotation patterns for each unreconciled segment. The
+        annotator also has the option of adding a new pattern. If one of
+        the patterns garners the votes of more than half of the assigned
+        annotators, the segment is marked as reconciled; if not, the
+        segment remains unreconciled.<br>
+      </li>
+      <li><span style="font-weight: bold;">human_decision</span>: in
+        this step, a designated review makes a choice among the
+        available annotation patterns, or introduces her own. This
+        choice is final, and the segment is marked as reconciled.</li>
+    </ul>
+    <p>The system will advance documents through these steps
+      automatically if possible (so, for instance, if an annotator makes
+      a choice during the crossvalidation_challenge step, and no
+      annotator adds any new annotation patterns, the system assumes
+      that the annotator's vote will not change). Once all segments have
+      been marked as reconciled, or the document has passed through all
+      assigned annotators and steps, it exits reconciliation, and the
+      agreed-upon changes are folded back into the documents in the core
+      annotation folder which were submitted to reconciliation. So if
+      the same document is assigned to two annotators, and it passes
+      through reconciliation and the conflicts are resolved, those
+      assigned documents will be altered to reflect the reconciliations.<br>
+    </p>
+    <h3>SEGMENTs in reconciliation<br>
+    </h3>
+    <p> </p>
+    <p>The use of the <a
+        href="annotations_and_segments.html#Admin_annotations_SEGMENTs_and">SEGMENTs</a>
+      in reconciliation differs slightly from its use in core
+      annotation, especially with respect to the value of its "status"
+      attribute. The three significant "status" attribute values in
+      reconciliation are:<br>
+    </p>
+    <ul>
+      <li>"ignore during reconciliation" (some input document has this
+        segment marked "non-gold", so it's not reconcilable yet)</li>
+      <li>"human gold" (all input documents have this segment marked
+        "human gold", but not all the segments match in their
+        annotations)</li>
+      <li>"reconciled" (all input documents have this segment marked
+        "human gold" or "reconciled", and all the segments match in
+        their annotations)</li>
+    </ul>
+    <p> In addition, there's additional administrative information on
+      the segment that records the state of the reconciliation.</p>
+    <h3>Stranded reconciliation documents</h3>
+    <p>If you submit a document to reconciliation, it may remain in
+      reconciliation because, e.g., an annotator who was registered with
+      one of the relevant roles is no longer working on the project. Or
+      you may have submitted it to reconciliation in error. You
+      can&nbsp; use the remove_from_reconciliation operation to remove
+      the document.<br>
+    </p>
+    <p>Keep in mind that the document may already be partially
+      reconciled.&nbsp; If you want to remove the document and preserve
+      the decisions already made, you can use the operation as follows:<br>
+    </p>
+    <pre>% $MAT_PKG_HOME/bin/MATWorkspaceEngine &lt;dir&gt; remove_from_reconciliation reconciliation basename1<br></pre>
+    <p>This will migrate the agreed-upon document segments back into the
+      documents which were used to create the reconciliation document.
+      If you do not want to preserve those decisions, and simply want to
+      stop the document from being reconciled, do this instead:<br>
+    </p>
+    <pre>% $MAT_PKG_HOME/bin/MATWorkspaceEngine &lt;dir&gt; remove_from_reconciliation --dont_reintegrate reconciliation basename1<br></pre>
+    <p>More on this operation <a href="#remove_from_reconciliation">here</a>.</p>
+    <h2><a name="Advanced_topic:_the_workspace_database"></a>Advanced
+      topic: the workspace database</h2>
+    <p>The workspace database is an SQLite database which tracks the
+      status of documents, users, and the workspace itself. The schema
+      can be found in MAT_PKG_HOME/lib/mat/python/MAT/ws_db.sql. The
+      tables are:<br>
+    </p>
+    <ul>
+      <li><span style="font-weight: bold;">document_info</span>:
+        contains the basenames and document names in the core folder,
+        the user they're assigned to, the transaction ID, and the <a
+          href="annotations_and_segments.html#Admin_annotations_SEGMENTs_and">document
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          status</a></li>
+      <li><span style="font-weight: bold;">users</span>: lists the users
+        in the workspace</li>
+      <li><span style="font-weight: bold;">workspace_state</span>:
+        specifies the workspace-level metadata, including the task and
+        the number of retained models</li>
+      <li><span style="font-weight: bold;">basename_sets</span>:
+        specifies the basename sets and basenames in them<br>
+      </li>
+    </ul>
+    <p>There are other tables and columns which relate to workspace
+      features we have yet to enable. We will document those features of
+      the database as the corresponding workspace features are enabled.<br>
+    </p>
+  </body>
+</html>

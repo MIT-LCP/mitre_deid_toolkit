@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Viewing Language Data in CSV Files</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Viewing language data in CSV files</h1>
+    <div style="margin-right: 10px; margin-left: 10px; padding: 10px;
+      border: 1px solid black; background-color: lightgray">Note: the
+      information below was current as of November 2011, when MAT 1.3
+      was released. It's possible that Excel's import features have
+      improved since then. We provide this information as representative
+      of the problems you may encounter.<br>
+    </div>
+    <p>The MATScore and the MATReport tools both produce CSV files which
+      contain snippets of your input document. Viewing these CSV files
+      is a bit complicated, and deserves some attention.<br>
+    </p>
+    <p>The short answer is: <span style="font-weight: bold;">use
+        OpenOffice rather than Excel</span>. <br>
+    </p>
+    <p>Excel 2007 CSV import has some very unpleasant features which
+      will compromise your ability to view the data cleanly.<br>
+    </p>
+    <ul>
+      <li>If the file extension of your CSV file is .csv, when you open
+        the file normally (either by double-clicking or selecting "Open"
+        from the main menu), Excel will not offer you an import wizard,
+        which will cause Excel to try to digest and interpret dates. So
+        if your annotation happens to span a date, Excel will recognize
+        it as such and process it. Changing the column format to Text
+        after you import is useless, because Excel has already discarded
+        the original data. To avoid this, create a new workbook, then
+        select the "From Text" option in the "Data" tab. This option is
+        available only on Windows; Mac Excel doesn't allow you to do
+        this at all with a .csv file, as far as we can tell.<br>
+      </li>
+      <li>If the file extension of your CSV file is .txt, Excel will
+        offer you the import wizard (although now you can't open the
+        file with a double-click). The import wizard allows you to
+        select the column delimiter (comma), and also allows you to
+        change the column format for the columns you select<span
+          style="font-weight: bold;">.</span> You should change the
+        columns which contain actual text to Text. However, the import
+        wizard screws up newlines in column data; even if they're
+        delimited with double-quotes, the import wizard treats them as
+        separate entries. So if there are any newlines in the spans of
+        text displayed, this strategy won't work.</li>
+    </ul>
+    <p>Another issue is character encoding. All the CSV documents
+      created by the MAT tools are encoded in UTF-8. In order to view
+      this data correctly on Excel 2007, you must use the import wizard.
+      Again, this option is only available on Windows.<br>
+    </p>
+    <p>Because there's no consistent way of viewing the data in its
+      clean form, Excel isn't an appropriate tool, especially on the
+      Mac.<br>
+    </p>
+    Fortunately, OpenOffice 3 <span style="font-weight: bold;">does</span>
+    do the right thing. You'll be offered an import wizard when you open
+    a .csv file. Select the column delimiter (comma), and make sure to
+    change the column format to Text for each column which contains
+    spans of text.
+  </body>
+</html>

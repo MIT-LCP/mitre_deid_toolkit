@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Starting and Shutting Down the UI</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Starting and shutting down the UI</h1>
+    <p>Make sure that you've <a href="start_web.html">started the Web
+        server</a>.<br>
+    </p>
+    <h2>Starting the UI<br>
+    </h2>
+    <p>Configure your Firefox browser as follows: <br>
+    </p>
+    <ul>
+      <li>Ensure that popups are not blocked for localhost (you can
+        check this in the Firefox preferences window under the Content
+        tab).</li>
+      <li>In the Firefox preferences window in the General tab, ensure
+        that "Always ask me where to save files" is selected.</li>
+    </ul>
+    <p>Both of these are extremely important. Popups must be unblocked
+      in order to view errors and other notifications in the UI, and the
+      file save dialog allows you to modify the names of the annotated
+      files you save.<br>
+    </p>
+    <p>Once the Web server is started and Firefox is configured, you can
+      navigate to <a href="http://localhost:7801/MAT/workbench">http://localhost:7801/MAT/workbench</a>
+      to start up the UI.<br>
+    </p>
+    <h2>The initial screen<br>
+    </h2>
+    <p>The initial UI screen displays a greeting, and is then blank
+      except for the top menubar and the three major panes:<br>
+    </p>
+    <img alt="blank ui" src="../img/ui_blank.jpg" height="647"
+      width="980">
+    <p>The region on the left, directly below the menubar, is the
+      container for a tabbed display of your open documents and
+      workspaces. The region on the right, directly below the menubar,
+      is the container for task information: the tags that are available
+      in your current document, the workflow that you're following (in
+      file mode) or the folder you're in (in workspace mode). The region
+      at the bottom is a container for auxiliary information, such as
+      tables of annotations, that may be available in some of the
+      document viewing or editing modes.<br>
+    </p>
+    <p>These regions are resizeable; at least in some browsers, there
+      will be a handle in the middle of the line separating the regions
+      (as you can see above).<br>
+    </p>
+    <p>The menubar has seven elements:<br>
+    </p>
+    <ul>
+      <li>"MAT" - a decorative label, which does nothing. If your task
+        has been appropriately customized, this may be the short name of
+        the task instead.</li>
+      <li>"File" - the file menu, where you can open documents or save
+        documents, or open workspaces<a
+href="file:///afs/rcf/project/anonymize/proj/users/sam/devel/MAT/web/htdocs/doc/html/use_ui.html#The_file_menu"></a></li>
+      <li>"Tabs" - the tabbing menu, where you'll be able to show and
+        hide various tabs in the upper left tabbed display.</li>
+      <li>"View" - a menu for controlling aspects of the document view.
+        This menu is enabled only when a document is active.<br>
+      </li>
+      <li>"Reconciliation" - a menu for controlling aspects of document
+        reconciliation. This menu is enabled only when the active
+        document is a reconciliation document.<br>
+      </li>
+      <li>"Help" - access the MAT documentation in a separate window or
+        tab, or show the MAT version.</li>
+      <li>"Logging" - a button to activate or deactivate UI logging</li>
+    </ul>
+    <p>We'll provide more detail about these elements as we proceed.<br>
+    </p>
+    <h2>Shutting down the UI</h2>
+    <p>Since the UI is just a browser page, simply close the page, or
+      your browser. <br>
+    </p>
+    <p>If there are any unsaved documents, or if logging is currently
+      enabled and there's logging data available, the UI will try to
+      ensure that you have the chance to save them. This behavior
+      differs from browser to browser (and from OS to OS), and is fairly
+      limited in the amount of control available over the closing
+      process. But you'll likely get a prompt like this:<br>
+    </p>
+    <img alt="[unsaved]" src="../img/ui_unsaved.jpg" height="130"
+      width="377"><br>
+    <p>Once you acknowledge this, you'll get another, somewhat more
+      helpful, dialog:<br>
+    </p>
+    <img alt="[ui leave page]" src="../img/ui_leavepage.jpg"
+      height="128" width="473">
+    <p>If you select "Stay on Page", you'll now have the option of
+      saving the unsaved elements.<br>
+    </p>
+    <p>If you're editing documents in a workspace, and you choose not to
+      save them, the UI will attempt to ensure that the document locks
+      are released when it closes. This operation is unreliable, so MAT
+      always allows you to open any document that has been locked by
+      you.<br>
+    </p>
+    <p> </p>
+  </body>
+</html>

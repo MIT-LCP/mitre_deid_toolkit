@@ -1,0 +1,176 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Task XML Use Cases</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Task XML Use Cases</h1>
+    <p>Use cases for the XML format for the task files (see <a
+        href="create_task.html">"Creating a New Task"</a>) <span
+        style="text-decoration: underline;"></span> are described in
+      this document. The reference document is found <a
+        href="task_xml.html">here</a>. Click <a
+        href="task_xml_iframe.html">here</a> for a split-screen view.<br>
+    </p>
+    <p>At the moment, most of the task XML customizations are quite
+      complex, and not yet documented. Here, we focus on the ways that
+      the user can specify various variations on defining the display of
+      their content annotations. For examples of how to define the
+      content annotations themselves, see <a
+        href="asd_xml_use_cases.html">here</a>.<br>
+    </p>
+    <ul>
+      <li><a href="#Defining_content_annotation_colors">Defining content
+          annotation colors<br>
+        </a></li>
+      <li><a href="#Defining_keyboard_accelerators">Defining keyboard
+          accelerators</a></li>
+      <li><a href="#Changing_the_annotation_foreground_font">Changing
+          the annotation foreground font</a></li>
+      <li><a href="#Editing_annotations_immediately_after">Editing
+          annotations immediately after creation</a></li>
+      <li><a href="#Changing_the_presented_name_of_an">Changing the
+          presented name of an annotation</a></li>
+      <li><a href="#Controlling_the_size_of_string_attribute">Controlling
+
+          the size of string attribute input widgets</a></li>
+      <li><a href="#Adding_a_custom_attribute_editor">Adding a custom
+          attribute editor</a><br>
+      </li>
+      <li><a href="#Using_cascaded_menus_for_more_and_less">Using
+          cascaded menus for more and less specialized tags</a></li>
+    </ul>
+    <h2><a name="Defining_content_annotation_colors"></a>Defining
+      content annotation colors<br>
+    </h2>
+    <p>The simplest way of customizing the UI behavior of your content
+      annotations is to assign some CSS to distinguish them in the Web
+      UI. The most appropriate way to do this is to use background
+      colors; using font weight or style, or text color, as the sole
+      distinguishing feature will fail in <a href="ui_alignment.html">document
+        alignment</a>, <a href="ui_comparison.html">comparison</a>, and
+      <a href="ui_reconciliation.html">reconciliation</a> for span
+      annotations, and will always fail for spanless annotations, which
+      don't cover any text.<br>
+    </p>
+    <pre>  &lt;annotation_display&gt;<br>    ...<br>    &lt;label name="TAG1" css="background-color: blue"/&gt;<br>    &lt;label name="TAG2" css="background-color: green"/&gt;<br>    ...<br>  &lt;/annotation_display&gt;</pre>
+    <p>(We assume that TAG1 and TAG2 are defined as true or effective
+      labels in your task.) We've assigned TAG1 a blue background color,
+      and TAG2 a red background color. Since you're using CSS, you can
+      assign colors using hexadecimal designations as well (or, if you
+      prefer, set a background image, or other wacky things).<br>
+    </p>
+    <p>One caveat: at the moment, annotation spans are styled on a
+      token-by-token basis. So if, for instance, you want to have a left
+      bracket at the left end of an annotation, and a right bracket at
+      the right end, you can't do that quite yet; you'd end up with each
+      token bracketed.<br>
+    </p>
+    <h2><a name="Defining_keyboard_accelerators"></a>Defining keyboard
+      accelerators</h2>
+    <p>The &lt;ui&gt; element also supports the option of having
+      keyboard accelerators. These are keys that the user can press when
+      the tagging menu is visible in the UI, which are equivalent to
+      having selected that menu item. You can add an accelerator using
+      an attribute on the &lt;label&gt; element:<br>
+    </p>
+    <pre>  &lt;annotation_display&gt;<br>    ...<br>    &lt;label name="TAG1" accelerator="1" css="background-color: blue"/&gt;<br>    &lt;label name="TAG2" accelerator="2" css="background-color: green"/&gt;<br>    ...<br>  &lt;/annotation_display&gt;</pre>
+    <p>It's probably a good idea to choose the accelerators mnemonically
+      (the first letter of the menu item name is always a good mnemonic,
+      unless of course more than one item starts with the same letter).
+      Be careful, though; MAT doesn't yet ensure that there are no
+      clashes among accelerators.<br>
+    </p>
+    <h2><a name="Changing_the_annotation_foreground_font"></a>Changing
+      the annotation foreground font</h2>
+    <p>Sometimes the color you choose is too dark to see the text, in
+      which case you can use CSS to change the text color:<br>
+    </p>
+    <pre>  &lt;annotation_display&gt;<br>    ...<br>    &lt;label name="TAG1" css="background-color: red; color: white"/&gt;<br>    ...<br>  &lt;/annotation_display&gt;</pre>
+    <p>Remember, the value of the css attribute is really CSS; it's not
+      converted or processed in any way before it's inserted into the
+      CSS rules in the Web UI. The one caveat is that the CSS is applied
+      to each token in the annotated phrase, not to the phrase as a
+      whole.<br>
+    </p>
+    <h2><a name="Editing_annotations_immediately_after"></a>Editing
+      annotations immediately after creation</h2>
+    <p>Spanless annotations will pop up an <a
+        href="ui_annotation_edit.html">annotation editor</a> immediately
+      when they're created. If you want this behavior for spanned
+      annotations, you can specify it in the &lt;label&gt; element:<br>
+    </p>
+    <pre>  &lt;annotation_display&gt;<br>    ...<br>    &lt;label name="TAG1" css="background-color: red" edit_immediately="yes"/&gt;<br>    ...<br>  &lt;/annotation_display&gt;<br></pre>
+    <h2><a name="Changing_the_presented_name_of_an"></a>Changing the
+      presented name of an annotation</h2>
+    <p>When an annotation is described in the UI (e.g., as an annotation
+      attribute value in the annotation tables or annotation editors, or
+      in the title bar of an annotation editor), it has a default
+      presentation, which, for spanned annotations, is the string the
+      span covers, and for spanless annotations, is the label and
+      annotation index. There are many times when you might want a
+      different default presented name, e.g., if the label tends to
+      traverse enormous spans. Here's an example of using the
+      presented_name attribute to truncate the text:<br>
+    </p>
+    <pre>  &lt;annotation_display&gt;<br>    ...<br>    &lt;label name="TAG1" css="background-color: red" presented_name="$(_text:truncate=20)"/&gt;<br>    ...<br>  &lt;/annotation_display&gt;<br></pre>
+    <p>There's a fairly extensive formatting language which is available
+      for the presented_name attribute; see the <a href="task_xml.html">task
+
+        XML reference</a> for details.<br>
+    </p>
+    <h2><a name="Controlling_the_size_of_string_attribute"></a>Controlling
+
+      the size of string attribute input widgets</h2>
+    <p>Sometimes string attribute values are expected to be short, and
+      sometimes long. By default, non-choice string attribute values get
+      a short typein window in the annotation editor. If you want to
+      make it a long string, you can do it like this:<br>
+    </p>
+    <pre>  &lt;annotation_display&gt;<br>    ...<br>    &lt;attribute name="attr1" of_annotation="TAG1" editor_style="long_string"/&gt;<br>    ...<br>  &lt;/annotation_display&gt;<br></pre>
+    <h2><a name="Adding_a_custom_attribute_editor"></a>Adding a custom
+      attribute editor</h2>
+    <p>You may have a string attribute which is actually a date, which
+      you want to use a calendar widget to populate; or you might want
+      to look up the annotation text in a database, and use the results
+      to populate the attribute value. If you're willing to do some
+      programming, there's a way to associate an arbitrary JavaScript
+      function with a string, int, or float attribute, to use as its
+      editor:<br>
+    </p>
+    <pre>  &lt;web_customization&gt;<br>    &lt;js&gt;js/yourTaskCustomizations.js&lt;/js&gt;<br>  &lt;/web_customization&gt; <br>  &lt;annotation_display&gt;<br>    ...<br>    &lt;attribute name="attr1" of_annotation="TAG1" custom_editor="yourJavascriptFunction"/&gt;<br>    ...<br>  &lt;/annotation_display&gt;<br></pre>
+    <p>You can define your function in your task directory in
+      js/yourTaskCustomizations.js (or whatever name you choose), and
+      this file will be loaded when the UI is loaded. Unfortunately, we
+      don't really have the resources to document the API this function
+      has to conform to; you can find the code which governs this
+      capability in the CustomEditorCellDisplay implementation in
+      MAT_PKG_HOME/web/htdocs/js/mat_doc_display.js.<br>
+    </p>
+    <p> </p>
+    <h2><a name="Using_cascaded_menus_for_more_and_less"></a>Using
+      cascaded menus for more and less specialized tags</h2>
+    <p>Let's say that you've defined the following annotations:<br>
+    </p>
+    <pre>  &lt;annotation_set_descriptor name="content" category="content"&gt;<br>    &lt;annotation label="PERSON"/&gt;<br>    &lt;annotation label="MAN"/&gt;<br>    &lt;annotation label="WOMAN"/&gt;<br>    &lt;annotation label="US-LOCATION"/&gt;<br>    &lt;annotation label="FOREIGN-LOCATION"/&gt;<br>  &lt;/annotation_set_descriptor&gt;<br></pre>
+    <p>Your annotator is instructed to label people, using PERSON as the
+      annotation if she can't tell which of MAN or WOMAN is applicable.
+      Your preference is to arrange these in a visual hierarchy for the
+      annotator's convenience; you wish to do the same with US-LOCATION
+      and FOREIGN-LOCATION, even though they don't have a common, less
+      specific annotation. Here's what you do:<br>
+    </p>
+    <pre>&lt;annotation_display&gt;<br>  ...<br>  &lt;label_group name="PERSON" children="MAN,WOMAN"/&gt;<br>  &lt;label_group name="LOCATION" children="US-LOCATION,FOREIGN-LOCATION"/&gt;<br>  ...<br>&lt;/annotation_display&gt;<br></pre>
+    <p>The label group can reference an existing annotation (as in the
+      PERSON case) or create its own group (as in the LOCATION case).
+      The effect of these groups will be to create submenus in the
+      annotation popup in the MAT UI.<br>
+    </p>
+    <p></p>
+  </body>
+</html>

@@ -1,0 +1,275 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Experiment XML Use Cases</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Experiment XML Use Cases</h1>
+    <p>Use cases for the XML format for the experiment files (see <a
+        href="MATExperimentEngine.html">MATExperimentEngine</a>) are
+      described here. The reference document is found <a
+        href="experiment_xml.html">here</a>. Click <a
+        href="experiment_xml_iframe.html">here</a> for a split-screen
+      view.<br>
+    </p>
+    <ul>
+      <li><a href="#A_simple_experiment">A simple experiment</a></li>
+      <li><a href="#A_simple_experiment_with_a_set-aside">A simple
+          experiment with a set-aside corpus</a></li>
+      <li><a href="#A_simple_experiment_run_against_a">A simple
+          experiment run against a workspace</a><br>
+      </li>
+      <li><a href="#Using_multiple_corpora">Using multiple corpora</a><br>
+      </li>
+      <li><a href="#Validating_against_the_training_corpus">Validating
+          against the training corpus</a><br>
+      </li>
+      <li><a href="#An_experiment_enhanced_with_model_size">An
+          experiment enhanced with model size iteration</a></li>
+      <li><a
+href="file:///afs/rcf/project/anonymize/proj/users/sam/devel/branches/version_2_0_release/MAT/web/htdocs/doc/html/experiment_xml_use_cases.html#Comparing_precisionrecall_biases">Comparing
+
+          precision/recall biases</a></li>
+      <li><a href="#An_experiment_with_multiple_iteration">An experiment
+          with multiple iteration types</a><br>
+      </li>
+      <li><a href="#A_simple_cross-comparison_experiment">A simple
+          cross-comparison experiment with two corpora</a><br>
+      </li>
+      <li><a href="#Model_comparison">Model comparison</a></li>
+      <li><a href="#Preprocessing_a_corpus">Preprocessing a corpus</a></li>
+      <li><a href="#Preserving_zone_tags_during_run">Preserving zone
+          tags during run preparation</a><br>
+      </li>
+      <li><a href="#Sharing_a_corpus">Sharing a corpus</a><br>
+      </li>
+    </ul>
+    <p>In all the examples below, we're going to use the sample "<a
+        href="sample_task.html">Named Entity</a>" task.<br>
+    </p>
+    <span style="font-weight: bold;"></span>
+    <h2><a name="A_simple_experiment"></a>A simple experiment<br>
+    </h2>
+    <p>The simplest possible experiment involves a single corpus, a
+      single model, and a single run. Assume you have a set of "gold"
+      documents in /documents/newswire/*.json.</p>
+    <pre>&lt;experiment task='Named Entity'&gt;<br>  &lt;corpora dir="corpora"&gt;<br>    &lt;partition name="train" fraction=".8"/&gt;<br>    &lt;partition name="test" fraction=".2"/&gt;<br>    &lt;corpus name="ne"&gt;<br>      &lt;pattern&gt;/documents/newswire/*.json&lt;/pattern&gt;<br>    &lt;/corpus&gt;<br>  &lt;/corpora&gt;<br>  &lt;model_sets dir="model_sets"&gt;<br>    &lt;model_set name="ne_model"&gt;<br>      &lt;training_corpus corpus="ne" partition="train"/&gt;<br>    &lt;/model_set&gt;<br>  &lt;/model_sets&gt;<br>  &lt;runs dir="runs"&gt;<br>    &lt;run_settings&gt;<br>      &lt;args steps="zone,tokenize,tag" workflow="Demo"/&gt;<br>    &lt;/run_settings&gt;<br>    &lt;run name="test_run" model="ne_model"&gt;<br>      &lt;test_corpus corpus="ne" partition="test"/&gt;<br>    &lt;/run&gt;<br>  &lt;/runs&gt;<br>&lt;/experiment&gt;</pre>
+    <p>This experiment takes a single set of documents, and designates
+      80% of the set for training and the remaining 20% for test. It
+      then generates a single model from the training documents, and
+      executes a single run using this model against the test documents.<br>
+    </p>
+    <p>If all your documents have the ".json" extension, and you want to
+      reuse this experiment XML file, just change the &lt;pattern&gt;
+      element entry to a relative pathname and use the --pattern_dir
+      argument when you call <a href="MATExperimentEngine.html">MATExperimentEngine</a>.<br>
+    </p>
+    <pre>...<br>    &lt;corpus name="ne"&gt;<br>      &lt;pattern&gt;*.json&lt;/pattern&gt;<br>    &lt;/corpus&gt;<br><br>...<br></pre>
+    <h2><a name="A_simple_experiment_with_a_set-aside"></a>A simple
+      experiment with a set-aside corpus</h2>
+    <p>Let's say you've set aside a test corpus which you want to hold
+      constant across a set of experiments, in
+      /documents/newswire-test/*.json. You can use an experiment XML
+      file such as this one:<br>
+    </p>
+    <pre>&lt;experiment task='Named Entity'&gt;<br>  &lt;corpora dir="corpora"&gt;<br>    &lt;corpus name="train_nw"&gt;<br>      &lt;pattern&gt;/documents/newswire/*.json&lt;/pattern&gt;<br>    &lt;/corpus&gt;<br>    &lt;corpus name="test_nw"&gt;<br>      &lt;pattern&gt;/documents/newswire-test/*.json&lt;/pattern&gt;<br>    &lt;/corpus&gt;<br>  &lt;/corpora&gt;<br>  &lt;model_sets dir="model_sets"&gt;<br>    &lt;model_set name="train"&gt;<br>      &lt;training_corpus corpus="train_nw"/&gt;<br>    &lt;/model_set&gt;<br>  &lt;/model_sets&gt;<br>  &lt;runs dir="runs"&gt;<br>    &lt;run_settings&gt;<br>      &lt;args steps="zone,tokenize,tag" workflow="Demo"/&gt;<br>    &lt;/run_settings&gt;<br>    &lt;run name="test" model="train"&gt;<br>      &lt;test_corpus corpus="test_nw"/&gt;<br>    &lt;/run&gt;<br>  &lt;/runs&gt;<br>&lt;/experiment&gt;</pre>
+    <p>Here, we have two separate corpora, which are not split; one is
+      used as a training corpus, and the other as a testing corpus. We
+      generate one model, and one run.<br>
+    </p>
+    <h2><a name="A_simple_experiment_run_against_a"></a>A simple
+      experiment run against a workspace</h2>
+    <p>You can run experiments against workspaces. There are special
+      workspace capabilities <a
+        href="MATWorkspaceEngine.html#Experimentation">devoted to
+        experiments</a>, and special experiment engine capabilities
+      devoted to workspaces.<br>
+    </p>
+    <p>Let's say you have a workspace, and you've introduced two
+      basename sets: test_1 and test_2. Furthermore, there are documents
+      in the workspace which are in neither set. Let's also suppose that
+      you want to restrict the documents to the gold and reconciled
+      documents in the workspace. Finally, let's suppose you have
+      multiple workspaces with these basename set names, and you want to
+      use bindings to specify the specific workspace to use. Here's how
+      you use test_1 and test_2 together as your test set, and use the
+      rest of the documents in the workspace as your training set:<br>
+    </p>
+    <pre>&lt;experiment task='Named Entity'&gt;<br>  &lt;workspace_corpora dir="corpora" workspace_dir="$(WS)"<br>                     document_statuses="gold,reconciled"&gt;<br>    &lt;workspace_corpus name="test" basename_sets="test_1,test_2"/&gt;<br>    &lt;workspace_corpus name="train" use_remainder="yes"/&gt;<br>  &lt;/workspace_corpora&gt;<br>  &lt;model_sets dir="model_sets"&gt;<br>    &lt;build_settings partial_training_on_gold_only="yes"/&gt;<br>    &lt;model_set name="train"&gt;<br>      &lt;training_corpus corpus="train"/&gt;<br>    &lt;/model_set&gt;<br>  &lt;/model_sets&gt;<br>  &lt;runs dir="runs"&gt;<br>    &lt;run_settings&gt;<br>      &lt;args steps="zone,tokenize,tag" workflow="Demo"/&gt;<br>      &lt;score_args gold_only="yes"/&gt;<br>    &lt;/run_settings&gt;<br>    &lt;run name="test" model="train"&gt;<br>      &lt;test_corpus corpus="test"/&gt;<br>    &lt;/run&gt;<br>  &lt;/runs&gt;<br>&lt;/experiment&gt;<br></pre>
+    <p>Note, too, that we've enhanced the experiment file as recommended
+      <a href="MATWorkspaceEngine.html#run_experiment">here</a>.<br>
+    </p>
+    <p> </p>
+    <h2><a name="Using_multiple_corpora"></a>Using multiple corpora</h2>
+    <p>Let's say you have two corpora, and you want to split each of
+      them 4-to-1, and use the larger slice of each of them, together,
+      to build a single model, and test against the smaller slice of
+      each of them, in a single run:<br>
+    </p>
+    <pre>&lt;experiment task='Named Entity'&gt;<br>  &lt;corpora dir="corpora"&gt;<br>    &lt;partition name="train" fraction=".8"/&gt;<br>    &lt;partition name="test" fraction=".2"/&gt;<br>    &lt;corpus name="nw1"&gt;<br>      &lt;pattern&gt;/documents/newswire-1/*.json&lt;/pattern&gt;<br>    &lt;/corpus&gt;<br>    &lt;corpus name="nw2"&gt;<br>      &lt;pattern&gt;/documents/newswire-2/*.json&lt;/pattern&gt;<br>    &lt;/corpus&gt;<br>  &lt;/corpora&gt;<br>  &lt;model_sets dir="model_sets"&gt;<br>    &lt;model_set name="train"&gt;<br>      &lt;training_corpus corpus="nw1" partition="train/&gt;<br>      &lt;training_corpus corpus="nw2" partition="train/&gt;<br>    &lt;/model_set&gt;<br>  &lt;/model_sets&gt;<br>  &lt;runs dir="runs"&gt;<br>    &lt;run_settings&gt;<br>      &lt;args steps="zone,tokenize,tag" workflow="Demo"/&gt;<br>    &lt;/run_settings&gt;<br>    &lt;run name="test" model="train"&gt;<br>      &lt;test_corpus corpus="nw1" partition="test"/&gt;<br>      &lt;test_corpus corpus="nw2" partition="test"/&gt;<br>    &lt;/run&gt;<br>  &lt;/runs&gt;<br>&lt;/experiment&gt;</pre>
+    <h2><a name="Validating_against_the_training_corpus"></a>Validating
+      against the training corpus</h2>
+    <p>Sometimes, you want to run the model against the corpus that
+      produced it. In the example in the previous use case, you can
+      modify the &lt;runs&gt; as follows:<br>
+    </p>
+    <pre>...<br>  &lt;runs dir="runs"&gt;<br>    &lt;run_settings&gt;<br>      &lt;args steps="zone,tokenize,tag" workflow="Demo"/&gt;<br>    &lt;/run_settings&gt;<br>    &lt;run name="test" model="train"&gt;<br>      &lt;training_corpus corpus="train_nw"/&gt;<br>    &lt;/run&gt;<br>  &lt;/runs&gt;<br>...<br></pre>
+    <h2><a name="An_experiment_enhanced_with_model_size"></a>An
+      experiment enhanced with model size iteration<br>
+    </h2>
+    <p>To find out what happens when you use more and more training
+      data, we add a &lt;corpus_settings&gt; element to
+      &lt;model_sets&gt;, as follows:<br>
+    </p>
+    <pre>...<br>  &lt;model_sets dir="model_sets"&gt;<br>    &lt;corpus_settings&gt;<br>      &lt;iterator type="corpus_size" increment="50"/&gt;<br>    &lt;/corpus_settings&gt;<br>    &lt;model_set name="test"&gt;<br>      &lt;training_corpus corpus="test"/&gt;<br>    &lt;/model_set&gt;<br>  &lt;/model_sets&gt;<br>...<br></pre>
+    <p>In this case, we're telling the experiment engine to build a
+      model at 50-document increments. So if the corpus contains 150
+      documents, the experiment engine will build three models, and
+      produce one set of three runs.<br>
+    </p>
+    <p>If your corpus has more than 100 documents, but fewer than 150,
+      the above values for &lt;build_settings&gt; will only build two
+      models. If you want a model built for the remainder, use the
+      "force_last" attribute:<br>
+    </p>
+    <pre>...<br>  &lt;model_sets dir="model_sets"&gt;<br>    &lt;corpus_settings&gt;<br>      &lt;iterator type="corpus_size" increment="50" force_last="yes"/&gt;<br>    &lt;/corpus_settings&gt;<br>    &lt;model_set name="test"&gt;<br>      &lt;training_corpus corpus="test"/&gt;<br>    &lt;/model_set&gt;<br>  &lt;/model_sets&gt;<br>...<br></pre>
+    <h2><a name="Comparing_precisionrecall_biases"></a>Comparing
+      precision/recall biases</h2>
+    <p>The Carafe tagger has the option of biasing precision and recall
+      differently during automated tagging, using the --prior_adjust
+      flag. If you want to compare two decoding strategies, one which
+      biases heavily toward recall and one toward precision, you might
+      do this:</p>
+    <pre>&lt;experiment task='Named Entity'&gt;<br>  &lt;corpora dir="corpora"&gt;<br>    &lt;partition name="train" fraction=".8"/&gt;<br>    &lt;partition name="test" fraction=".2"/&gt;<br>    &lt;corpus name="newswire"&gt;<br>      &lt;pattern&gt;/documents/newswire/*.json&lt;/pattern&gt;<br>    &lt;/corpus&gt;<br>  &lt;/corpora&gt;<br>  &lt;model_sets dir="model_sets"&gt;<br>    &lt;model_set name="newswire"&gt;<br>      &lt;training_corpus corpus="newswire" partition="train"/&gt;<br>    &lt;/model_set&gt;<br> &nbsp;&lt;/model_sets&gt;<br>  &lt;runs dir="runs"&gt;<br>    &lt;run_settings&gt;<br>      &lt;args steps="zone,tokenize,tag" workflow="Demo" prior_adjust="-3.0"/&gt;<br>    &lt;/run_settings&gt;<br>    &lt;run name="recall_bais" model="newswire"&gt;<br>      &lt;test_corpus corpus="newswire" partition="test"/&gt;<br>    &lt;/run&gt;<br> &nbsp;&lt;/runs&gt;<br>  &lt;runs dir="runs"&gt;<br>    &lt;run_settings&gt;<br>      &lt;args steps="zone,tokenize,tag" workflow="Demo" prior_adjust="3.0"/&gt;<br>    &lt;/run_settings&gt;<br>    &lt;run name="precision_bias" model="newswire"&gt;<br>      &lt;test_corpus corpus="newswire" partition="test"/&gt;<br>    &lt;/run&gt;<br> &nbsp;&lt;/runs&gt;<br>&lt;/experiment&gt;</pre>
+    In this case we have two different &lt;runs&gt; elements, because
+    the run settings differ for the two runs. So we end up with one
+    corpus, one model, and two runs.
+    <h2><a name="An_experiment_with_multiple_iteration"></a>An
+      experiment with multiple iteration types</h2>
+    <p>Let's say that in addition to increasing the size of the model,
+      you also want to know what happens when you increment the number
+      of model iterations during model building, and you also want to
+      vary the recall/precision bias of the decoder. You can do all
+      these things at once, as follows:<br>
+    </p>
+    <pre>...<br>  &lt;model_sets dir="model_sets"&gt;<br>    &lt;build_settings&gt;<br>      &lt;iterator type="increment" attribute="max_iterations"<br>                start_val="3" end_val="9" increment="2"/&gt;<br>    &lt;build_settings&gt;<br>    &lt;corpus_settings&gt;<br>      &lt;iterator type="corpus_size" increment="50"/&gt;<br>    &lt;/corpus_settings&gt;<br>   &nbsp;&lt;model_set name="train"&gt;<br>      &lt;training_corpus corpus="nw1" partition="train/&gt;<br>      &lt;training_corpus corpus="nw2" partition="train/&gt;<br>    &lt;/model_set&gt;<br>  &lt;/model_sets&gt;<br>  &lt;runs dir="runs"&gt;<br>    &lt;run_settings&gt;<br>      &lt;args steps="zone,tokenize,tag" workflow="Demo"/&gt;<br>      &lt;iterator type="increment" attribute="prior_adjust"<br>                start_val="-3.0" end_val="3.0" increment="1.0"<br>                force_last="yes"/&gt;<br>    &lt;/run_settings&gt;<br>    &lt;run name="test" model="train"&gt;<br>      &lt;test_corpus corpus="nw1" partition="test"/&gt;<br>      &lt;test_corpus corpus="nw2" partition="test"/&gt;<br>    &lt;/run&gt;<br>  &lt;/runs&gt;<br>...<br></pre>
+    <p>If your training corpus is 150 documents, this experiment will
+      generate 12 models - for each of 50, 100 and 150 documents, a
+      model for each of the max_iterations values (3, 5, 7, 9). For each
+      model, the experiment will conduct 7 runs, one for each of the
+      values of prior_adjust. Note that we've used force_last to force
+      the final value to be used, even if it's not exactly 3.0 (due to
+      the issues with how floats are implemented).<br>
+    </p>
+    <h2><a name="A_simple_cross-comparison_experiment"></a>A simple
+      cross-comparison experiment with two corpora<br>
+    </h2>
+    <p>Let's say you have two sets of completed documents: a set of
+      newswire documents, in /documents/newswire/*.json, and a set of
+      chat transcripts, in /documents/chat/*.json. Both these document
+      sets are tagged with the same tag set. If you want to know how a
+      model built against each will work on the other, here's an
+      experiment XML file that accomplishes that:<br>
+    </p>
+    <pre>&lt;experiment task='Named Entity'&gt;<br>  &lt;corpora dir="corpora"&gt;<br>    &lt;partition name="train" fraction=".8"/&gt;<br>    &lt;partition name="test" fraction=".2"/&gt;<br>    &lt;corpus name="newswire"&gt;<br>      &lt;pattern&gt;/documents/newswire/*.json&lt;/pattern&gt;<br>    &lt;/corpus&gt;<br>    &lt;corpus name="chat"&gt;<br>      &lt;pattern&gt;/documents/chat/*.json&lt;/pattern&gt;<br>    &lt;/corpus&gt;<br>  &lt;/corpora&gt;<br>  &lt;model_sets dir="model_sets"&gt;<br>    &lt;model_set name="newswire"&gt;<br>      &lt;training_corpus corpus="newswire" partition="train"/&gt;<br>    &lt;/model_set&gt;<br>    &lt;model_set name="chat"&gt;<br>      &lt;training_corpus corpus="chat" partition="train"/&gt;<br>    &lt;/model_set&gt;<br>  &lt;/model_sets&gt;<br>  &lt;runs dir="runs"&gt;<br>    &lt;run_settings&gt;<br>      &lt;args steps="zone,tokenize,tag" workflow="Demo"/&gt;<br>    &lt;/run_settings&gt;<br>    &lt;run name="nw_train_nw_test" model="newswire"&gt;<br>      &lt;test_corpus corpus="newswire" partition="test"/&gt;<br>    &lt;/run&gt;<br>    &lt;run name="nw_train_chat_test" model="newswire"&gt;<br>      &lt;test_corpus corpus="chat" partition="test"/&gt;<br>    &lt;/run&gt;<br>    &lt;run name="chat_train_chat_test" model="chat"&gt;<br>      &lt;test_corpus corpus="chat" partition="test"/&gt;<br>    &lt;/run&gt;<br>&nbsp;   &lt;run name="chat_train_nw_test" model="chat"&gt;<br>      &lt;test_corpus corpus="newswire" partition="test"/&gt;<br>    &lt;/run&gt;<br> &nbsp;&lt;/runs&gt;<br>&lt;/experiment&gt;<br></pre>
+    <p>This experiment XML file will split each corpus 80%/20%, and
+      build two models, one from each corpus. Finally, it performs a
+      four-way comparison between the models and the test subsets of the
+      corpora.<br>
+    </p>
+    <h2><a name="Model_comparison"></a>Model comparison<br>
+    </h2>
+    <p>Let's say that you have a Carafe lexicon directory, as described
+      in the documentation for <a href="MATModelBuilder.html">MATModelBuilder</a>.
+      You want to know whether using this lexicon results in a better
+      model. Here's an experiment XML file which accomplishes that:<br>
+    </p>
+    <pre>&lt;experiment task='Named Entity'&gt;<br>  &lt;corpora dir="corpora"&gt;<br>    &lt;partition name="train" fraction=".8"/&gt;<br>    &lt;partition name="test" fraction=".2"/&gt;<br>    &lt;corpus name="newswire"&gt;<br>      &lt;pattern&gt;/documents/newswire/*.json&lt;/pattern&gt;<br>    &lt;/corpus&gt;<br>  &lt;/corpora&gt;<br>  &lt;model_sets dir="model_sets"&gt;<br>    &lt;model_set name="newswire"&gt;<br>      &lt;training_corpus corpus="newswire" partition="train"/&gt;<br>    &lt;/model_set&gt;<br>  &lt;/model_sets&gt;<br>  &lt;model_sets dir="model_sets"&gt;<br>    &lt;build_settings lexicon_dir="/documents/newswire_lexicon/"/&gt;<br>    &lt;model_set name="newswire_w_lex"&gt;<br>      &lt;training_corpus corpus="newswire" partition="train"/&gt;<br>    &lt;/model_set&gt;  <br>  &lt;/model_sets&gt;<br>  &lt;runs dir="runs"&gt;<br>    &lt;run_settings&gt;<br>      &lt;args steps="zone,tokenize,tag" workflow="Demo"/&gt;<br>    &lt;/run_settings&gt;<br>    &lt;run name="w_lex" model="newswire_w_lex"&gt;<br>      &lt;test_corpus corpus="newswire" partition="test"/&gt;<br>    &lt;/run&gt;<br>    &lt;run name="wo_lex" model="newswire"&gt;<br>      &lt;test_corpus corpus="newswire" partition="test"/&gt;<br>    &lt;/run&gt;<br> &nbsp;&lt;/runs&gt;<br>&lt;/experiment&gt;<br></pre>
+    <p> </p>
+    <p>In this case, there are two different &lt;model_sets&gt;
+      elements, because the build settings for the enclosed models
+      differ. We have one corpus, two models, and two runs.<br>
+    </p>
+    <p>You can further specify any of the advanced settings for the
+      trainer, if you know what you're doing. See <a
+        href="MATModelBuilder.html">MATModelBuilder</a> for whatever
+      documentation is available.</p>
+    <h2><a name="Preprocessing_a_corpus"></a>Preprocessing a corpus</h2>
+    <p>Sometimes, you may need to do some preprocessing of a corpus.
+      Let's assume:<br>
+    </p>
+    <ul>
+      <li>you've created your gold-standard documents using an
+        annotation tool other than the MAT annotation tool</li>
+      <li>this tool only writes out your content labels, without zoning
+        or token information</li>
+      <li>these documents are in XML inline format, and you wish to
+        retain all the other tags as part of your signal</li>
+      <li>you've added an "align" step and a "Preprocess" workflow to
+        your task (see the <a href="sample_task.html">sample 'Named
+          Entity' task</a> for such a workflow) which backfills the zone
+        and token data, and aligns the annotations with token boundaries</li>
+      <li>you haven't applied this step to your documents</li>
+    </ul>
+    <p>To do this during the experiment, you'd use the &lt;prep&gt;
+      element:<br>
+    </p>
+    <pre>...<br>  &lt;corpora dir="corpora"&gt;<br>    &lt;partition name="train" fraction=".8"/&gt;<br>    &lt;partition name="test" fraction=".2"/&gt;<br>    &lt;prep steps="zone,tokenize,align" workflow="Preprocess" input_file_type="xml-inline" xml_input_is_overlay="yes"/&gt;<br>    &lt;corpus name="test"&gt;<br>      &lt;pattern&gt;/documents/newswire/*.xml&lt;/pattern&gt;<br>    &lt;/corpus&gt;<br>  &lt;/corpora&gt;<br>...<br></pre>
+    <h2><a name="Preserving_zone_tags_during_run"></a>Preserving zone
+      tags during run preparation</h2>
+    <p>Let's say, for instance, that you're working with the MUC
+      (Message Understanding Conference) corpus, and you're not tagging
+      the header portions of the documents. Under normal circumstances,
+      when it prepares an experiment run, the experiment engine converts
+      the test documents to raw text, and processes them starting from
+      raw text. However, in this case, you can't actually recreate the
+      zoning with your own zoner; you need the zoning as it was provided
+      in the MUC documents. In this situation, you can use the
+      &lt;prep_args&gt; element in the &lt;run&gt; element to specify a
+      set of parameters to MATEngine to modify the default test document
+      preparation:<br>
+    </p>
+    <pre>...<br>  &lt;runs dir="runs"&gt;<br>    &lt;run_settings&gt;<br>      &lt;prep_args output_file_type="mat-json" undo_through="tag" workflow="Demo"/&gt;<br>      &lt;args steps="tag" workflow="Demo"/&gt;<br>    &lt;/run_settings&gt;<br>    &lt;run name="test" model="test"&gt;<br>      &lt;test_corpus corpus="test" partition="test"/&gt;<br>    &lt;/run&gt;<br>  &lt;/runs&gt;<br>...<br></pre>
+    <p>Here, instead of undoing all steps by using an output_file_type
+      of "raw" (which is the default), we undo the "tag" step and use
+      MAT JSON documents as the inputs to the run; we see that the
+      &lt;args&gt; for the run only does the "tag" step.<br>
+    </p>
+    <h2><a name="Sharing_a_corpus"></a>Sharing a corpus</h2>
+    <p>Sometimes, you might want to prepare a corpus ahead of time, with
+      a fixed partition, a fixed prep phase, or the like. You can use
+      the experiment engine to create a corpus alone, and then refer to
+      that corpus elsewhere.<br>
+    </p>
+    <p>For instance, you might prepare the corpus in the previous use
+      case with nothing in the &lt;experiment&gt; element except the
+      &lt;corpora&gt;:<br>
+    </p>
+    <pre>&lt;experiment task='Named Entity'&gt;<br>  &lt;corpora dir="corpora"&gt;<br>    &lt;partition name="train" fraction=".8"/&gt;<br>    &lt;partition name="test" fraction=".2"/&gt;<br>    &lt;prep steps="zone,tokenize,align" workflow="Preprocess" input_file_type="mat-json"/&gt;<br>    &lt;corpus name="test"&gt;<br>      &lt;pattern&gt;/documents/newswire/*.json&lt;/pattern&gt;<br>    &lt;/corpus&gt;<br>  &lt;/corpora&gt;<br>&lt;/experiment&gt;<br></pre>
+    <p>Assume we save this XML file to /experiments/xml/corpus.xml, and
+      output the experiment into /experiments/corpus1:<br>
+    </p>
+    <pre>% <span style="font-weight: bold;">cd $MAT_PKG_HOME</span><br>% <span style="font-weight: bold;">bin/MATExperimentEngine --exp_dir /experiments/corpus1 </span><span style="font-weight: bold;">/experiments/xml/corpus.xml</span>
+</pre>
+    <p>The corpus will be in the "corpora" subdirectory, in the
+      subdirectory named "test" (the name of the corpus).<br>
+    </p>
+    <p>Now, let's refer to it in a different experiment XML file:<br>
+    </p>
+    <pre>&lt;experiment task='Named Entity'&gt;<br>  &lt;corpora dir="corpora"&gt;<br>    &lt;corpus name="local_test" source_corpus_dir="/experiments/corpus1/corpora/test"/&gt;<br>  &lt;/corpora&gt;<br>  ...<br>&lt;/experiment&gt;<br></pre>
+    <p>Instead of including a &lt;pattern&gt; element, we use the
+      "source_corpus_dir" attribute. The corpus referred to can itself
+      have a "source_corpus_dir" attribute (i.e., you can chain them).
+      Local &lt;prep&gt; or &lt;partition&gt; elements can augment or
+      override remote elements; the combinations are complex, and you
+      can find more documentation on them in the <a
+        href="experiment_xml.html">experiment XML reference</a>.<br>
+    </p>
+    <p> </p>
+  </body>
+</html>

@@ -1,0 +1,606 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Annotations and Annotation Progress</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Annotations and annotation progress</h1>
+    <ul>
+      <li><a href="#Annotations">Annotations</a></li>
+      <li><a href="#Annotation_attributes_and_values_">Annotation
+          attributes and values</a></li>
+      <li><a href="#Simple_span_annotations_vs._complex">Simple span
+          annotations vs. complex annotations</a><br>
+      </li>
+      <li><a href="#Annotation_categories">Annotation categories</a></li>
+      <li><a href="#Admin_annotations_SEGMENTs_and">Admin annotations,
+          SEGMENTs, and annotation progress</a><br>
+      </li>
+    </ul>
+    <h2><a name="Annotations"></a>Annotations<br>
+    </h2>
+    <p>The basic unit of document enrichment in MAT is the <span
+        style="font-weight: bold;">annotation</span>. There are two
+      types of annotations in MAT: <span style="font-weight: bold;">span
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        annotations</span> and <span style="font-weight: bold;">spanless
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        annotations</span>. Span annotations are anchored to a
+      particular contiguous span in the document, and make some implicit
+      assertion about it; e.g., the span from character 10 to character
+      15 is a noun phrase. Spanless annotations are not anchored to a
+      span, and are used to make assertions about the entire document,
+      or to make assertions about other annotations; e.g., annotation 1
+      and annotation 2 refer to the same entity.<br>
+    </p>
+    <p>The <a href="task_xml.html">task specification</a> for each <a
+        href="task_workflow_ref.html">task</a> contains one or more <a
+        href="asd_reference.html">annotation set descriptors</a>, which
+      define the annotations available in the task. In MAT 2.0, there's
+      very little reason, if any, to have multiple annotation set
+      descriptors defined; however, upcoming versions of MAT will
+      exploit this capability extensively.<br>
+    </p>
+    <h2><a name="Annotation_attributes_and_values_"></a>Annotation
+      attributes and values<br>
+    </h2>
+    <p>In MAT, annotations have labels, and may have attributes and
+      values associated with them. Each attribute has a <b>type</b> and
+      an <b>aggregation</b>.<br>
+    </p>
+    <p>The types are:<br>
+    </p>
+    <ul>
+      <li>"string": this is the default type. The value of such an
+        attribute must be a string. When specifying this type, you can
+        provide a default; specify that the default is the spanned text;
+        or provide an exhaustive list of choices.</li>
+      <li>"int": the value of this attribute must be an integer. When
+        specifying this type, you can provide a default; specify that
+        the default is the spanned text (if it can be coerced to an
+        integer); provide an exhaustive list of choices; or provide
+        minimum and/or maximum values.</li>
+      <li>"float": the value of this attribute must be a float. When
+        specifying this type, you can provide a default; specify that
+        the default is the spanned text (if it can be coerced to a
+        float); or provide minimum and/or maximum values.</li>
+      <li>"boolean": the value of this attribute must be a boolean (Java
+        boolean, JavaScript true/false, Python True/False). When
+        specifying this type, you can provide a default.</li>
+      <li>"annotation": the value of this attribute must be an
+        annotation. When specifying this type, you can specify a set of
+        label restrictions, each consisting of a label or a label and
+        some attribute/value pairs; any filler of this attribute must
+        satisfy one of the label restrictions.</li>
+    </ul>
+    <p>See <a href="asd_xml_use_cases.html#Defining_attributes">here</a>
+      for examples of defining attributes of various types.<br>
+    </p>
+    <p>It is possible for any attribute to have a null value (Java and
+      JavaScript null, Python None), or not to be present. These
+      conditions are intended to be equivalent, and the various document
+      libraries mostly treat them that way; however, there may be times
+      in Python where an attribute which has never been set will raise a
+      KeyError.</p>
+    <p>The aggregations are:<br>
+    </p>
+    <ul>
+      <li>"none" or null: the default. A singleton value.</li>
+      <li>"list": a list of values of the type specified. Null list
+        elements are not permitted.<br>
+      </li>
+      <li>"set": a set of values of the type specified. Null set
+        elements are not permitted.</li>
+    </ul>
+    <p>MAT does not currently limit the possible combinations of these
+      types and aggregations, even if some of them are nonsensical
+      (e.g., a set of booleans). However, the annotation UI has not been
+      enriched with the ability to edit all 15 possible combinations;
+      some of the less common ones (e.g., sets of strings which are not
+      restricted by a choice list) have not been implemented yet. We're
+      committed to supporting all of them, eventually.<br>
+    </p>
+    <p>MAT also supports the notion of <b>effective label</b>. An
+      effective label is a notional label (e.g., "PERSON") which is
+      presented to the user in its notional form, but is implemented as
+      an annotation label plus an attribute value of a string attribute
+      which is specified to have an exhaustive list of choices. Labels
+      of this sort are also known as "ENAMEX-style" labels, after the
+      MUC convention of defining "PERSON" as "ENAMEX" + type="PER", and
+      "ORGANIZATION" and "LOCATION" analogously. <br>
+    </p>
+    <h2><a name="Simple_span_annotations_vs._complex"></a>Simple span
+      annotations vs. complex annotations</h2>
+    <p><b>Simple span annotations</b> are span annotations which have
+      either no attributes, or a single attribute/value pair which
+      defines the effective label. This notion is important because it
+      is the class of annotations which the <a
+        href="carafe_engine.html">Carafe</a> engine can build models
+      for. While it's possible to use more complex engines with MAT (we
+      don't provide details on how to do it, but it's possible), MAT
+      "out of the box" has more limited capabilities for annotations
+      which are more complex than this (i.e., spanless annotations, or
+      annotations with more attributes). In these case, Carafe will
+      happily build and apply models for the simple span subset of the
+      complex annotations it's given, but this capability isn't enough
+      to support the full <a href="tallal.html">tag-a-little,
+        learn-a-little</a> loop, or the <a
+        href="MATExperimentEngine.html">experiment harness</a>.<br>
+    </p>
+    <p>Here's a complete list of these limitations:<br>
+    </p>
+    <ul>
+      <li><b>Hand anotation:</b> no limitations.</li>
+      <li><b>Automated content tagging in workflows, workspaces, and the
+          experiment engine: </b>Carafe will add only simple span
+        annotations. Carafe will not add additional attributes beyond
+        the effective label attribute (if present), nor spanless
+        annotations.</li>
+      <li><b>Model building in file mode, workspaces, and the experiment
+          engine:</b> Carafe will build models only for simple span
+        annotations. Carafe will not build models for additional
+        attributes beyond the effective label attribute (if present),
+        nor spanless annotations.</li>
+      <li><b>Visual document comparison:</b> no limitations.</li>
+      <li><b>Visual document alignment and reconciliation</b>: simple
+        span annotations only.<br>
+      </li>
+      <li><b>Scoring:</b> no limitations.</li>
+      <li><b>Workspace import, assignment and folder management: </b>no
+        limitations.</li>
+      <li><b>Transducing and reporting:</b> no limitations.<br>
+      </li>
+    </ul>
+    <h2><a name="Annotation_categories"></a>Annotation categories</h2>
+    <p>Annotation categories are one way of notifying MAT about the role
+      of the various annotations in the MAT task. Annotations in the
+      "content" category are, in some sense, what the task is about;
+      these are the annotations you'll be adding by hand, or using the <a
+        href="carafe_engine.html">Carafe engine</a> to add
+      automatically.<br>
+    </p>
+    <p>The other categories above have semantics assigned by MAT. These
+      semantics are crucial for using MAT correctly. The annotations in
+      the "token" and "zone" categories (known as "structure
+      categories") can be inherited from the root task, which is what
+      most tasks will do. This is what you should do in most cases,
+      since it's unusual to need to define your own structural
+      annotations. We attempt to document MAT's dependencies on these
+      categories below. The annotations in the "admin" category are
+      special; all tasks will have these annotations.<br>
+    </p>
+    <h3>Content annotations<br>
+    </h3>
+    <p>The semantics of the content labels are defined by the task. For
+      instance, the sample task is about annotation of named entities,
+      and the three content annotation labels shown here have a
+      standardized interpretation in named entity annotation, for which
+      detailed guidelines have been developed about when to assign each
+      of these annotation labels. You may not add annotations named
+      SEGMENT or VOTE, since these are reserved names of admin
+      annotations.<br>
+    </p>
+    <p>Good guidelines are crucial for maximizing agreement among human
+      annotators when preparing gold-standard corpora. When you develop
+      your own task, you should develop similar guidelines; this skill
+      is quite sophisticated, and is outside the scope of this
+      documentation.<br>
+    </p>
+    <h3>Zone annotations</h3>
+    <p>Zones correspond to large chunks of the document where
+      annotations can be found. The default zone annotation in MAT is
+      the "zone" label, which has an attribute called "region_type",
+      whose value is typically "body" (it's possible for the Carafe
+      engine to use the zone attributes as a training feature, but we
+      don't use that capability at the moment). The implementation of
+      your task provides the Carafe engine with information about the
+      default zone annotation; you can change this implementation (and
+      you must if you have a custom zone annotation) as described in the
+      <a
+href="customized_task_advanced.html#Changing_the_default_zone_information">advanced
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        topics</a>. You may not add annotations named SEGMENT or VOTE,
+      since these are reserved names of admin annotations. </p>
+    <p>The simplest zoning of a document is to assign a single zone of
+      region_type "body" which encompasses the whole document, and there
+      is a zone step available which does this. If you want to get more
+      sophisticated (e.g., exclude HTML or XML tags), you'll have to
+      consult the <a href="customize_task_advanced.html">advanced
+        topics</a>.<br>
+    </p>
+    <p>Zone tags are also used in the UI to induce the creation of
+      untaggable regions, which are regions that have no zone
+      annotation. These regions are indicated visually by graying out
+      the document text. If the document has any zone annotations at
+      all, the UI will create these regions.<br>
+    </p>
+    <h3>Token annotations</h3>
+    <p>Tokens correspond, pretty much, to words. In MAT, token
+      annotations are used as the basis for most computation. When you
+      hand-annotate your documents, you are encouraged to require that
+      token annotations are present, so that the MAT annotation tool can
+      determine the possible boundaries of your proposed annotation.
+      This is because the Carafe trainer and tagger both use tokens (not
+      characters) as the "atoms" of computation, and as a result, any
+      annotation whose boundaries do not coincide with token boundaries
+      must be modified or discarded during the training phase (because
+      the element at the relevant edge doesn't correspond to an "atom"
+      as far as Carafe is concerned). Similarly, you must use the same
+      automatic tokenization process for training and tagging, for
+      obvious reasons.<br>
+    </p>
+    <p>Carafe is one of many trainable annotation tools which rely on
+      tokens as atoms; however, most hand annotation tools don't try to
+      ensure in advance that annotation boundaries match token
+      boundaries, and the users of such tools have to make
+      accommodations later in their workflows.<br>
+    </p>
+    <p>The MAT toolkit comes with a default English tokenizer, which we
+      describe when we talk about <a href="task_workflow_ref.html">steps</a>.
+      There's nothing special about this tokenizer; you can replace it
+      with your own, as long as you use the same tokenizer throughout
+      your task. If you inherit your structure annotations from the core
+      task, and use the default tokenizer, you don't have to think about
+      this any further. If you don't, your tokenizer and task have to
+      make sure of several things:<br>
+    </p>
+    <ul>
+      <li>the task defines an annotation label of category "token"</li>
+      <li>there is at least one annotation label of this category, named
+        "lex" (Carafe expects this name)<br>
+      </li>
+      <li>the tokenizer outputs annotations with these labels</li>
+      <li>the spans which bear these labels don't cross the boundaries
+        of zone annotations</li>
+    </ul>
+    <h3><a name="A_sample_inventory_of_annotations"></a>A sample
+      inventory of annotations<br>
+    </h3>
+    <p>As an example, let's take a look at the annotations in the <a
+href="file:///afs/rcf/project/anonymize/proj/users/sam/devel/MAT/web/htdocs/doc/html/sample_task.html">sample
+
+
+
+
+
+
+        'Named Entity' task</a>.<br>
+    </p>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Annotation label<br>
+          </th>
+          <th style="vertical-align: top;">Category<br>
+          </th>
+          <th style="vertical-align: top;">Use<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">lex<br>
+          </td>
+          <td style="vertical-align: top;">token<br>
+          </td>
+          <td style="vertical-align: top;">each lex tag delimits a
+            non-whitespace token (the basic element used in the Carafe
+            trainer and tagger)<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">zone<br>
+          </td>
+          <td style="vertical-align: top;">zone<br>
+          </td>
+          <td style="vertical-align: top;">delimits a contiguous zone in
+            which content annotations will be found<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">PERSON<br>
+          </td>
+          <td style="vertical-align: top;">content<br>
+          </td>
+          <td style="vertical-align: top;">a proper name of a person<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">LOCATION<br>
+          </td>
+          <td style="vertical-align: top;">content<br>
+          </td>
+          <td style="vertical-align: top;">a proper name of a location<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">ORGANIZATION<br>
+          </td>
+          <td style="vertical-align: top;">content<br>
+          </td>
+          <td style="vertical-align: top;">a proper name of an
+            organization<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">SEGMENT<br>
+          </td>
+          <td style="vertical-align: top;">admin<br>
+          </td>
+          <td style="vertical-align: top;">administrative info about the
+            progress of annotation (present in all tasks)<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">VOTE<br>
+          </td>
+          <td style="vertical-align: top;">admin<br>
+          </td>
+          <td style="vertical-align: top;">administrative info about <a
+href="file:///afs/rcf/project/anonymize/proj/users/sam/devel/MAT/web/htdocs/doc/html/ui_reconciliation.html">reconciliation</a>
+            (present in all tasks)<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><a name="Admin_annotations_SEGMENTs_and"></a>Admin annotations,
+      SEGMENTs, and annotation progress</h2>
+    <p>The final category of annotations, <span style="font-weight:
+        bold;">admin</span> annotations, are crucial to the operation of
+      the 2.0 version of MAT. However, both of them work behind the
+      scenes for you. If you don't care about the inner bookkeeping that
+      MAT uses, you may skip this section; all you really need to know
+      is that using the two admin annotations, SEGMENT and VOTE, MAT can
+      keep detailed track of how the annotation of various portions of a
+      document is progressing.<br>
+    </p>
+    <div style="margin-left: 10px; margin-right: 10px; border: 1px solid
+      black; padding-left: 10px; padding-right: 10px; background:
+      lightgray">
+      <p>These admin annotations play a much smaller role in MAT 2.0
+        than we originally anticipated. We had originally expected MAT
+        2.0 to contain support for partial hand annotation and
+        correction (e.g., annotating only certain regions of documents),
+        for active learning, and for reconciliation workflows in
+        workspaces. However, our exploration of active learning has
+        convinced us that there's no evidence that it reduces annotator
+        time for document-oriented annotation tasks, and our extensions
+        for spanless annotation have forced us to reconsider our
+        original strategy for reconciliation. We've issued a
+        reconciliation tool for simple span tasks with MAT 2.0, but this
+        tool will be replaced in the next version of MAT with a more
+        general-purpose reconciliation tool based on the new <a
+          href="ui_comparison.html">comparison tool</a> and the new <a
+          href="score_algorithm.html">scorer</a>. The new reconciliation
+        workflows will still require SEGMENTs and VOTEs, but they'll
+        look different than they do now.<br>
+      </p>
+      <p>This section should be regarded as applying exclusively to MAT
+        2.0, with considerable future modifications planned.<br>
+      </p>
+    </div>
+    <h3>The details<br>
+    </h3>
+    <p>There are currently two admin annotations: SEGMENT, which records
+      information about the progress of annotation, and VOTE, which is
+      used specifically during <a href="ui_reconciliation.html">reconciliation</a>.
+      Reconciliation is an advanced topic, and we'll talk about VOTE
+      annotations when we talk about reconciliation. Here, we describe
+      the role of the SEGMENT annotation.<br>
+    </p>
+    SEGMENTs are a disjoint cover of the zone annotations in a document.
+    These annotations can capture a number of aspects about the progress
+    of annotation:<br>
+    <ul>
+      <li>the extent of the progress</li>
+      <li>the identity of the annotator</li>
+      <li>the status of the progress</li>
+    </ul>
+    <p>The SEGMENT is a span annotation. It has two attributes,
+      "annotator" and "status". These attributes occur in the following
+      configurations of values:<br>
+    </p>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Value of the annotator
+            attribute<br>
+          </th>
+          <th style="vertical-align: top;">Value of the status attribute<br>
+          </th>
+          <th style="vertical-align: top;">What it means<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">(null)<br>
+          </td>
+          <td style="vertical-align: top;">"non-gold"<br>
+          </td>
+          <td style="vertical-align: top;">The segment is untouched. No
+            human or automated annotator has modified it.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">"MACHINE"<br>
+          </td>
+          <td style="vertical-align: top;">"non-gold"<br>
+          </td>
+          <td style="vertical-align: top;">The segment has been
+            annotated by an automated tool, but no human has marked it
+            as completed.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">(a user's name)<br>
+          </td>
+          <td style="vertical-align: top;">"non-gold"<br>
+          </td>
+          <td style="vertical-align: top;">A user "owns" this segment
+            and has modified the segment in some way, but is not
+            prepared to mark it as completed. If a user corrects a
+            segment which an automated tool has annotated, the user now
+            "owns" the segment.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">(a user's name)<br>
+          </td>
+          <td style="vertical-align: top;">"human gold"<br>
+          </td>
+          <td style="vertical-align: top;">A user "owns" the segment and
+            has marked it as complete.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">(a user's name)<br>
+          </td>
+          <td style="vertical-align: top;">"reconciled"<br>
+          </td>
+          <td style="vertical-align: top;">A user "owns" the segment and
+            has marked it complete, and the segment has been vetted by
+            the reconciliation process.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p> </p>
+    (Reconciliation adds a few more attributes to the SEGMENT
+    annotation. We'll discuss those later.)<br>
+    <p>It's possible, then, to have partially annotated documents, with
+      multiple segments, some of whose segments are gold and some of
+      whose segments are not gold. The 2.0 version of MAT does not yet
+      expose this possibility in its UI (except during the
+      reconciliation process), but the infrastructure to represent this
+      is already there. These attribute values can be rolled up,
+      conceptually, to represent documents which are in a variety of
+      states of completion. These document status values are used
+      extensively in <a href="workspace_ref.html">workspaces</a>.<br>
+    </p>
+    <table style=" text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <td style="vertical-align: top;">
+            <meta http-equiv="content-type" content="text/html;
+              charset=ISO-8859-1">
+            "reconciled"<br>
+          </td>
+          <td style="vertical-align: top;">documents all of whose
+            SEGMENTs have status = "reconciled"</td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">"gold"<br>
+          </td>
+          <td style="vertical-align: top;">documents all of whose
+            SEGMENTS have status = "reconciled" or status = "human gold"
+            (and at least one "human gold" SEGMENT)</td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">"partially gold"<br>
+          </td>
+          <td style="vertical-align: top;">documents some (but not all)
+            of whose SEGMENTs have status = "reconciled" or status =
+            "human gold"</td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">"uncorrected"<br>
+          </td>
+          <td style="vertical-align: top;">documents all of whose
+            SEGMENTS have annotator = "MACHINE"</td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">"partially corrected"<br>
+          </td>
+          <td style="vertical-align: top;">documents some of whose
+            SEGMENTs have annotator != "MACHINE" and annotator != null
+            (i.e., they've been touched by a human annotator)</td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">"unannotated"<br>
+          </td>
+          <td style="vertical-align: top;">documents which have no
+            content annotations in any segment and no SEGMENTs which are
+            owned by any annotator</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>All the relevant MAT tools are aware of the SEGMENT annotations.<br>
+    </p>
+    <ul>
+      <li>The predefined zone <a href="task_workflow_ref.html">steps</a>
+        ensure that when zones are added, corresponding SEGMENT
+        annotations are added as well.</li>
+      <li>The <a href="carafe_engine.html">Carafe engine</a>, by
+        default, will only insert annotations into SEGMENTs whose
+        annotator = "MACHINE" or annotator = null. If no segments are
+        found, it will insert annotations into all the zones; if no
+        zones are found, it will insert annotations into the entire
+        document. Any SEGMENT into which annotations are inserted will
+        be marked annotator = "MACHINE".<br>
+      </li>
+      <li>The <a href="carafe_engine.html">Carafe engine</a>, by
+        default, will train on all SEGMENTs which have been which have
+        been touched by a human annotator, whether or not they're gold
+        (see, however, the --partial_training_on_gold_only option). If
+        no SEGMENTs are found, it will use all the zones; if no zones
+        are found, it will use the entire document. The scope of the
+        training is important; any blank regions are treated as
+        implicitly negative information (i.e., the trainer will conclude
+        that there's no annotation there on purpose).</li>
+      <li>The MAT UI ensures that each document that's going to be
+        annotated has at least one SEGMENT per zone. It uses "unknown
+        human" as the default annotator. As soon as the human annotator
+        adds, removes or modifies an annotation, the enclosing SEGMENT
+        annotation is marked annotator = "unknown human".&nbsp; The
+        "mark gold" step in the UI marks all SEGMENTs in the document
+        status = "human gold".</li>
+    </ul>
+  </body>
+</html>

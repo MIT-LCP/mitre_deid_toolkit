@@ -1,0 +1,221 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Experiment Engine Output Directory Structure</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Experiment output directory structure </h1>
+    <p>The <a href="MATExperimentEngine.html">experiment engine</a>
+      records its output in a directory, which is specified when you
+      call the experiment engine. Here, we describe the structure of the
+      output directory.<br>
+    </p>
+    <p>The output directory has three toplevel subdirectories, one for
+      the corpora ("corpora", by default), one for the models that are
+      constructed ("model_sets", by default), and one for the test runs
+      that are executed ("runs", by default). The names of the toplevel
+      subdirectories might vary (or there may be more such directories),
+      if you've provided a non-default value for "dir" to any of the
+      elements in the XML file. The &lt;format&gt; value in the names of
+      the CSV files are determined by the --csv_formula_output
+      command-line option of the experiment engine.<br>
+    </p>
+    <ul>
+      <li>&lt;xml_file&gt;.xml (file) - the experiment XML file that
+        populated this directory</li>
+      <li>allbytag_&lt;format&gt;.csv, allbytoken_&lt;format&gt;.csv -
+        aggregate spreadsheets for the experiment runs</li>
+      <li>corpora (dir) - the subdirectory containing the prepared
+        corpus</li>
+      <ul>
+        <li>&lt;corpus_name&gt; (dir) - one directory for each corpus
+          &lt;corpus_name&gt;, as named in the experiment XML file</li>
+        <ul>
+          <li>properties.txt - the properties of the corpus, as defined
+            in the XML file</li>
+          <li>prepared_files.txt - the list of absolute pathnames of the
+            documents in this corpus</li>
+          <li>file_seed.txt - the list of absolute pathnames that this
+            corpus began with (which may differ from prepared_files.txt
+            if any preprocessing was required)</li>
+          <li>file_partition.txt - if the corpus has a partition, this
+            file consists of one line for each file in file_seed.txt,
+            prepended with the name of the partition it's assigned to,
+            separated by a comma.<br>
+          </li>
+          <li>preprocessed (dir) - if any &lt;prep&gt; is specified for
+            the corpus, this directory contains the input and the output
+            of the preprocessing step</li>
+          <ul>
+            <li>in (dir) - the document inputs to the preprocessing step</li>
+            <li>out (dir) - the document outputs of the preprocessing
+              step<br>
+            </li>
+          </ul>
+        </ul>
+      </ul>
+      <li>model_sets (dir) - the directory containing the model sets</li>
+      <ul>
+        <li>&lt;model_set_name&gt;_properties.txt - a properties file
+          which stores the settings for the "family" of model sets
+          represented by &lt;model_set_name&gt; (as named in the
+          experiment XML file)</li>
+        <li>&lt;model_set_name&gt;_training_set.txt - a file listing the
+          documents comprising the training set, including the corpus
+          and partition from which the documents are drawn<br>
+        </li>
+        <li>&lt;model_set_name&gt;... (dir) - one directory for each
+          actual model built. The model set &lt;model_set_name&gt;, as
+          named in the experiment XML file, is the prefix; the remainder
+          of the directory name encodes the iterators (if any) which
+          applied to specify the settings for this model<br>
+        </li>
+        <ul>
+          <li>properties.txt - the properties of the model, as defined
+            in the XML file and the iterators<br>
+          </li>
+          <li>model - the constructed model<br>
+          </li>
+        </ul>
+      </ul>
+      <li>runs (dir) - the directory containing the runs</li>
+      <ul>
+        <li>&lt;run_name&gt;_properties.txt - a properties file which
+          stores the settings for the "family" of runs represented by
+          &lt;run_name&gt; (as named in the experiment XML file)<br>
+        </li>
+        <li>&lt;run_name&gt;... (dir) - one directory for each actual
+          run performed. The run &lt;run_name&gt;, as named in the
+          experiment XML file, is the prefix; the remainder of the
+          directory name encodes the iterators (if any) which applied to
+          specify the settings for this run</li>
+        <ul>
+          <li>&lt;model_set_name&gt;... (dir) - a subdirectory
+            corresponding to the model which is being applied in this
+            run (identical to the name of the directory for the actual
+            model built, under model_sets)<br>
+          </li>
+          <ul>
+            <li>bytag_&lt;format&gt;.csv, bytoken_&lt;format&gt;.csv,
+              details.csv - spreadsheets for this run</li>
+            <li>properties.txt - the properties of the run, as defined
+              in the XML file</li>
+            <li>run_input (dir) - the versions of the documents in the
+              test corpus which serve as input to the run. Typically,
+              these will be raw documents, unless the run has a prep
+              phase.<br>
+            </li>
+          </ul>
+          <ul>
+            <li>hyp (dir) - the hypotheses (i.e., the documents created
+              by the model), which will be compared to the actual
+              "gold-standard" values in the test corpus<br>
+            </li>
+          </ul>
+        </ul>
+      </ul>
+    </ul>
+    <p>When the engine completes its experiment runs, it produces a pair
+      of toplevel spreadsheets, allbytag_&lt;format&gt;.csv and
+      allbytoken_&lt;format&gt;.csv. These files contain the tag-level
+      and token-level scoring results for all the runs. The format and
+      interpretation of these results is found in the documentation for
+      <a href="MATScore.html">MATScore</a>, except that the initial
+      columns are different: </p>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <td style="vertical-align: top;">run family<br>
+          </td>
+          <td style="vertical-align: top;">The name of the run in the
+            experiment XML file.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">run<br>
+          </td>
+          <td style="vertical-align: top;">The actual directory of the
+            run (which may be affected by whatever iterators have
+            applied)<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">model family<br>
+          </td>
+          <td style="vertical-align: top;">The name of the model set in
+            the experiment XML file.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">model<br>
+          </td>
+          <td style="vertical-align: top;">The actual directory of the
+            model (which may be affected by whatever iterators have
+            applied)<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">train corpora<br>
+          </td>
+          <td style="vertical-align: top;">The name of the training
+            corpora (and their partitions, if appropriate) for this run.
+            Comma-separated.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">test corpora<br>
+          </td>
+          <td style="vertical-align: top;">The name of the test corpora
+            (and their partitions, if appropriate) for this run.
+            Comma-separated.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">tag<br>
+          </td>
+          <td style="vertical-align: top;">The label being scored, as
+            described in <a href="MATScore.html">MATScore</a>.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">train docs<br>
+          </td>
+          <td style="vertical-align: top;">The number of documents in
+            the training corpus for this run.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">train toks<br>
+          </td>
+          <td style="vertical-align: top;">The total number of tokens in
+            the documents in the training corpus for this run.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">train items<br>
+          </td>
+          <td style="vertical-align: top;">The total number of training
+            "items" for this label in the documents in the training
+            corpus for this run. For tag-level scoring, this is the
+            number of annotations; for token-level scoring, this is the
+            number of tokens in those annotations.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>In the directory for each run, you'll find the individual scoring
+      files bytag_&lt;format&gt;.csv and bytoken_&lt;format&gt;.csv,
+      which are (approximately) the subset of the corresponding overall
+      scoring files which is relevant to this run. Of greater interest
+      is details.csv, which is the detail spreadsheet for this run.
+      These detail spreadsheets are not aggregated at the top level
+      because they contain an entry for each tag, and the volume of data
+      would likely be too great.</p>
+  </body>
+</html>

@@ -1,0 +1,65 @@
+body {
+  font-family: sans-serif;
+  margin-top: 0px;
+}
+
+#legendDiv td {
+  vertical-align: top;
+  border: ridge black;
+  height: 100%;
+}
+
+#legendDiv {
+  height: 10em;
+  overflow: auto;
+}
+
+/* Modifications of YUI specifications. I add a CSS class
+   to make it more specific. */
+
+/* I need to defeat the margin and border. */
+
+.yui-skin-sam .yui-panel.borrowed-css .bd, .yui-skin-sam .yui-panel.borrowed-css .hd {
+  background-color: white;
+  margin: 0px;
+  border-width: 0px;
+}
+
+/* And I also want to defeat some of the settings for the tabs.
+   These allow the busy image to be appropriately visible. */
+
+.yui-skin-sam .yui-navset.borrowed-css .yui-nav .selected,
+.yui-skin-sam .yui-navset.borrowed-css .yui-navset-top .yui-nav .selected {
+  margin: 0 0.16em 0;
+}
+
+.yui-skin-sam .yui-navset.borrowed-css .yui-nav .selected a, 
+.yui-skin-sam .yui-navset.borrowed-css .yui-nav .selected a:focus, 
+.yui-skin-sam .yui-navset.borrowed-css .yui-nav .selected a:hover {
+  background: #D8D8D8 url(/MAT/resources/yui-2.6.0-dist/build/assets/skins/sam/sprite.png) repeat-x scroll 0 0;
+  color: #000000;
+}
+
+.yui-skin-sam .yui-navset.borrowed-css .yui-nav a, 
+.yui-skin-sam .yui-navset.borrowed-css .yui-navset-top .yui-nav a {
+  color: #888888;
+}
+
+.yui-skin-sam .yui-navset.borrowed-css .yui-content {
+  background: white none repeat scroll 0 0;
+}
+
+#busyimg {
+  border: 0px;
+}
+
+.docPortal {
+  width: 100%;
+  font-family: sans-serif;
+}
+
+#docOutputDiv, #unEditableDocInputDiv {
+  border: medium ridge black;
+  height: 20em;
+  overflow: auto;
+}

@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=windows-1252"
+      http-equiv="Content-Type">
+    <title>Windows Native System Requirements, Conventions, and
+      Installation</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Windows Native System Requirements, Conventions, and
+      Installation</h1>
+    <ul>
+      <li><a href="#System_requirements">System requirements</a></li>
+      <li><a href="#Conventions">Conventions</a></li>
+      <li><a href="#Installation">Installation</a></li>
+      <li><a href="#Upgrading_dependencies_or_moving_the">Upgrading
+          dependencies or moving the installation</a><br>
+      </li>
+    </ul>
+    <h2><a name="System_requirements"></a>System requirements</h2>
+    <p>This toolkit is known to run on Windows 7. It has run in the past
+      on Windows XP, but we no longer have access to Windows XP for
+      testing. We have no access to Windows Vista, and don't expect to.
+      We do not have access to Windows 8.<br>
+    </p>
+    <p>This toolkit depends on a number of external tools which must be
+      installed before you install MAT. For the Windows version, they
+      are:<br>
+    </p>
+    <ul>
+      <li>Python, version 2.6 or later. Most of our development is
+        currently on 2.7. 3.x is known not to work.<br>
+      </li>
+      <li>Java, version 1.6.0_04 or later.</li>
+    </ul>
+    <h2><a name="Conventions"></a>Conventions</h2>
+    <p>MAT is primarily a Unix-based tool, so the documentation is
+      written mostly with reference to Unix. As a result, you should
+      first familiarize yourself with the <a
+        href="unix_req_etc.html#Conventions">Unix conventions</a>, and
+      make sure you know the DOS CMD equivalents of basic Unix
+      operations like pwd, cd, etc. We'll assume throughout that you've
+      set your MAT_PKG_HOME cmd shell variable to the directory src/MAT
+      inside the unpacked zip file. </p>
+    <p>The documentation assumes you've added Python to your Windows
+      path.<br>
+    </p>
+    <p><span style="font-weight: bold;">MAT may be installed in
+        directories whose paths contain spaces</span>. If you do this,
+      you'll likely have to wrap double-quotes around any references to
+      MAT_PKG_HOME or subdirectories thereof:<br>
+    </p>
+    <pre>&gt; <span style="font-weight: bold;">cd "%MAT_PKG_HOME%"</span><br>&gt; <span style="font-weight: bold;">dir "%CD%"</span><br></pre>
+    <p>If you don't do this, you'll likely encounter bizarre behavior
+      due to the path being expanded and split into command-line tokens
+      according to the whitespace in the path.<br>
+    </p>
+    <p> </p>
+    <h2><a name="Installation"></a>Installation</h2>
+    <p>First, ensure that you have Java installed. You'll need version
+      1.6.0_04 or later. The installer looks for any version of Java
+      found in C:\Program Files\Java. The installer will probe all the
+      Java versions and choose the newest one that meets the system
+      requirements. If you don't have Java, you can get it from Sun.<br>
+    </p>
+    <p>Next, install Python. You don't need any of Mark Hammond's Python
+      win32 extensions. You may want to add Python to your Windows path.
+      None of the instructions in this documentation should require
+      that, but if you do find an instruction to run python.exe, use the
+      full executable path for Python if you haven't added it to your
+      path..<br>
+    </p>
+    <p>Next, open a Windows cmd shell, e.g., via Start -&gt; Run -&gt;
+      cmd. We recommend that you ensure that the output history is
+      longer than the default 50 lines; click left on the leftmost icon
+      in the top window bar in the "cmd" window, select Properties,
+      select the Layout tab, and change "Height" under "Screen Buffer
+      Size" to, say, 500. </p>
+    <p>Next, open the unzipped directory containing this distribution in
+      your file viewer (e.g., navigating from "My Computer"). In the top
+      directory of the distribution, you should see a file "install.py".
+      In your cmd shell window, type "python" (if you've added Python to
+      your Windows path), or the full path to the executable (probably
+      "C:\Python27\python.exe"), and then a space, and then drag the
+      "install.py" file to the cmd shell window. Switch to the cmd shell
+      and press &lt;return&gt;. This will run the MAT installer.<br>
+    </p>
+    <p>The output of the installer is fairly verbose. If it does not
+      print out "Done" at the end, it hasn't completed appropriately.<br>
+    </p>
+    <p>When the installation is complete, your <a
+        href="runtime_env.html">runtime environment</a> will be
+      configured for you. The installed directory is <b>not relocatable</b>;
+      you must rerun the installer if you move the installation.<br>
+    </p>
+    <h2><a name="Upgrading_dependencies_or_moving_the"></a>Upgrading
+      dependencies or moving the installation</h2>
+    <p>If you want MAT to use a new version of Java or Python because
+      the Java or Python on your machine has been upgraded and the old
+      version is no longer present, just rerun the installer. The
+      installer will find the updated versions and reconfigure your
+      tools.<br>
+    </p>
+    <p>If you want to move the MAT installation from one location to
+      another on the same machine, just move the toplevel MAT directory
+      - it's completely self-contained. If you want to move the MAT
+      installation to another machine, the safest thing to do is
+      reinstall on that new machine.</p>
+  </body>
+</html>

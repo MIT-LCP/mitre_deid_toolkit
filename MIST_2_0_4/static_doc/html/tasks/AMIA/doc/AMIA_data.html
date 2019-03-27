@@ -1,0 +1,244 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>AMIA Data Customizations</title>
+    <!-- this will appear as tasks/<taskdir>/doc/<file>, and the doc CSS
+       is in css, so... -->
+    <link href="../../../../css/doc.css" rel="stylesheet"
+      type="text/css">
+  </head>
+  <body>
+    <h1>The AMIA medical deidentification task</h1>
+    <p>The i2b2 organization, a national center for biomedical
+      computing, sponsored a medical deidentification challenge in
+      conjunction with the 2006 AMIA conference. MITRE participated in
+      this challenge, and the work we did there is the foundation of the
+      MIST system. The data for that challenge - 889 fully deidentified
+      medical discharge summaries, annotated for PHI - has been released
+      to the public by i2b2 as their NLP dataset #1B, and is available
+      for download once your organization executes the appropriate
+      bilateral data use agreement. The data and registration procedures
+      can be found <a href="https://www.i2b2.org/NLP/DataSets/Main.php">here</a>.
+      We are distributing a MIST task which manipulates this data.<br>
+    </p>
+    <p>This task is a simple variant of the general deidentification
+      task. Make sure you've read the documentation on <a
+        href="../../core/doc/general.html">general deidentification
+        customizations</a>.<br>
+    </p>
+    <h2>Task name</h2>
+    <p>The name of this task, when you need to refer to it in MATEngine,
+      MATWorkspaceEngine, or the UI, is "AMIA Deidentification".<br>
+    </p>
+    <h2>Preparing the data</h2>
+    <p>The data, as distributed by i2b2, is not in the appropriate
+      format for use with this task, for the following reasons:<br>
+    </p>
+    <ul>
+      <li>It is distributed as two large XML files, each containing
+        hundreds of documents.</li>
+      <li>The extent of the annotations for dates covers only the day
+        and month, presumably because the HIPAA guidelines do not
+        require the year to be obscured. However, this extent makes
+        reliable resynthesis impossible.</li>
+      <li>The annotations are ENAMEX-style annotations, with a single
+        PHI annotation which bears a "type" attribute which contains the
+        type of the PII. This task, however, expects there to be a
+        different annotation for each PII type.</li>
+    </ul>
+    <p>We provide a script which you can use to prepare the data
+      appropriately. The script can be found in src/tasks/AMIA/utils in
+      your distribution.<br>
+    </p>
+    <p>Let's say that your input file that you got from i2b2 is
+      train.xml, and you want to put the postprocessed documents in the
+      outdir directory:</p>
+    <pre>% <span style="font-weight: bold;">python src/tasks/AMIA/utils/split_AMIA_file.py --extend_dates \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--promote_type_attr train.xml outdir</span><br></pre>
+    <p>Note that this script makes two crucial repairs to the data as it
+      splits it:<br>
+    </p>
+    <ul>
+      <li>The training data, as distributed by i2b2, has a mismatched
+        XML tag at line 25722 (the offending string is <span
+          style="font-family: monospace;">&lt;PHI TYPE="DATE"&gt;25th of
+          July&lt;PHI TYPE="DOCTOR"&gt;</span>). This error is repaired.</li>
+      <li>The raw test data, if you ultimately choose to download it,
+        has Windows line terminations, while the annotated ground truth
+        test data has Unix line terminations. If you were to try to
+        annotate the raw data documents, and score them against the
+        ground truth, the signals would differ and the scorer would
+        fail. The script converts any Windows line terminations it finds
+        into Unix line terminations.<br>
+      </li>
+    </ul>
+    <p>Once you run this script, the output directory contains segmented
+      individual records whose annotations are in the appropriate form,
+      but the documents do not contain zones or tokens, which are
+      important to MIST. So we next apply an AMIA-specific workflow to
+      add these zones and tokens, and at the same time convert the
+      documents to MAT JSON format.<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATEngine --task "AMIA Deidentification" \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_dir outdir --input_file_re ".*[.]xml" --input_file_type xml-inline \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--workflow "Process tagged untokenized docs" --steps "zone and align" \<br>--output_dir json-outdir --output_file_type mat-json --output_fsuff ".json"</span><br><br>Windows:<br><br>% <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATEngine.cmd --task "AMIA Deidentification" \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_dir outdir --input_file_re ".*[.]xml" --input_file_type xml-inline \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--workflow "Process tagged untokenized docs" --steps "zone and align" \<br>--output_dir json-outdir --output_file_type mat-json --output_fsuff ".json"</span><br></pre>
+    <p>The documents you've produced can be used as any other fully
+      annotated document can be used; e.g. you can apply the nominate
+      and transform steps to create redacted or resynthesized documents.
+      As another example, these documents are now suitable for building
+      a model:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATModelBuilder --task 'AMIA Deidentification' \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_files 'outdir/*.json' --file_type mat-json --save_as_default_model</span><br><br>Windows:<br><br>% <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATModelBuilder.cmd --task "AMIA Deidentification" \</span><br style="font-weight: bold;"><span style="font-weight: bold;">--input_files 'outdir\*.json' --file_type mat-json --save_as_default_model</span><br></pre>
+    <p>The resulting model will be in src/tasks/AMIA/default_model.<br>
+    </p>
+    <p>Note: You may have to increase the Java heap size in order to
+      make the model building (and subsequent tagging) work; you may do
+      this in your task.xml file by modifying the
+      &lt;java_subprocess_parameters&gt; as follows, for example:<br>
+    </p>
+    <pre>  &lt;java_subprocess_parameters heap_size="2G"/&gt;<br></pre>
+    <p></p>
+    <h2>Additional workflows</h2>
+    <p>The AMIA task has an additional workflow "Process tagged
+      untokenized docs", which should be applied to documents which have
+      content annotations for PHI but is missing either zones or tokens
+      or both. This workflow has a special "zone and align" step; once
+      this step is applied, the resulting documents are in the same
+      state as if they had been processed in the "Demo" workflow using
+      the the "zone" and "tag" steps.<br>
+    </p>
+    <h2>Annotation set<br>
+    </h2>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <td style="vertical-align: top;">HOSPITAL<br>
+          </td>
+          <td style="vertical-align: top;">A medical facility<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">PATIENT<br>
+          </td>
+          <td style="vertical-align: top;">The name of a patient<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">DOCTOR<br>
+          </td>
+          <td style="vertical-align: top;">The name of a medical
+            provider<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">DATE<br>
+          </td>
+          <td style="vertical-align: top;">A date, including the year<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">LOCATION<br>
+          </td>
+          <td style="vertical-align: top;">A partial or full address,
+            including city, state and ZIP<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">ID<br>
+          </td>
+          <td style="vertical-align: top;">An ID code or number<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">PHONE<br>
+          </td>
+          <td style="vertical-align: top;">A telephone number<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">AGE<br>
+          </td>
+          <td style="vertical-align: top;">An age<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2>Additional replacer implementations</h2>
+    <p>The AMIA task provides some special replacer implementations.<br>
+    </p>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top;">Implementation<br>
+          </th>
+          <th style="vertical-align: top;">UI name<br>
+          </th>
+          <th style="vertical-align: top;">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">AMIAReplacementEngine.AMIADEIDReplacementEngine<br>
+          </td>
+          <td style="vertical-align: top;">clear&nbsp;-&gt;&nbsp;DE-ID<br>
+          </td>
+          <td style="vertical-align: top;">Maps clear text PIIs to the a
+            DE-id-style obscured pattern.<br>
+            <br>
+            For most tags, the pattern is, e.g., **HOSPITAL. However,
+            AGE, DATE, PATIENT and DOCTOR have subsequent patterns
+            surrounded by square brackets.<br>
+            <ul>
+              <li>**PATIENT[AAA B. CCC], where the pattern represents
+                the pattern of name tokens in the clear text name. The
+                token substitutions are, by default, consistent within
+                the scope of a single document. This pattern applies to
+                DOCTOR as well.<br>
+              </li>
+              <li>**DATE[5/6/09], where the sequence between the
+                brackets is an actual date, displaced consistently
+                throughout the document by the same randomly-selected
+                offset.</li>
+              <li>**AGE[in 30s], where the sequence between the bracket
+                indicates a decade of life, with the exception of
+                "birth-12", "in teens", and "90+".<br>
+              </li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">AMIAReplacementEngine.AMIADEIDResynthesisEngine
+
+
+
+
+
+
+          </td>
+          <td style="vertical-align: top;">DE-ID&nbsp;-&gt;&nbsp;clear <br>
+          </td>
+          <td style="vertical-align: top;">Maps the DE-id-style pattern
+            described above into clear text</td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">AMIAReplacementEngine.AMIAPIIReplacementEngine<br>
+          </td>
+          <td style="vertical-align: top;">clear -&gt; clear<br>
+          </td>
+          <td style="vertical-align: top;">Maps clear text PIIs to
+            resynthesized, artificial PIIs. <br>
+            <br>
+            For most tags, the behavior of this replacer is identical to
+            the general clear -&gt; clear replacer, except that there
+            are some idiosyncracies of handling HOSPITALs (which can
+            include room numbers) and DOCTORs (which can include
+            initials with an attached set of initials for the medical
+            transcriber, e.g. "djh / vp").<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

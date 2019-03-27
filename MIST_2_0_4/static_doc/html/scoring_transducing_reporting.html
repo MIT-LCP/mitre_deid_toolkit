@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Scoring, Transducing, Reporting</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Scoring, transducing, reporting</h1>
+    <p>In addition to iteratively preparing corpora using <a
+        href="tallal.html">"tag a little, learn a little"</a>, MAT has
+      tools for assessing your progress, converting corpora from one
+      annotation structure to another, and reporting on the content of
+      corpora.<br>
+    </p>
+    <h2>Scoring</h2>
+    <p>We saw the scorer, <a href="MATScore.html">MATScore</a>, briefly
+      in <a href="tutorial_5.html">Tutorial 5</a>. The scorer can be
+      used to compare an annotator's data with a gold standard, or to
+      compare two annotators with each other. The scorer uses a very
+      general and configurable <a href="score_algorithm.html">comparison
+
+
+        algorithm</a> to determine a best match among the annotations in
+      the document pairs, and then uses a separate scoring configuration
+      to determine which label aggregations and decompositions to
+      display. The <a href="score_output.html">output</a> is an Excel-
+      or OpenOffice-compatible spreadsheet.<br>
+    </p>
+    <p>The <a href="task_xml.html#similarity_profile_of_task">&lt;similarity_profile&gt;</a>
+      element in your task XML file allows you to specify, for a given
+      true label, which dimensions of the annotation are used for
+      comparison; what comparison method is used; and how the comparison
+      value should be weighted in computing the overall similarity. The
+      similarity and score algorithm provides a default comparison for
+      use when no comparison is specified for a label. You can define
+      multiple similarity profiles in your task, and choose the one you
+      want using the --similarity_profile option of MATScore.<br>
+    </p>
+    <p>The <a href="task_xml.html#score_profile_of_task">&lt;score_profile&gt;</a>
+      element in your task XML file allows you to specify how label
+      scores should be decomposed (e.g., compute separate subscores for
+      annotations with particular attribute values) or aggregated (e.g.,
+      compute a separate subscore for all spanned annotations). You can
+      define multiple scoring profiles in your task, and choose the one
+      you want using the --score_profile option of MATScore.<br>
+    </p>
+    <p>The scorer itself, in addition to using each of these profile
+      types, also allows you to collapse labels using equivalence
+      classes, and to ignore particular labels.<br>
+    </p>
+    <p>Finally, the scorer is one of the MAT tools which does not
+      require a task; you can separately tell it which annotations count
+      as content annotations for scoring, and which count as token
+      annotations for token-based scoring. In this case, the default
+      similarity and score profiles will be used. You can use the MAT
+      scorer, then, to compare documents you can read using a <a
+        href="readers_and_writers.html">MAT reader</a> (e.g., inline
+      XML), even if you haven't configured a task.<br>
+    </p>
+    <h2>Transducing</h2>
+    <p>The transducer tool, <a href="MATTransducer.html">MATTransducer</a>,
+      will convert documents from any known readable format (e.g.,
+      inline XML) to any known writeable format (e.g., MAT-JSON). The
+      available core readers and writers are described <a
+        href="readers_and_writers.html">here</a>; it's possible that
+      your task will have <a href="rw_create.html">defined its own
+        readers</a>. Like the scorer, the transducer does not require a
+      task.<br>
+    </p>
+    <p>In addition to format conversion, the transducer can convert the
+      structure of your annotations using a <a
+        href="doc_conversion_xml.html">declarative XML format</a>. For
+      instance, let's say that you've been given data which contains
+      annotations with the ENAMEX label, and a TYPE attribute whose
+      values are PER, ORG, LOC. And you'd prefer for these annotations
+      to be PERSON, ORGANIZATION and LOCATION labels. You can define
+      this document conversion in XML as follows:<br>
+    </p>
+    <pre>&lt;instructions&gt;<br>  &lt;labels source="ENAMEX"&gt;<br>    &lt;promote_attr source="TYPE"/&gt;<br>  &lt;/labels&gt;<br>  &lt;labels source="PER"&gt;<br>    &lt;map target="PERSON"/&gt;<br>  &lt;/labels&gt;<br>  &lt;labels source="ORG"&gt;<br>    &lt;map target="ORGANIZATION"/&gt;<br>  &lt;/labels&gt;<br>  &lt;labels source="LOC"&gt;<br>    &lt;map target="LOCATION"/&gt;<br>  &lt;/labels&gt;<br>&lt;/instructions&gt;<br></pre>
+    <p>With this declarative format, you can<br>
+    </p>
+    <ul>
+      <li>promote attributes to labels, and demote labels to attributes</li>
+      <li>convert annotations from spanned to spanless</li>
+      <li>map labels</li>
+      <li>apply operations to labels which bear particular
+        attribute-value pairs</li>
+      <li>discard and map attributes</li>
+      <li>discard annotations if particular attributes are null</li>
+      <li>map attribute values</li>
+    </ul>
+    <p>and a range of other things.<br>
+    </p>
+    <h2>Reporting</h2>
+    <p>The reporting tool, <a href="MATReport.html">MATReport</a>, will
+      generate concordance-style spreadsheets listing all the
+      annotations and their descriptions, with their left and right
+      contexts. For spanless annotations, the tool will show the span of
+      text implied by the spanned annotations linked to the spanless
+      annotations (e.g., relation arguments), and indicate the arguments
+      in-line. You can optionally choose to suppress the left and right
+      concordance context.<br>
+    </p>
+    <p>The reporting tool also provides the option of generating
+      per-label spreadsheet reports, which have the advantage of showing
+      each label attribute as a separate column. You can use this mode
+      as a quick and dirty CSV export for document annotations.<br>
+    </p>
+    <p>Like the other two tools describe here, the reporter does not
+      require a task.<br>
+    </p>
+    <p><br>
+    </p>
+  </body>
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Workspaces in the UI</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Workspaces in the UI</h1>
+    <p>Only a subset of <a href="workspaces.html">workspace</a> actions
+      are available in the MAT UI. You can view the contents of folders
+      and apply operations to individual documents in workspace folders,
+      but you can't create workspaces, add users, import documents into
+      the workspace, or apply folder-level operations.<br>
+    </p>
+    <div style="margin-right: 10px; margin-left: 10px; padding-left:
+      10px; padding-right: 10px; border: 1px solid black;
+      background-color: lightgray">
+      <h2>Accessing workspaces via the MAT Web server is NOT SECURE<br>
+      </h2>
+      <p>The native MAT Web server is <span style="font-weight: bold;">not
+
+
+
+
+an
+
+
+
+
+          enterprise-secure implementation, and will never be one</span>.
+        It does not use SSL; in workspace mode, it does not perform any
+        sort of user authentication beyond the workspace key; it does
+        not provide any security logging or traceability. You should
+        assume that anyone who has access to your network can see your
+        Web server traffic, and either observe or (in the case of
+        workspaces) overwrite your data. </p>
+    </div>
+    <ul>
+      <li><a href="#The_Open_workspace_dialog">The "Open workspace"
+          dialog</a></li>
+      <li><a href="#The_workspace_window">The workspace window</a></li>
+      <li><a href="#The_workspace_mode_document_tab">The workspace mode
+          document tab<br>
+        </a></li>
+      <li><a href="#The_Update_workspace_key_dialog">The "Update
+          workspace key" dialog</a></li>
+      <ul>
+      </ul>
+    </ul>
+    <h2><a name="The_Open_workspace_dialog"></a>The "Open workspace"
+      dialog</h2>
+    <p>When you select "File -&gt; Open workspace..." you'll be
+      presented with the following dialog:<br>
+    </p>
+    <p><img style=" width: 482px; height: 238px;" alt="[open workspace]"
+        src="../img/ui_openworkspace.jpg"><br>
+    </p>
+    <p>You'll need to know which user ID to use; this is one of the IDs
+      you've provided either via the --initial_users option when you <a
+        href="MATWorkspaceEngine.html#create">create the workspace</a>,
+      or via the <a href="MATWorkspaceEngine.html#register_users">register_users</a>
+      operation. Provide this user ID in the "User ID" field, and press
+      &lt;tab&gt; to enable and advance to the "Workspace key" field.<br>
+    </p>
+    <p>Next, you should copy the workspace key from the <a
+        href="MATWeb.html">MATWeb</a> command loop (or, if there's an
+      agreed-upon workspace key that you've provided to MATWeb when you
+      start up, provide that key). Once the workspace key is inserted
+      into the "Workspace key" field, you may press the &lt;tab&gt; key
+      in that field to enable and advance to the "Directory" field; once
+      the pathname of the workspace directory is entered in the
+      "Directory" field, you may press the &lt;tab&gt; key in that field
+      to enable the "Open" button:<br>
+    </p>
+    <p><img style=" width: 483px; height: 238px;" alt="[open workspace
+        filled]" src="../img/ui_openworkspace_filled.jpg"><br>
+    </p>
+    <p>If you only want to view the workspace, and don't plan on
+      perfoming any operations, select the "read-only" checkbox.<br>
+    </p>
+    <p><span style="font-weight: bold;">Note</span>: the value of the
+      "Directory" field depends on how the <a href="MATWeb.html">MATWeb</a>
+      server was started. By default, it should be a full pathname, as
+      shown. However, it MATWeb was started up with any
+      --workspace_container_directory options, this value must be a <span
+        style="font-weight: bold;">partial</span> pathname, representing
+      a subdirectory of one of the workspace container directories. This
+      limitation is intended to provide a measure of security when
+      MATWeb is being used as a persistent service, by limiting the
+      directories on the server you have access to.<br>
+    </p>
+    <h2><a name="The_workspace_window"></a>The workspace window</h2>
+    <p>Initially, the workspace will contain the contents of the "core"
+      folder. This will be displayed in a tab in the upper left UI
+      region:<br>
+    </p>
+    <p><img alt="[selected folder]"
+        src="../img/ui_workspace_selected.jpg" height="647" width="1018">
+    </p>
+    The tab shows the pathname of the workspace. The controls region on
+    the right shows the pathname as well, and then the task associated
+    with the workspace and the current user ID. Immediately below those,
+    you see a drop-down menu on the left which allows you to select a
+    workspace folder. Immediately to the right of the folder menu is a
+    "Refresh" button; you may press this to resynchronize the workspace
+    view with the workspace itself if you ever perform workspace actions
+    on the command-line while the workspace tab is open.<br>
+    <p>If you select a folder, you'll see a scrollable list of files in
+      that folder (or "Folder is empty" if the folder is empty). This
+      scrollable list shows the document basenames, along with the
+      document status. If you click once on an element in the file list,
+      it will open a workspace mode document tab. You will only be able
+      to select document basenames which are either unassigned or
+      assigned to you, and you will only be able to select locked
+      basenames which are locked by you. Basenames which you can't
+      select will be grayed out, and will not highlight when you hover
+      your mouse over the entry:<br>
+    </p>
+    <img alt="[selected multi]"
+      src="../img/ui_workspace_selected_multiuser.jpg" height="663"
+      width="1021">
+    <p>When you open a document in a non-read-only workspace, the
+      workspace will <a href="workspace_ref.html#Workspace_locking">lock</a>
+      the document. When you navigate away from the UI (either by
+      loading a different page, or closing the browser window, or
+      quitting the browser), the UI will do its best to free these locks
+      before shutting down. If for some odd reason the UI fails to free
+      these locks, you'll still be able to open documents which are
+      locked by you when you open the workspace the next time. <span
+        style="font-weight: bold;">Note</span>: this means that it's
+      possible to open the same document in two different browsers; in
+      this case, only the most recently opened document will be able to
+      be modified and saved (since, by opening the document a second
+      time, you free and discard the first document lock).<br>
+    </p>
+    <h2><a name="The_workspace_mode_document_tab"></a>The workspace mode
+      document tab<br>
+    </h2>
+    <p>The workspace mode document tab is very similar to the file mode
+      document tab:<br>
+    </p>
+    <p><img alt="[workspace file]" src="../img/ui_workspace_file.jpg"
+        height="648" width="1018"><br>
+    </p>
+    <p>It can be closed and hidden in the same way the document tab can,
+      and is listed in the Tabs menu. It, too, has a hand annotation
+      status line at the top, and a tag information line at the bottom.
+      However, it differs otherwise.<br>
+    </p>
+    <p>The tab itself contains the basename of the file. The controls
+      pane on the right also shows the basename, along with the
+      workspace it's drawn from in parentheses. Immediately below this
+      is the current folder, and below that is the <a
+        href="annotation_ref.html#Admin_annotations_SEGMENTs_and">document
+
+
+
+
+
+
+
+
+        status</a>. Immediately below these is a drop-down menu of
+      operations available in this folder, and below this drop-down
+      menu, a "Go!" button which performs the selected operation.
+      Finally, below this is an indication of whether <a
+        href="workspaces.html#Workspace_logging">workspace logging</a>
+      is enabled for this workspace.<br>
+    </p>
+    <p>There are no options to save the document to the client desktop,
+      no workflow, and no steps.<br>
+    </p>
+    <p>When you press the "Go!" button, the workspace applies the
+      selected operation to the selected document. For instance, you can
+      autotag this document using the current workspace model before
+      completing the hand annotation, or you can mark the document gold:<br>
+    </p>
+    <p><img alt="[processing in workspace]"
+        src="../img/ui_workspace_file_processed.jpg" height="646"
+        width="1017"><br>
+    </p>
+    Hand-annotating the document is identical to the hand-annotating a
+    document in file mode.<br>
+    <h2><a name="The_Update_workspace_key_dialog"></a>The "Update
+      workspace key" dialog</h2>
+    <p>Finally, if you've happened to shut down and restart the Web
+      server while the UI is open, you might be in a situation where you
+      want to continue working, but the Web server has presented a new
+      workspace key. If you select "File -&gt; Update workspace key",
+      you'll be presented with the following dialog:<br>
+    </p>
+    <p><img alt="" src="../img/ui_updateworkspacekey.jpg"><br>
+    </p>
+    <p>If you enter the new workspace key and press the "OK" button, the
+      UI will now be able to continue to interact with the workspaces
+      via the UI without restarting.<br>
+    </p>
+  </body>
+</html>

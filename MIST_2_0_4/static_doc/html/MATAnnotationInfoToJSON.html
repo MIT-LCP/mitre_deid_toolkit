@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <!-- Copyright (C) 2007 - 2009 The MITRE Corporation. See the toplevel
+file LICENSE for license terms. -->
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Annotation Description Conversion Tool</title>
+    <link href="../css/doc.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>Annotation Information Conversion Tool<br>
+    </h1>
+    <h2>Description</h2>
+    <p>MAT 2.0 introduces a new, extremely detailed mechanism for
+      describing the annotation types available to a given task. The
+      documented description language is <a href="asd_reference.html">XML</a>.
+      However, the compiled information is made available to the MAT UI
+      as JSON, and this <a href="asd_json_reference.html">JSON format</a>
+      is also used in the MAT standalone viewer/annotator and the Java
+      library. This tool converts the information in a known task into
+      the appropriate JSON format.</p>
+    <h2>Usage</h2>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/</span><span style="font-weight: bold;">MATAnnotationInfoToJSON</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\MATAnnotationInfoToJSON<br></span><br>Usage: MATAnnotationInfoToJSON [options] task outfile<br><br>task: the name of a MAT task.<br>outfile: the output file to write the JSON version of the annotation info to. If the file<br>  is '-', the JSON will be written to standard output.<br></pre>
+    <p>The tool also allows you to control whether redundant info is
+      displayed; whether the output is pretty-printed or not; and
+      whether noncontent annotations are produced.<br>
+    </p>
+    <h2>Options</h2>
+    <table style="text-align: left; width: 100%;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr>
+          <td style="vertical-align: top;">--dont_remove_redundant_info<br>
+          </td>
+          <td style="vertical-align: top;">By default, the tool removes
+            redundant information to improve readability. If this flag
+            is present, the redundant information will be retained. Both
+            the Java library and the Javascript standalone viewer are
+            configured to repopulate redundant information.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--compact<br>
+          </td>
+          <td style="vertical-align: top;">By default, the tool
+            pretty-prints its JSON output. If this flag is present, the
+            JSON will not be pretty-printed<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--keep_noncontent_annotations<br>
+          </td>
+          <td style="vertical-align: top;">By default, the tool does not
+            preserve token, zone or admin annotation type descriptors.
+            If this flag is present, all annotation types will be
+            presented.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;">--simplified<br>
+          </td>
+          <td style="vertical-align: top;">By default, the tool dumps <a
+              href="asd_json_reference.html#The_expanded_JSON">expanded
+              JSON</a>, in which all the annotation-related task
+            information, including tag order, hierarchy, etc., even if
+            this information is not present. If this flag is present,
+            the tool will dump <a
+              href="asd_json_reference.html#The_simplified_JSON">simplified
+              JSON</a>, which is just a list of the annotation types.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2><span style="font-weight: bold;"></span>Examples</h2>
+    <h3>Example 1<br>
+    </h3>
+    <p>Let's say you want to convert the included "Named Entity" task
+      and save the content annotations to the file ne.json,
+      pretty-printed, without redundant information:<br>
+    </p>
+    <pre>Unix:<br><br>% <span style="font-weight: bold;">$MAT_PKG_HOME/bin/MATAnnotationInfoToJSON "Named Entity" ne.json</span><br><br>Windows native:<br><br>&gt; <span style="font-weight: bold;">%MAT_PKG_HOME%\bin\</span><span style="font-weight: bold;">MATAnnotationInfoToJSON</span><span style="font-weight: bold;">.cmd "Named Entity" ne.json</span><span style="font-weight: bold;"><br></span><span style="font-weight: bold;"></span></pre>
+    <h3>Example 2</h3>
+    <p>Like example 1, but you want the noncontent annotations as well,
+      and you want the output printed to standard output:<br>
+    </p>
+    <pre><span style="font-weight: bold;">Unix:<br><br>% $MAT_PKG_HOME/bin/MATAnnotationInfoToJSON --keep_noncontent_annotations "Named Entity" -<br><br>Windows native:<br><br>&gt; %MAT_PKG_HOME%\bin\MATAnnotationInfoToJSON.cmd --keep_noncontent_annotations "Named Entity" -<br></span></pre>
+  </body>
+</html>
